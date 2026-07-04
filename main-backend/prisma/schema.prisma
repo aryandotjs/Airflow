@@ -18,26 +18,44 @@ model User {
   email    String @unique
   password String
 
-  zaps Zap[]
+  zaps         Zap[]
+  caredentials Credential[]
+}
+
+model Credential {
+  id        String          @id @default(uuid())
+  name      String
+  value     String
+  type      CredentialsType
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+}
+
+enum CredentialsType {
+  CLAUDE
+  GEMINI
+  CHATGPT
 }
 
 model Zap {
-  id     String @id @default(uuid())
-  userId Int
-
-  trigger Trigger?
+  id      String   @id @default(uuid())
+  userId  Int
   user    User     @relation(fields: [userId], references: [id])
+  trigger Trigger?
   actions Action[]
-  zapruns Zaprun[]
+  zapRuns Zaprun[]
 }
 
 model Trigger {
-  id        String @id @default(uuid())
+  id        String           @id @default(uuid())
   triggerId String
-  zapId     String @unique
-
-  type AvailableTrigger @relation(fields: [triggerId], references: [id])
-  Zap  Zap              @relation(fields: [zapId], references: [id])
+  zapId     String           @unique
+  metadata  Json             @default("{}")
+  type      AvailableTrigger @relation(fields: [triggerId], references: [id])
+  Zap       Zap              @relation(fields: [zapId], references: [id])
 }
 
 model AvailableTrigger {
@@ -49,12 +67,13 @@ model AvailableTrigger {
 }
 
 model Action {
-  id       String @id @default(uuid())
-  ActionId String
-  zapId    String @unique
-
-  type AvailableAction @relation(fields: [ActionId], references: [id])
-  Zap  Zap             @relation(fields: [zapId], references: [id])
+  id           String          @id @default(uuid())
+  metadata     Json            @default("{}")
+  sortingOrder Int             @default(0)
+  zapId        String
+  Zap          Zap             @relation(fields: [zapId], references: [id])
+  ActionId     String
+  type         AvailableAction @relation(fields: [ActionId], references: [id])
 }
 
 model AvailableAction {
