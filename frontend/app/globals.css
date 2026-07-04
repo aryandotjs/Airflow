@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme {
+    --color-brand-bg: #FDFDFD;
+    --color-brand-dark-bg: #000000;
+    --color-brand-border: #D5D5D5;
+    --color-dark-border: #212629
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+body {
+    background-color: var(--color-brand-bg);
+    color: #333333;
+}
+
+
+
+.dark body {
+    background-color: var(--color-brand-dark-bg);
+    color: #A1A4A5;
+}
+
+
+.dark .react-flow__controls-button {
+    @apply bg-[#151619] border-neutral-800 hover:bg-neutral-900 text-[#9C9FA0];
+}
+
+.dark ::-webkit-scrollbar {
+    width: 4px;
+}
+
+.dark ::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background-color: #3f3f46;
+    border-radius: 10px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background-color: #52525b;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #949494;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #52525b;
+}

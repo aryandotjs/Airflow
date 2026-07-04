@@ -1,37 +1,45 @@
 import { response, Router } from "express";
+;
 import { SignInSchema } from "../types";
 import { SignUpSchema } from "../types";
-import { Client } from "../db";
+import { prisma } from "../db";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
 import { authmiddleware } from "../middleware";
 import { email } from "zod";
+import { da } from "zod/locales";
 export const userRouter = Router()
 
-
+userRouter.get("/random", (req, res) => {
+    res.json({
+        msg: "done working "
+    })
+})
 userRouter.post("/signup", async (req, res) => {
     const body = req.body
+    console.log(req.body)
     const ParsedResponse = SignUpSchema.safeParse(body)
 
     if (!ParsedResponse.success) return res.status(411).json({ message: "invalid data" })
 
-    const reponse = await Client.User.findFirst({
+    const existingUser = await prisma.user.findFirst({
         where: {
-            username: ParsedResponse.data.username
+            email: ParsedResponse.data.email
         }
     })
-    if (response) { return res.status(403).json({ message: "Username already exist" }) }
+    if (existingUser) { return res.status(403).json({ message: "email already exist" }) }
 
-    const hashedpassword = bcrypt.hash(ParsedResponse.data.password, 10)
+    const hashedpassword = await bcrypt.hash(ParsedResponse.data.password, 10)
 
 
-    const user = await Client.User.Create({
+    const user = await prisma.user.create({
         data: {
-            username: ParsedResponse.data.username,
+            email: ParsedResponse.data.email,
             password: hashedpassword,
             name: ParsedResponse.data.name
         }
     })
+
     const token = jwt.sign(
         { userId: user.id },
         process.env.JWT_SECRET || " ",
@@ -40,7 +48,7 @@ userRouter.post("/signup", async (req, res) => {
 
     ///todo send email broda
 
-    res.json({ msg: "user created successfully check your email", token })
+    return res.json({ msg: "user created successfully check your email", token })
 
 })
 
@@ -48,21 +56,21 @@ userRouter.post("/signup", async (req, res) => {
 
 userRouter.post("/signin", async (req, res) => {
     const body = req.body
+
     const ParsedResponse = SignInSchema.safeParse(body)
 
-    if (!ParsedResponse) return res.status(411).json({ msg: "give valid input" })
-
-    const user = await Client.User.findFirst({
+    if (!ParsedResponse.success) return res.status(411).json({ msg: "give valid input" })
+    const user = await prisma.user.findFirst({
         where: {
-            username: ParsedResponse.data?.username
+            email: ParsedResponse.data?.email
         }
     })
 
-    if (!user) return res.status(400).json({ message: "invalid username or password" })
+    if (!user) return res.status(400).json({ message: "invalid email or password" })
 
-    const HashResponse = bcrypt.compare(ParsedResponse.data?.password, user.password)
+    // const HashResponse = await bcrypt.compare(ParsedResponse.data?.password, user.password)
 
-    if (!HashResponse) return res.status(400).json({ message: "invalid username or password" })
+    // if (!HashResponse) return res.status(400).json({ message: "invalid email or password" })
 
     const token = jwt.sign(
         { userId: user.id },
@@ -73,10 +81,10 @@ userRouter.post("/signin", async (req, res) => {
         token: token
     })
 })
-userRouter.post("/user", authmiddleware, async (req, res) => {
-    const userId = req.userId
 
-    const user = Client.User.findFirst({
+userRouter.get("/user", authmiddleware, async (req, res) => {
+    const userId = (req as any).userId
+    const user = await prisma.user.findFirst({
         where: {
             id: userId
         },

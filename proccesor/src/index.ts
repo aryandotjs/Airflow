@@ -1,43 +1,67 @@
-import { PrismaClient } from "@prisma/client";
 import { Kafka } from "kafkajs";
+import { prisma } from "./db";
+
+
 
 const TOPIC_NAME = "zap-events"
-const client = new PrismaClient()
 
 const kafka = new Kafka({
     clientId: "outbox-proccesor",
-    brokers: ['localhost:9092']
+    brokers: ["localhost:9092"]
 })
-async function Process() {
+
+async function proccesor() {
     const producer = kafka.producer()
     await producer.connect()
+    await initkafka()
 
     while (1) {
-
-        const pendingrows = await client.zapRunOutBox.findMany({
+        const pendingrows = await prisma.zapRunOutBox.findMany({
             where: {},
             take: 10
         })
-        producer.send({
+        await producer.send({
             topic: TOPIC_NAME,
-            messages: pendingrows.map((r: any) => {
+            messages: pendingrows.map((a: any) => {
                 return {
-                    value: JSON.stringify({ zapRunId: r.zapRunId, stage: 0 })
+                    value: JSON.stringify({ zapRunId: a.zaprunId, stage: 0 })
                 }
             })
         })
 
-        await client.zapRunOutBox.deleteMany({
+        await prisma.zapRunOutBox.deleteMany({
             where: {
                 id: {
                     in: pendingrows.map((a: any) => a.id)
                 }
             }
         })
-
         await new Promise(a => setTimeout(a, 3000))
     }
-
 }
+proccesor()
 
-Process()
+
+async function initkafka() {
+    const admin = kafka.admin()
+    console.log("cnting kfka admn")
+    await admin.connect();
+
+    console.log("Kafka admin connected!");
+
+    const currtopics = await admin.listTopics()
+    console.log(currtopics, "_______________")
+    if (!currtopics.includes("zap-events")) {
+        await admin.createTopics({
+            topics: [{
+                topic: "zap-events",
+                numPartitions: 1,
+                replicationFactor: 1
+            }]
+        });
+        console.log("Topic 'zap-events' created dynamically!");
+    }
+    const currtopics2 = await admin.listTopics()
+    console.log(currtopics2, "_______________")
+    await admin.disconnect();
+}

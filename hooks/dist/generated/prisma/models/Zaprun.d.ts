@@ -1,0 +1,1182 @@
+import type * as runtime from "@prisma/client/runtime/client";
+import type * as Prisma from "../internal/prismaNamespace.js";
+/**
+ * Model Zaprun
+ *
+ */
+export type ZaprunModel = runtime.Types.Result.DefaultSelection<Prisma.$ZaprunPayload>;
+export type AggregateZaprun = {
+    _count: ZaprunCountAggregateOutputType | null;
+    _min: ZaprunMinAggregateOutputType | null;
+    _max: ZaprunMaxAggregateOutputType | null;
+};
+export type ZaprunMinAggregateOutputType = {
+    id: string | null;
+    zapId: string | null;
+};
+export type ZaprunMaxAggregateOutputType = {
+    id: string | null;
+    zapId: string | null;
+};
+export type ZaprunCountAggregateOutputType = {
+    id: number;
+    metadata: number;
+    zapId: number;
+    _all: number;
+};
+export type ZaprunMinAggregateInputType = {
+    id?: true;
+    zapId?: true;
+};
+export type ZaprunMaxAggregateInputType = {
+    id?: true;
+    zapId?: true;
+};
+export type ZaprunCountAggregateInputType = {
+    id?: true;
+    metadata?: true;
+    zapId?: true;
+    _all?: true;
+};
+export type ZaprunAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Filter which Zaprun to aggregate.
+     */
+    where?: Prisma.ZaprunWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of Zapruns to fetch.
+     */
+    orderBy?: Prisma.ZaprunOrderByWithRelationInput | Prisma.ZaprunOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the start position
+     */
+    cursor?: Prisma.ZaprunWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` Zapruns from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` Zapruns.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Count returned Zapruns
+    **/
+    _count?: true | ZaprunCountAggregateInputType;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the minimum value
+    **/
+    _min?: ZaprunMinAggregateInputType;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the maximum value
+    **/
+    _max?: ZaprunMaxAggregateInputType;
+};
+export type GetZaprunAggregateType<T extends ZaprunAggregateArgs> = {
+    [P in keyof T & keyof AggregateZaprun]: P extends '_count' | 'count' ? T[P] extends true ? number : Prisma.GetScalarType<T[P], AggregateZaprun[P]> : Prisma.GetScalarType<T[P], AggregateZaprun[P]>;
+};
+export type ZaprunGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.ZaprunWhereInput;
+    orderBy?: Prisma.ZaprunOrderByWithAggregationInput | Prisma.ZaprunOrderByWithAggregationInput[];
+    by: Prisma.ZaprunScalarFieldEnum[] | Prisma.ZaprunScalarFieldEnum;
+    having?: Prisma.ZaprunScalarWhereWithAggregatesInput;
+    take?: number;
+    skip?: number;
+    _count?: ZaprunCountAggregateInputType | true;
+    _min?: ZaprunMinAggregateInputType;
+    _max?: ZaprunMaxAggregateInputType;
+};
+export type ZaprunGroupByOutputType = {
+    id: string;
+    metadata: runtime.JsonValue;
+    zapId: string;
+    _count: ZaprunCountAggregateOutputType | null;
+    _min: ZaprunMinAggregateOutputType | null;
+    _max: ZaprunMaxAggregateOutputType | null;
+};
+export type GetZaprunGroupByPayload<T extends ZaprunGroupByArgs> = Prisma.PrismaPromise<Array<Prisma.PickEnumerable<ZaprunGroupByOutputType, T['by']> & {
+    [P in ((keyof T) & (keyof ZaprunGroupByOutputType))]: P extends '_count' ? T[P] extends boolean ? number : Prisma.GetScalarType<T[P], ZaprunGroupByOutputType[P]> : Prisma.GetScalarType<T[P], ZaprunGroupByOutputType[P]>;
+}>>;
+export type ZaprunWhereInput = {
+    AND?: Prisma.ZaprunWhereInput | Prisma.ZaprunWhereInput[];
+    OR?: Prisma.ZaprunWhereInput[];
+    NOT?: Prisma.ZaprunWhereInput | Prisma.ZaprunWhereInput[];
+    id?: Prisma.StringFilter<"Zaprun"> | string;
+    metadata?: Prisma.JsonFilter<"Zaprun">;
+    zapId?: Prisma.StringFilter<"Zaprun"> | string;
+    type?: Prisma.XOR<Prisma.ZapScalarRelationFilter, Prisma.ZapWhereInput>;
+    zapRunOutBox?: Prisma.XOR<Prisma.ZapRunOutBoxNullableScalarRelationFilter, Prisma.zapRunOutBoxWhereInput> | null;
+};
+export type ZaprunOrderByWithRelationInput = {
+    id?: Prisma.SortOrder;
+    metadata?: Prisma.SortOrder;
+    zapId?: Prisma.SortOrder;
+    type?: Prisma.ZapOrderByWithRelationInput;
+    zapRunOutBox?: Prisma.zapRunOutBoxOrderByWithRelationInput;
+};
+export type ZaprunWhereUniqueInput = Prisma.AtLeast<{
+    id?: string;
+    AND?: Prisma.ZaprunWhereInput | Prisma.ZaprunWhereInput[];
+    OR?: Prisma.ZaprunWhereInput[];
+    NOT?: Prisma.ZaprunWhereInput | Prisma.ZaprunWhereInput[];
+    metadata?: Prisma.JsonFilter<"Zaprun">;
+    zapId?: Prisma.StringFilter<"Zaprun"> | string;
+    type?: Prisma.XOR<Prisma.ZapScalarRelationFilter, Prisma.ZapWhereInput>;
+    zapRunOutBox?: Prisma.XOR<Prisma.ZapRunOutBoxNullableScalarRelationFilter, Prisma.zapRunOutBoxWhereInput> | null;
+}, "id">;
+export type ZaprunOrderByWithAggregationInput = {
+    id?: Prisma.SortOrder;
+    metadata?: Prisma.SortOrder;
+    zapId?: Prisma.SortOrder;
+    _count?: Prisma.ZaprunCountOrderByAggregateInput;
+    _max?: Prisma.ZaprunMaxOrderByAggregateInput;
+    _min?: Prisma.ZaprunMinOrderByAggregateInput;
+};
+export type ZaprunScalarWhereWithAggregatesInput = {
+    AND?: Prisma.ZaprunScalarWhereWithAggregatesInput | Prisma.ZaprunScalarWhereWithAggregatesInput[];
+    OR?: Prisma.ZaprunScalarWhereWithAggregatesInput[];
+    NOT?: Prisma.ZaprunScalarWhereWithAggregatesInput | Prisma.ZaprunScalarWhereWithAggregatesInput[];
+    id?: Prisma.StringWithAggregatesFilter<"Zaprun"> | string;
+    metadata?: Prisma.JsonWithAggregatesFilter<"Zaprun">;
+    zapId?: Prisma.StringWithAggregatesFilter<"Zaprun"> | string;
+};
+export type ZaprunCreateInput = {
+    id?: string;
+    metadata: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    type: Prisma.ZapCreateNestedOneWithoutZapRunsInput;
+    zapRunOutBox?: Prisma.zapRunOutBoxCreateNestedOneWithoutTypeInput;
+};
+export type ZaprunUncheckedCreateInput = {
+    id?: string;
+    metadata: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    zapId: string;
+    zapRunOutBox?: Prisma.zapRunOutBoxUncheckedCreateNestedOneWithoutTypeInput;
+};
+export type ZaprunUpdateInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    type?: Prisma.ZapUpdateOneRequiredWithoutZapRunsNestedInput;
+    zapRunOutBox?: Prisma.zapRunOutBoxUpdateOneWithoutTypeNestedInput;
+};
+export type ZaprunUncheckedUpdateInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    zapId?: Prisma.StringFieldUpdateOperationsInput | string;
+    zapRunOutBox?: Prisma.zapRunOutBoxUncheckedUpdateOneWithoutTypeNestedInput;
+};
+export type ZaprunCreateManyInput = {
+    id?: string;
+    metadata: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    zapId: string;
+};
+export type ZaprunUpdateManyMutationInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+};
+export type ZaprunUncheckedUpdateManyInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    zapId?: Prisma.StringFieldUpdateOperationsInput | string;
+};
+export type ZaprunListRelationFilter = {
+    every?: Prisma.ZaprunWhereInput;
+    some?: Prisma.ZaprunWhereInput;
+    none?: Prisma.ZaprunWhereInput;
+};
+export type ZaprunOrderByRelationAggregateInput = {
+    _count?: Prisma.SortOrder;
+};
+export type ZaprunCountOrderByAggregateInput = {
+    id?: Prisma.SortOrder;
+    metadata?: Prisma.SortOrder;
+    zapId?: Prisma.SortOrder;
+};
+export type ZaprunMaxOrderByAggregateInput = {
+    id?: Prisma.SortOrder;
+    zapId?: Prisma.SortOrder;
+};
+export type ZaprunMinOrderByAggregateInput = {
+    id?: Prisma.SortOrder;
+    zapId?: Prisma.SortOrder;
+};
+export type ZaprunScalarRelationFilter = {
+    is?: Prisma.ZaprunWhereInput;
+    isNot?: Prisma.ZaprunWhereInput;
+};
+export type ZaprunCreateNestedManyWithoutTypeInput = {
+    create?: Prisma.XOR<Prisma.ZaprunCreateWithoutTypeInput, Prisma.ZaprunUncheckedCreateWithoutTypeInput> | Prisma.ZaprunCreateWithoutTypeInput[] | Prisma.ZaprunUncheckedCreateWithoutTypeInput[];
+    connectOrCreate?: Prisma.ZaprunCreateOrConnectWithoutTypeInput | Prisma.ZaprunCreateOrConnectWithoutTypeInput[];
+    createMany?: Prisma.ZaprunCreateManyTypeInputEnvelope;
+    connect?: Prisma.ZaprunWhereUniqueInput | Prisma.ZaprunWhereUniqueInput[];
+};
+export type ZaprunUncheckedCreateNestedManyWithoutTypeInput = {
+    create?: Prisma.XOR<Prisma.ZaprunCreateWithoutTypeInput, Prisma.ZaprunUncheckedCreateWithoutTypeInput> | Prisma.ZaprunCreateWithoutTypeInput[] | Prisma.ZaprunUncheckedCreateWithoutTypeInput[];
+    connectOrCreate?: Prisma.ZaprunCreateOrConnectWithoutTypeInput | Prisma.ZaprunCreateOrConnectWithoutTypeInput[];
+    createMany?: Prisma.ZaprunCreateManyTypeInputEnvelope;
+    connect?: Prisma.ZaprunWhereUniqueInput | Prisma.ZaprunWhereUniqueInput[];
+};
+export type ZaprunUpdateManyWithoutTypeNestedInput = {
+    create?: Prisma.XOR<Prisma.ZaprunCreateWithoutTypeInput, Prisma.ZaprunUncheckedCreateWithoutTypeInput> | Prisma.ZaprunCreateWithoutTypeInput[] | Prisma.ZaprunUncheckedCreateWithoutTypeInput[];
+    connectOrCreate?: Prisma.ZaprunCreateOrConnectWithoutTypeInput | Prisma.ZaprunCreateOrConnectWithoutTypeInput[];
+    upsert?: Prisma.ZaprunUpsertWithWhereUniqueWithoutTypeInput | Prisma.ZaprunUpsertWithWhereUniqueWithoutTypeInput[];
+    createMany?: Prisma.ZaprunCreateManyTypeInputEnvelope;
+    set?: Prisma.ZaprunWhereUniqueInput | Prisma.ZaprunWhereUniqueInput[];
+    disconnect?: Prisma.ZaprunWhereUniqueInput | Prisma.ZaprunWhereUniqueInput[];
+    delete?: Prisma.ZaprunWhereUniqueInput | Prisma.ZaprunWhereUniqueInput[];
+    connect?: Prisma.ZaprunWhereUniqueInput | Prisma.ZaprunWhereUniqueInput[];
+    update?: Prisma.ZaprunUpdateWithWhereUniqueWithoutTypeInput | Prisma.ZaprunUpdateWithWhereUniqueWithoutTypeInput[];
+    updateMany?: Prisma.ZaprunUpdateManyWithWhereWithoutTypeInput | Prisma.ZaprunUpdateManyWithWhereWithoutTypeInput[];
+    deleteMany?: Prisma.ZaprunScalarWhereInput | Prisma.ZaprunScalarWhereInput[];
+};
+export type ZaprunUncheckedUpdateManyWithoutTypeNestedInput = {
+    create?: Prisma.XOR<Prisma.ZaprunCreateWithoutTypeInput, Prisma.ZaprunUncheckedCreateWithoutTypeInput> | Prisma.ZaprunCreateWithoutTypeInput[] | Prisma.ZaprunUncheckedCreateWithoutTypeInput[];
+    connectOrCreate?: Prisma.ZaprunCreateOrConnectWithoutTypeInput | Prisma.ZaprunCreateOrConnectWithoutTypeInput[];
+    upsert?: Prisma.ZaprunUpsertWithWhereUniqueWithoutTypeInput | Prisma.ZaprunUpsertWithWhereUniqueWithoutTypeInput[];
+    createMany?: Prisma.ZaprunCreateManyTypeInputEnvelope;
+    set?: Prisma.ZaprunWhereUniqueInput | Prisma.ZaprunWhereUniqueInput[];
+    disconnect?: Prisma.ZaprunWhereUniqueInput | Prisma.ZaprunWhereUniqueInput[];
+    delete?: Prisma.ZaprunWhereUniqueInput | Prisma.ZaprunWhereUniqueInput[];
+    connect?: Prisma.ZaprunWhereUniqueInput | Prisma.ZaprunWhereUniqueInput[];
+    update?: Prisma.ZaprunUpdateWithWhereUniqueWithoutTypeInput | Prisma.ZaprunUpdateWithWhereUniqueWithoutTypeInput[];
+    updateMany?: Prisma.ZaprunUpdateManyWithWhereWithoutTypeInput | Prisma.ZaprunUpdateManyWithWhereWithoutTypeInput[];
+    deleteMany?: Prisma.ZaprunScalarWhereInput | Prisma.ZaprunScalarWhereInput[];
+};
+export type ZaprunCreateNestedOneWithoutZapRunOutBoxInput = {
+    create?: Prisma.XOR<Prisma.ZaprunCreateWithoutZapRunOutBoxInput, Prisma.ZaprunUncheckedCreateWithoutZapRunOutBoxInput>;
+    connectOrCreate?: Prisma.ZaprunCreateOrConnectWithoutZapRunOutBoxInput;
+    connect?: Prisma.ZaprunWhereUniqueInput;
+};
+export type ZaprunUpdateOneRequiredWithoutZapRunOutBoxNestedInput = {
+    create?: Prisma.XOR<Prisma.ZaprunCreateWithoutZapRunOutBoxInput, Prisma.ZaprunUncheckedCreateWithoutZapRunOutBoxInput>;
+    connectOrCreate?: Prisma.ZaprunCreateOrConnectWithoutZapRunOutBoxInput;
+    upsert?: Prisma.ZaprunUpsertWithoutZapRunOutBoxInput;
+    connect?: Prisma.ZaprunWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.ZaprunUpdateToOneWithWhereWithoutZapRunOutBoxInput, Prisma.ZaprunUpdateWithoutZapRunOutBoxInput>, Prisma.ZaprunUncheckedUpdateWithoutZapRunOutBoxInput>;
+};
+export type ZaprunCreateWithoutTypeInput = {
+    id?: string;
+    metadata: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    zapRunOutBox?: Prisma.zapRunOutBoxCreateNestedOneWithoutTypeInput;
+};
+export type ZaprunUncheckedCreateWithoutTypeInput = {
+    id?: string;
+    metadata: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    zapRunOutBox?: Prisma.zapRunOutBoxUncheckedCreateNestedOneWithoutTypeInput;
+};
+export type ZaprunCreateOrConnectWithoutTypeInput = {
+    where: Prisma.ZaprunWhereUniqueInput;
+    create: Prisma.XOR<Prisma.ZaprunCreateWithoutTypeInput, Prisma.ZaprunUncheckedCreateWithoutTypeInput>;
+};
+export type ZaprunCreateManyTypeInputEnvelope = {
+    data: Prisma.ZaprunCreateManyTypeInput | Prisma.ZaprunCreateManyTypeInput[];
+    skipDuplicates?: boolean;
+};
+export type ZaprunUpsertWithWhereUniqueWithoutTypeInput = {
+    where: Prisma.ZaprunWhereUniqueInput;
+    update: Prisma.XOR<Prisma.ZaprunUpdateWithoutTypeInput, Prisma.ZaprunUncheckedUpdateWithoutTypeInput>;
+    create: Prisma.XOR<Prisma.ZaprunCreateWithoutTypeInput, Prisma.ZaprunUncheckedCreateWithoutTypeInput>;
+};
+export type ZaprunUpdateWithWhereUniqueWithoutTypeInput = {
+    where: Prisma.ZaprunWhereUniqueInput;
+    data: Prisma.XOR<Prisma.ZaprunUpdateWithoutTypeInput, Prisma.ZaprunUncheckedUpdateWithoutTypeInput>;
+};
+export type ZaprunUpdateManyWithWhereWithoutTypeInput = {
+    where: Prisma.ZaprunScalarWhereInput;
+    data: Prisma.XOR<Prisma.ZaprunUpdateManyMutationInput, Prisma.ZaprunUncheckedUpdateManyWithoutTypeInput>;
+};
+export type ZaprunScalarWhereInput = {
+    AND?: Prisma.ZaprunScalarWhereInput | Prisma.ZaprunScalarWhereInput[];
+    OR?: Prisma.ZaprunScalarWhereInput[];
+    NOT?: Prisma.ZaprunScalarWhereInput | Prisma.ZaprunScalarWhereInput[];
+    id?: Prisma.StringFilter<"Zaprun"> | string;
+    metadata?: Prisma.JsonFilter<"Zaprun">;
+    zapId?: Prisma.StringFilter<"Zaprun"> | string;
+};
+export type ZaprunCreateWithoutZapRunOutBoxInput = {
+    id?: string;
+    metadata: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    type: Prisma.ZapCreateNestedOneWithoutZapRunsInput;
+};
+export type ZaprunUncheckedCreateWithoutZapRunOutBoxInput = {
+    id?: string;
+    metadata: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    zapId: string;
+};
+export type ZaprunCreateOrConnectWithoutZapRunOutBoxInput = {
+    where: Prisma.ZaprunWhereUniqueInput;
+    create: Prisma.XOR<Prisma.ZaprunCreateWithoutZapRunOutBoxInput, Prisma.ZaprunUncheckedCreateWithoutZapRunOutBoxInput>;
+};
+export type ZaprunUpsertWithoutZapRunOutBoxInput = {
+    update: Prisma.XOR<Prisma.ZaprunUpdateWithoutZapRunOutBoxInput, Prisma.ZaprunUncheckedUpdateWithoutZapRunOutBoxInput>;
+    create: Prisma.XOR<Prisma.ZaprunCreateWithoutZapRunOutBoxInput, Prisma.ZaprunUncheckedCreateWithoutZapRunOutBoxInput>;
+    where?: Prisma.ZaprunWhereInput;
+};
+export type ZaprunUpdateToOneWithWhereWithoutZapRunOutBoxInput = {
+    where?: Prisma.ZaprunWhereInput;
+    data: Prisma.XOR<Prisma.ZaprunUpdateWithoutZapRunOutBoxInput, Prisma.ZaprunUncheckedUpdateWithoutZapRunOutBoxInput>;
+};
+export type ZaprunUpdateWithoutZapRunOutBoxInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    type?: Prisma.ZapUpdateOneRequiredWithoutZapRunsNestedInput;
+};
+export type ZaprunUncheckedUpdateWithoutZapRunOutBoxInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    zapId?: Prisma.StringFieldUpdateOperationsInput | string;
+};
+export type ZaprunCreateManyTypeInput = {
+    id?: string;
+    metadata: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+};
+export type ZaprunUpdateWithoutTypeInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    zapRunOutBox?: Prisma.zapRunOutBoxUpdateOneWithoutTypeNestedInput;
+};
+export type ZaprunUncheckedUpdateWithoutTypeInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+    zapRunOutBox?: Prisma.zapRunOutBoxUncheckedUpdateOneWithoutTypeNestedInput;
+};
+export type ZaprunUncheckedUpdateManyWithoutTypeInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+};
+export type ZaprunSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+    id?: boolean;
+    metadata?: boolean;
+    zapId?: boolean;
+    type?: boolean | Prisma.ZapDefaultArgs<ExtArgs>;
+    zapRunOutBox?: boolean | Prisma.Zaprun$zapRunOutBoxArgs<ExtArgs>;
+}, ExtArgs["result"]["zaprun"]>;
+export type ZaprunSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+    id?: boolean;
+    metadata?: boolean;
+    zapId?: boolean;
+    type?: boolean | Prisma.ZapDefaultArgs<ExtArgs>;
+}, ExtArgs["result"]["zaprun"]>;
+export type ZaprunSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+    id?: boolean;
+    metadata?: boolean;
+    zapId?: boolean;
+    type?: boolean | Prisma.ZapDefaultArgs<ExtArgs>;
+}, ExtArgs["result"]["zaprun"]>;
+export type ZaprunSelectScalar = {
+    id?: boolean;
+    metadata?: boolean;
+    zapId?: boolean;
+};
+export type ZaprunOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "metadata" | "zapId", ExtArgs["result"]["zaprun"]>;
+export type ZaprunInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    type?: boolean | Prisma.ZapDefaultArgs<ExtArgs>;
+    zapRunOutBox?: boolean | Prisma.Zaprun$zapRunOutBoxArgs<ExtArgs>;
+};
+export type ZaprunIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    type?: boolean | Prisma.ZapDefaultArgs<ExtArgs>;
+};
+export type ZaprunIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    type?: boolean | Prisma.ZapDefaultArgs<ExtArgs>;
+};
+export type $ZaprunPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    name: "Zaprun";
+    objects: {
+        type: Prisma.$ZapPayload<ExtArgs>;
+        zapRunOutBox: Prisma.$zapRunOutBoxPayload<ExtArgs> | null;
+    };
+    scalars: runtime.Types.Extensions.GetPayloadResult<{
+        id: string;
+        metadata: runtime.JsonValue;
+        zapId: string;
+    }, ExtArgs["result"]["zaprun"]>;
+    composites: {};
+};
+export type ZaprunGetPayload<S extends boolean | null | undefined | ZaprunDefaultArgs> = runtime.Types.Result.GetResult<Prisma.$ZaprunPayload, S>;
+export type ZaprunCountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = Omit<ZaprunFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+    select?: ZaprunCountAggregateInputType | true;
+};
+export interface ZaprunDelegate<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: {
+        types: Prisma.TypeMap<ExtArgs>['model']['Zaprun'];
+        meta: {
+            name: 'Zaprun';
+        };
+    };
+    /**
+     * Find zero or one Zaprun that matches the filter.
+     * @param {ZaprunFindUniqueArgs} args - Arguments to find a Zaprun
+     * @example
+     * // Get one Zaprun
+     * const zaprun = await prisma.zaprun.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ZaprunFindUniqueArgs>(args: Prisma.SelectSubset<T, ZaprunFindUniqueArgs<ExtArgs>>): Prisma.Prisma__ZaprunClient<runtime.Types.Result.GetResult<Prisma.$ZaprunPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Find one Zaprun that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ZaprunFindUniqueOrThrowArgs} args - Arguments to find a Zaprun
+     * @example
+     * // Get one Zaprun
+     * const zaprun = await prisma.zaprun.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ZaprunFindUniqueOrThrowArgs>(args: Prisma.SelectSubset<T, ZaprunFindUniqueOrThrowArgs<ExtArgs>>): Prisma.Prisma__ZaprunClient<runtime.Types.Result.GetResult<Prisma.$ZaprunPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Find the first Zaprun that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZaprunFindFirstArgs} args - Arguments to find a Zaprun
+     * @example
+     * // Get one Zaprun
+     * const zaprun = await prisma.zaprun.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ZaprunFindFirstArgs>(args?: Prisma.SelectSubset<T, ZaprunFindFirstArgs<ExtArgs>>): Prisma.Prisma__ZaprunClient<runtime.Types.Result.GetResult<Prisma.$ZaprunPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Find the first Zaprun that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZaprunFindFirstOrThrowArgs} args - Arguments to find a Zaprun
+     * @example
+     * // Get one Zaprun
+     * const zaprun = await prisma.zaprun.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ZaprunFindFirstOrThrowArgs>(args?: Prisma.SelectSubset<T, ZaprunFindFirstOrThrowArgs<ExtArgs>>): Prisma.Prisma__ZaprunClient<runtime.Types.Result.GetResult<Prisma.$ZaprunPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Find zero or more Zapruns that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZaprunFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Zapruns
+     * const zapruns = await prisma.zaprun.findMany()
+     *
+     * // Get first 10 Zapruns
+     * const zapruns = await prisma.zaprun.findMany({ take: 10 })
+     *
+     * // Only select the `id`
+     * const zaprunWithIdOnly = await prisma.zaprun.findMany({ select: { id: true } })
+     *
+     */
+    findMany<T extends ZaprunFindManyArgs>(args?: Prisma.SelectSubset<T, ZaprunFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ZaprunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>;
+    /**
+     * Create a Zaprun.
+     * @param {ZaprunCreateArgs} args - Arguments to create a Zaprun.
+     * @example
+     * // Create one Zaprun
+     * const Zaprun = await prisma.zaprun.create({
+     *   data: {
+     *     // ... data to create a Zaprun
+     *   }
+     * })
+     *
+     */
+    create<T extends ZaprunCreateArgs>(args: Prisma.SelectSubset<T, ZaprunCreateArgs<ExtArgs>>): Prisma.Prisma__ZaprunClient<runtime.Types.Result.GetResult<Prisma.$ZaprunPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Create many Zapruns.
+     * @param {ZaprunCreateManyArgs} args - Arguments to create many Zapruns.
+     * @example
+     * // Create many Zapruns
+     * const zaprun = await prisma.zaprun.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     */
+    createMany<T extends ZaprunCreateManyArgs>(args?: Prisma.SelectSubset<T, ZaprunCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>;
+    /**
+     * Create many Zapruns and returns the data saved in the database.
+     * @param {ZaprunCreateManyAndReturnArgs} args - Arguments to create many Zapruns.
+     * @example
+     * // Create many Zapruns
+     * const zaprun = await prisma.zaprun.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Create many Zapruns and only return the `id`
+     * const zaprunWithIdOnly = await prisma.zaprun.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    createManyAndReturn<T extends ZaprunCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, ZaprunCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ZaprunPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>;
+    /**
+     * Delete a Zaprun.
+     * @param {ZaprunDeleteArgs} args - Arguments to delete one Zaprun.
+     * @example
+     * // Delete one Zaprun
+     * const Zaprun = await prisma.zaprun.delete({
+     *   where: {
+     *     // ... filter to delete one Zaprun
+     *   }
+     * })
+     *
+     */
+    delete<T extends ZaprunDeleteArgs>(args: Prisma.SelectSubset<T, ZaprunDeleteArgs<ExtArgs>>): Prisma.Prisma__ZaprunClient<runtime.Types.Result.GetResult<Prisma.$ZaprunPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Update one Zaprun.
+     * @param {ZaprunUpdateArgs} args - Arguments to update one Zaprun.
+     * @example
+     * // Update one Zaprun
+     * const zaprun = await prisma.zaprun.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    update<T extends ZaprunUpdateArgs>(args: Prisma.SelectSubset<T, ZaprunUpdateArgs<ExtArgs>>): Prisma.Prisma__ZaprunClient<runtime.Types.Result.GetResult<Prisma.$ZaprunPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Delete zero or more Zapruns.
+     * @param {ZaprunDeleteManyArgs} args - Arguments to filter Zapruns to delete.
+     * @example
+     * // Delete a few Zapruns
+     * const { count } = await prisma.zaprun.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     *
+     */
+    deleteMany<T extends ZaprunDeleteManyArgs>(args?: Prisma.SelectSubset<T, ZaprunDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>;
+    /**
+     * Update zero or more Zapruns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZaprunUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Zapruns
+     * const zaprun = await prisma.zaprun.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    updateMany<T extends ZaprunUpdateManyArgs>(args: Prisma.SelectSubset<T, ZaprunUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>;
+    /**
+     * Update zero or more Zapruns and returns the data updated in the database.
+     * @param {ZaprunUpdateManyAndReturnArgs} args - Arguments to update many Zapruns.
+     * @example
+     * // Update many Zapruns
+     * const zaprun = await prisma.zaprun.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Update zero or more Zapruns and only return the `id`
+     * const zaprunWithIdOnly = await prisma.zaprun.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    updateManyAndReturn<T extends ZaprunUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, ZaprunUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ZaprunPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>;
+    /**
+     * Create or update one Zaprun.
+     * @param {ZaprunUpsertArgs} args - Arguments to update or create a Zaprun.
+     * @example
+     * // Update or create a Zaprun
+     * const zaprun = await prisma.zaprun.upsert({
+     *   create: {
+     *     // ... data to create a Zaprun
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Zaprun we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ZaprunUpsertArgs>(args: Prisma.SelectSubset<T, ZaprunUpsertArgs<ExtArgs>>): Prisma.Prisma__ZaprunClient<runtime.Types.Result.GetResult<Prisma.$ZaprunPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Count the number of Zapruns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZaprunCountArgs} args - Arguments to filter Zapruns to count.
+     * @example
+     * // Count the number of Zapruns
+     * const count = await prisma.zaprun.count({
+     *   where: {
+     *     // ... the filter for the Zapruns we want to count
+     *   }
+     * })
+    **/
+    count<T extends ZaprunCountArgs>(args?: Prisma.Subset<T, ZaprunCountArgs>): Prisma.PrismaPromise<T extends runtime.Types.Utils.Record<'select', any> ? T['select'] extends true ? number : Prisma.GetScalarType<T['select'], ZaprunCountAggregateOutputType> : number>;
+    /**
+     * Allows you to perform aggregations operations on a Zaprun.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZaprunAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ZaprunAggregateArgs>(args: Prisma.Subset<T, ZaprunAggregateArgs>): Prisma.PrismaPromise<GetZaprunAggregateType<T>>;
+    /**
+     * Group by Zaprun.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ZaprunGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     *
+    **/
+    groupBy<T extends ZaprunGroupByArgs, HasSelectOrTake extends Prisma.Or<Prisma.Extends<'skip', Prisma.Keys<T>>, Prisma.Extends<'take', Prisma.Keys<T>>>, OrderByArg extends Prisma.True extends HasSelectOrTake ? {
+        orderBy: ZaprunGroupByArgs['orderBy'];
+    } : {
+        orderBy?: ZaprunGroupByArgs['orderBy'];
+    }, OrderFields extends Prisma.ExcludeUnderscoreKeys<Prisma.Keys<Prisma.MaybeTupleToUnion<T['orderBy']>>>, ByFields extends Prisma.MaybeTupleToUnion<T['by']>, ByValid extends Prisma.Has<ByFields, OrderFields>, HavingFields extends Prisma.GetHavingFields<T['having']>, HavingValid extends Prisma.Has<ByFields, HavingFields>, ByEmpty extends T['by'] extends never[] ? Prisma.True : Prisma.False, InputErrors extends ByEmpty extends Prisma.True ? `Error: "by" must not be empty.` : HavingValid extends Prisma.False ? {
+        [P in HavingFields]: P extends ByFields ? never : P extends string ? `Error: Field "${P}" used in "having" needs to be provided in "by".` : [
+            Error,
+            'Field ',
+            P,
+            ` in "having" needs to be provided in "by"`
+        ];
+    }[HavingFields] : 'take' extends Prisma.Keys<T> ? 'orderBy' extends Prisma.Keys<T> ? ByValid extends Prisma.True ? {} : {
+        [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+    }[OrderFields] : 'Error: If you provide "take", you also need to provide "orderBy"' : 'skip' extends Prisma.Keys<T> ? 'orderBy' extends Prisma.Keys<T> ? ByValid extends Prisma.True ? {} : {
+        [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+    }[OrderFields] : 'Error: If you provide "skip", you also need to provide "orderBy"' : ByValid extends Prisma.True ? {} : {
+        [P in OrderFields]: P extends ByFields ? never : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+    }[OrderFields]>(args: Prisma.SubsetIntersection<T, ZaprunGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetZaprunGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>;
+    /**
+     * Fields of the Zaprun model
+     */
+    readonly fields: ZaprunFieldRefs;
+}
+/**
+ * The delegate class that acts as a "Promise-like" for Zaprun.
+ * Why is this prefixed with `Prisma__`?
+ * Because we want to prevent naming conflicts as mentioned in
+ * https://github.com/prisma/prisma-client-js/issues/707
+ */
+export interface Prisma__ZaprunClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise";
+    type<T extends Prisma.ZapDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ZapDefaultArgs<ExtArgs>>): Prisma.Prisma__ZapClient<runtime.Types.Result.GetResult<Prisma.$ZapPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
+    zapRunOutBox<T extends Prisma.Zaprun$zapRunOutBoxArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Zaprun$zapRunOutBoxArgs<ExtArgs>>): Prisma.Prisma__zapRunOutBoxClient<runtime.Types.Result.GetResult<Prisma.$zapRunOutBoxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
+}
+/**
+ * Fields of the Zaprun model
+ */
+export interface ZaprunFieldRefs {
+    readonly id: Prisma.FieldRef<"Zaprun", 'String'>;
+    readonly metadata: Prisma.FieldRef<"Zaprun", 'Json'>;
+    readonly zapId: Prisma.FieldRef<"Zaprun", 'String'>;
+}
+/**
+ * Zaprun findUnique
+ */
+export type ZaprunFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Zaprun
+     */
+    select?: Prisma.ZaprunSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Zaprun
+     */
+    omit?: Prisma.ZaprunOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ZaprunInclude<ExtArgs> | null;
+    /**
+     * Filter, which Zaprun to fetch.
+     */
+    where: Prisma.ZaprunWhereUniqueInput;
+};
+/**
+ * Zaprun findUniqueOrThrow
+ */
+export type ZaprunFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Zaprun
+     */
+    select?: Prisma.ZaprunSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Zaprun
+     */
+    omit?: Prisma.ZaprunOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ZaprunInclude<ExtArgs> | null;
+    /**
+     * Filter, which Zaprun to fetch.
+     */
+    where: Prisma.ZaprunWhereUniqueInput;
+};
+/**
+ * Zaprun findFirst
+ */
+export type ZaprunFindFirstArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Zaprun
+     */
+    select?: Prisma.ZaprunSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Zaprun
+     */
+    omit?: Prisma.ZaprunOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ZaprunInclude<ExtArgs> | null;
+    /**
+     * Filter, which Zaprun to fetch.
+     */
+    where?: Prisma.ZaprunWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of Zapruns to fetch.
+     */
+    orderBy?: Prisma.ZaprunOrderByWithRelationInput | Prisma.ZaprunOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for searching for Zapruns.
+     */
+    cursor?: Prisma.ZaprunWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` Zapruns from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` Zapruns.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of Zapruns.
+     */
+    distinct?: Prisma.ZaprunScalarFieldEnum | Prisma.ZaprunScalarFieldEnum[];
+};
+/**
+ * Zaprun findFirstOrThrow
+ */
+export type ZaprunFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Zaprun
+     */
+    select?: Prisma.ZaprunSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Zaprun
+     */
+    omit?: Prisma.ZaprunOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ZaprunInclude<ExtArgs> | null;
+    /**
+     * Filter, which Zaprun to fetch.
+     */
+    where?: Prisma.ZaprunWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of Zapruns to fetch.
+     */
+    orderBy?: Prisma.ZaprunOrderByWithRelationInput | Prisma.ZaprunOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for searching for Zapruns.
+     */
+    cursor?: Prisma.ZaprunWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` Zapruns from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` Zapruns.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of Zapruns.
+     */
+    distinct?: Prisma.ZaprunScalarFieldEnum | Prisma.ZaprunScalarFieldEnum[];
+};
+/**
+ * Zaprun findMany
+ */
+export type ZaprunFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Zaprun
+     */
+    select?: Prisma.ZaprunSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Zaprun
+     */
+    omit?: Prisma.ZaprunOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ZaprunInclude<ExtArgs> | null;
+    /**
+     * Filter, which Zapruns to fetch.
+     */
+    where?: Prisma.ZaprunWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of Zapruns to fetch.
+     */
+    orderBy?: Prisma.ZaprunOrderByWithRelationInput | Prisma.ZaprunOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for listing Zapruns.
+     */
+    cursor?: Prisma.ZaprunWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` Zapruns from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` Zapruns.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of Zapruns.
+     */
+    distinct?: Prisma.ZaprunScalarFieldEnum | Prisma.ZaprunScalarFieldEnum[];
+};
+/**
+ * Zaprun create
+ */
+export type ZaprunCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Zaprun
+     */
+    select?: Prisma.ZaprunSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Zaprun
+     */
+    omit?: Prisma.ZaprunOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ZaprunInclude<ExtArgs> | null;
+    /**
+     * The data needed to create a Zaprun.
+     */
+    data: Prisma.XOR<Prisma.ZaprunCreateInput, Prisma.ZaprunUncheckedCreateInput>;
+};
+/**
+ * Zaprun createMany
+ */
+export type ZaprunCreateManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Zapruns.
+     */
+    data: Prisma.ZaprunCreateManyInput | Prisma.ZaprunCreateManyInput[];
+    skipDuplicates?: boolean;
+};
+/**
+ * Zaprun createManyAndReturn
+ */
+export type ZaprunCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Zaprun
+     */
+    select?: Prisma.ZaprunSelectCreateManyAndReturn<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Zaprun
+     */
+    omit?: Prisma.ZaprunOmit<ExtArgs> | null;
+    /**
+     * The data used to create many Zapruns.
+     */
+    data: Prisma.ZaprunCreateManyInput | Prisma.ZaprunCreateManyInput[];
+    skipDuplicates?: boolean;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ZaprunIncludeCreateManyAndReturn<ExtArgs> | null;
+};
+/**
+ * Zaprun update
+ */
+export type ZaprunUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Zaprun
+     */
+    select?: Prisma.ZaprunSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Zaprun
+     */
+    omit?: Prisma.ZaprunOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ZaprunInclude<ExtArgs> | null;
+    /**
+     * The data needed to update a Zaprun.
+     */
+    data: Prisma.XOR<Prisma.ZaprunUpdateInput, Prisma.ZaprunUncheckedUpdateInput>;
+    /**
+     * Choose, which Zaprun to update.
+     */
+    where: Prisma.ZaprunWhereUniqueInput;
+};
+/**
+ * Zaprun updateMany
+ */
+export type ZaprunUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Zapruns.
+     */
+    data: Prisma.XOR<Prisma.ZaprunUpdateManyMutationInput, Prisma.ZaprunUncheckedUpdateManyInput>;
+    /**
+     * Filter which Zapruns to update
+     */
+    where?: Prisma.ZaprunWhereInput;
+    /**
+     * Limit how many Zapruns to update.
+     */
+    limit?: number;
+};
+/**
+ * Zaprun updateManyAndReturn
+ */
+export type ZaprunUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Zaprun
+     */
+    select?: Prisma.ZaprunSelectUpdateManyAndReturn<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Zaprun
+     */
+    omit?: Prisma.ZaprunOmit<ExtArgs> | null;
+    /**
+     * The data used to update Zapruns.
+     */
+    data: Prisma.XOR<Prisma.ZaprunUpdateManyMutationInput, Prisma.ZaprunUncheckedUpdateManyInput>;
+    /**
+     * Filter which Zapruns to update
+     */
+    where?: Prisma.ZaprunWhereInput;
+    /**
+     * Limit how many Zapruns to update.
+     */
+    limit?: number;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ZaprunIncludeUpdateManyAndReturn<ExtArgs> | null;
+};
+/**
+ * Zaprun upsert
+ */
+export type ZaprunUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Zaprun
+     */
+    select?: Prisma.ZaprunSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Zaprun
+     */
+    omit?: Prisma.ZaprunOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ZaprunInclude<ExtArgs> | null;
+    /**
+     * The filter to search for the Zaprun to update in case it exists.
+     */
+    where: Prisma.ZaprunWhereUniqueInput;
+    /**
+     * In case the Zaprun found by the `where` argument doesn't exist, create a new Zaprun with this data.
+     */
+    create: Prisma.XOR<Prisma.ZaprunCreateInput, Prisma.ZaprunUncheckedCreateInput>;
+    /**
+     * In case the Zaprun was found with the provided `where` argument, update it with this data.
+     */
+    update: Prisma.XOR<Prisma.ZaprunUpdateInput, Prisma.ZaprunUncheckedUpdateInput>;
+};
+/**
+ * Zaprun delete
+ */
+export type ZaprunDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Zaprun
+     */
+    select?: Prisma.ZaprunSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Zaprun
+     */
+    omit?: Prisma.ZaprunOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ZaprunInclude<ExtArgs> | null;
+    /**
+     * Filter which Zaprun to delete.
+     */
+    where: Prisma.ZaprunWhereUniqueInput;
+};
+/**
+ * Zaprun deleteMany
+ */
+export type ZaprunDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Filter which Zapruns to delete
+     */
+    where?: Prisma.ZaprunWhereInput;
+    /**
+     * Limit how many Zapruns to delete.
+     */
+    limit?: number;
+};
+/**
+ * Zaprun.zapRunOutBox
+ */
+export type Zaprun$zapRunOutBoxArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the zapRunOutBox
+     */
+    select?: Prisma.zapRunOutBoxSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the zapRunOutBox
+     */
+    omit?: Prisma.zapRunOutBoxOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.zapRunOutBoxInclude<ExtArgs> | null;
+    where?: Prisma.zapRunOutBoxWhereInput;
+};
+/**
+ * Zaprun without action
+ */
+export type ZaprunDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Zaprun
+     */
+    select?: Prisma.ZaprunSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Zaprun
+     */
+    omit?: Prisma.ZaprunOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ZaprunInclude<ExtArgs> | null;
+};
+//# sourceMappingURL=Zaprun.d.ts.map

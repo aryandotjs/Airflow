@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -17,51 +12,48 @@ model User {
   name     String
   email    String @unique
   password String
-
-  zaps Zap[]
+  zaps     Zap[]
 }
 
 model Zap {
-  id     String @id @default(uuid())
-  userId Int
-
+  id      String   @id @default(uuid())
+  userId  Int
+  actions Action[]
   trigger Trigger?
   user    User     @relation(fields: [userId], references: [id])
-  actions Action[]
-  zapruns Zaprun[]
+  zapRuns Zaprun[]
 }
 
 model Trigger {
-  id        String @id @default(uuid())
+  id        String           @id @default(uuid())
   triggerId String
-  zapId     String @unique
-
-  type AvailableTrigger @relation(fields: [triggerId], references: [id])
-  Zap  Zap              @relation(fields: [zapId], references: [id])
+  zapId     String           @unique
+  metadata  Json             @default("{}")
+  type      AvailableTrigger @relation(fields: [triggerId], references: [id])
+  Zap       Zap              @relation(fields: [zapId], references: [id])
 }
 
 model AvailableTrigger {
-  id    String @id @default(uuid())
-  name  String @unique
-  image String
-
+  id       String    @id @default(uuid())
+  name     String    @unique
+  image    String
   triggers Trigger[]
 }
 
 model Action {
-  id       String @id @default(uuid())
-  ActionId String
-  zapId    String @unique
-
-  type AvailableAction @relation(fields: [ActionId], references: [id])
-  Zap  Zap             @relation(fields: [zapId], references: [id])
+  id           String          @id @default(uuid())
+  ActionId     String
+  zapId        String
+  metadata     Json            @default("{}")
+  sortingOrder Int             @default(0)
+  type         AvailableAction @relation(fields: [ActionId], references: [id])
+  Zap          Zap             @relation(fields: [zapId], references: [id])
 }
 
 model AvailableAction {
-  id    String @id @default(uuid())
-  name  String @unique
-  image String
-
+  id      String   @id @default(uuid())
+  name    String   @unique
+  image   String
   actions Action[]
 }
 
