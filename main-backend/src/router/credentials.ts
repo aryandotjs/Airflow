@@ -90,3 +90,27 @@ CredentialRouter.get("/all", async (req, res) => {
 
 })
 
+CredentialRouter.delete("/delete", async (req, res) => {
+    // const id = (req as any).userId
+    const id = 3
+    const { apiId } = req.body
+
+    try {
+        const creds = await prisma.credential.delete({
+            where: {
+                id: apiId
+            }
+        })
+
+        return res.status(200).json({
+            msg: "Creadential delete succesfully"
+        })
+    } catch (err: any) {
+        console.log(err)
+        res.status(400).json({
+            msg: "Creadential didnt delete"
+        })
+    }
+
+})
+

@@ -65,7 +65,7 @@ export  function Executions(){
     
     return  <div className="flex flex-col gap-4 px-24 ">
                 <div className="flex justify-between mt-6 items-center ">
-                    <div className=" text-[28px] tracking-tight  font-semibold">Executions</div>
+                    <div className=" text-[28px] tracking-tight  font-semibold    dark:text-brand-bg text-brand-dark-bg">Executions</div>
                 </div>
                 <div className="flex justify-between mt-5 items-center gap-2">
                     <div className="h-8 w-[40%]">
@@ -136,20 +136,21 @@ function History({zapruns} :any){
                             </div>
                         })}
                     </div>
-                    <div onClick={()=>{ 
+                    
+                    <div  onClick={()=>{ 
                         setiscardOpen(!iscardOpen)
                         setcardIndex(index)
-                        }} className="w-[20%]  flex items-center gap-3 underline decoration-dashed decoration-[#EEEEEE] dark:decoration-[#191B1E] hover:decoration-blue-400 dark:hover:decoration-[#EEEEEE]  underline-offset-6 transition-all duration-400">
-                          Untititled Workflow
+                        }} className="w-[20%] dark:text-[#F0F0F0] text-[#191919] text-xs flex items-center gap-3 underline decoration-dashed decoration-[#EEEEEE] dark:decoration-[#191B1E] hover:decoration-blue-400 dark:hover:decoration-[#EEEEEE]  underline-offset-6 transition-all duration-400  font-normal dark:font-medium ">
+                      Untititled Workflow
                     </div>
-                    <div className="w-[15%]  flex items-center   ">
+                    <div className="w-[15%]  flex items-center ">
                         <StatusButton status={"Success"}></StatusButton>
                     </div>
                     <div className="w-[25%]  flex items-center ">
-                        <div className="">{z.id}</div>
+                        <div className="bg-[#E9E9E9]  dark:bg-[#151619] text-xs px-2 rounded-lg py-0.5">{z.id}</div>
                     </div>
-                    <div className="w-[15%]  flex items-center flex-row-reverse">
-                         <RuntimeBadge isoString={"1780922371720"}></RuntimeBadge>
+                    <div className="w-[15%]  flex items-center justify-end text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-[#191919]">
+                         <RuntimeBadge isoString={"1783223001331"}></RuntimeBadge>
                     </div>
                 </div>
                 

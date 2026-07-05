@@ -5,7 +5,7 @@ import { OpenOptions } from "./openoptions"
 export function OpenerBoxWithOptions({options ,simplefilter ,setsimplefilter }:{options:string[],simplefilter : string ,setsimplefilter : Dispatch<SetStateAction<string>>}){
     const [open , setopen] = useState(false) 
 
-    return <div className="w-full relative" >
+    return <div className="w-full relative z-10" >
              <OpenerButton simplefilter={simplefilter} open={open} setopen={setopen}></OpenerButton>
                 <div className="absolute w-full top-10">
                 <OpenOptions simplefilter={simplefilter} open={open} setopen={setopen} options={options} setsimplefilter={setsimplefilter}>

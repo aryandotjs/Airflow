@@ -9,7 +9,7 @@ export function RuntimeBadge({ isoString }: TimestampProps) {
     const start = isoString as any;
     const now = Date.now();
     const diffInSeconds = Math.floor((now - start) / 1000);
-
+    console.log(diffInSeconds)
     if (diffInSeconds < 60) return "just now";
     
     const diffInMinutes = Math.floor(diffInSeconds / 60);
