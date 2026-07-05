@@ -18,27 +18,29 @@ import { OpenComp } from "./opencomp"
 const BACKEND_URL = "http://localhost:3001";
 
 export function Credentials(){
+     const [refreshTrigger, setRefreshTrigger] = useState(false);
     const [allcreds ,setallcreds] = useState()
      
      const [credName ,setcredName] = useState("")
      const [Apikey ,setApikeys] = useState("")
      const [type ,settype] = useState("GEMINI")
 
+
      const [formopen ,setformopen] = useState(false)
      const [filter1,setfilter1] = useState("discord")
 
      const [toast,settoast] = useState({show:false,mess:"."})
 
+    
      useEffect(()=>{
          axios.get(`${BACKEND_URL}/api/v1/credentials/all`).then((a)=>{
              setallcreds(a.data.credential)
          })
-         
-     },[])
+     },[refreshTrigger])
     
      return <div className="flex flex-col gap-4 px-24">
             <div className="flex justify-between mt-6 items-center ">
-                <div className=" text-[28px] tracking-tight  font-semibold">Credentials</div>
+                <div className=" text-[28px] tracking-tight  font-semibold  dark:text-brand-bg text-brand-dark-bg">Credentials</div>
                 <div onClick={()=>{setformopen(!formopen)}} className=" flex transition-all duration-150 active:scale-95   font-semibold rounded-xl justify-center text-sm  px-2.5 h-7.5 gap-1.5 cursor-default items-center bg-brand-dark-bg text-brand-bg dark:bg-brand-bg  dark:text-brand-dark-bg">
                     <Add size="18"></Add>
                     <div>Add Credentials</div>
@@ -59,16 +61,20 @@ export function Credentials(){
             </div>
             <div className=" h-8">
                 <Secondarybutton onclick={()=>{}} >
-                    <div className="flex justify-between w-full text-xs px-4">
-                        <div>Name</div>
-                        <div>Token</div>
-                        <div>type</div>
-                        <div>updated</div>
-                        <div>Created</div>
+                    <div className="flex  w-full text-xs px-1">
+                        <div className="w-[30%] flex justify-start">Name</div>
+                        <div className="w-[15%] flex justify-start">Token</div>
+                        <div className="w-[14%] flex justify-start pl-6">type</div>
+                        <div className="w-[13%] flex justify-start">Total uses</div>
+                        <div className="w-[13%] flex justify-start">Last used</div>
+                        <div className="w-[13%] flex justify-start">
+                            <div>updated</div> /<div>Created</div>
+                        </div>
+                        <div className=""></div>
                     </div>
                 </Secondarybutton>
                 <div className="">
-                        { allcreds ? <CredHistory settoast={settoast} allcreds={allcreds}></CredHistory> : "Loading...." }
+                        { allcreds ? <CredHistory setRefreshTrigger={setRefreshTrigger}  settoast={settoast} allcreds={allcreds}></CredHistory> : "Loading...." }
                 </div>
             </div>
             <div className={`fixed bottom-8 right-8 transition-all duration-300 ease-in-out 
@@ -90,9 +96,10 @@ export function Credentials(){
                             type : type
                           })
                     
-                    settoast({show : true , mess:response.data.msg})
-                    setformopen(false)
-                    setTimeout(() => {
+                        settoast({show : true , mess:response.data.msg})
+                        setformopen(false)
+                        setRefreshTrigger((Prev:any)=>!Prev)
+                        setTimeout(() => {
                         settoast({show:false,mess:""})
                     }, 2000);
 
@@ -111,7 +118,7 @@ export function Credentials(){
 }
 
 
-function CredHistory({allcreds,settoast} : {allcreds : any,settoast:Dispatch<SetStateAction<any>>}){
+function CredHistory({allcreds,settoast,setRefreshTrigger} : {setRefreshTrigger:Dispatch<SetStateAction<boolean>>,allcreds : any,settoast:Dispatch<SetStateAction<any>>}){
 
         const [option,setoption] = useState({open : false , id : null})
         const [updateform,setupdateform] = useState(false)
@@ -120,11 +127,15 @@ function CredHistory({allcreds,settoast} : {allcreds : any,settoast:Dispatch<Set
         const [UpdateName ,setUpdateName] = useState("")
         const [UpdateApikey ,setUpdateApikeys] = useState("")
         const [Updatetype ,setUpdatetype] = useState("GEMINI")
+        const [crediddb ,setcrediddb] = useState("")
+
 
         useEffect(()=>{
             const clickeventfunc = (a:any) => {
                 if (openmodalref.current && !openmodalref.current.contains(a.target)) {
-                    setoption({open : false , id : null})
+                    setoption((prev)=>{ 
+                       return {open : false , id : prev.id}
+                    })
                 }
             }
             document.addEventListener("mousedown",clickeventfunc)
@@ -135,31 +146,31 @@ function CredHistory({allcreds,settoast} : {allcreds : any,settoast:Dispatch<Set
 
         return <div className="px-2 pr-4 ">
             {allcreds.map((z:any,index:any)=>{
-                return <div key={index} className=" flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold ">
-                            <div className="flex w-full h-8 my-3 gap-5 justify-between">
-                                <div className="  flex items-center gap-1 w-[20%]">
+                return <div key={index} className="relative flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold ">
+                        <div className="flex w-full h-8 my-3 gap-2 ">
+                            <div className="  flex items-center  gap-3 w-[30%] overflow-hidden">
                                 
                                 <Svgframe status="Success">
-                                    <SvgforActionsTriggers size="18" name={"Webhook"}></SvgforActionsTriggers>
+                                    <SvgforActionsTriggers size="18" name={"Lock"}></SvgforActionsTriggers>
                                 </Svgframe>
+                                
                                 <div onClick={()=>{ 
-                                    // setiscardOpen(!iscardOpen)
-                                    // setcardIndex(index)
-                                    }} className="w-[30%]  flex items-center gap-3 underline decoration-dashed decoration-[#EEEEEE] dark:decoration-[#191B1E] hover:decoration-blue-400 dark:hover:decoration-[#EEEEEE]  underline-offset-6 transition-all duration-400">
+                                   
+                                    }} className="w-[30%]  flex items-center gap-3 font-normal underline decoration-dashed decoration-[#EEEEEE] dark:decoration-[#191B1E] hover:decoration-blue-400 dark:hover:decoration-[#EEEEEE]  underline-offset-6 transition-all duration-400 text-xs dark:font-medium dark:text-[#F0F0F0] text-[#191919]">
                                     {z.name}
                                 </div>
                                 
                             </div>
                         
-                            <div className="w-[10%]  flex items-center ">
-                                <div className="bg-[#E9E9E9]  dark:bg-[#151619] py-1 px-2 rounded-lg">
-                                <div className="">{z.value.slice(0,z.value.length/2)}.....</div>
+                            <div className="w-[15%] flex justify-start pl-3  items-center overflow-hidden">
+                                <div className="bg-[#E9E9E9]  dark:bg-[#151619] py-0.5 px-2 rounded-lg">
+                                <div className="">{z.value.slice(0,10)}.....</div>
                                 </div>
                             </div>
 
-                            <div className="flex justify-center items-center gap-1.5 w-[10%]">
+                            <div className="flex justify-center items-center gap-1.5 w-[15%] font-normal text-sm dark:font-medium dark:text-[#F0F0F0] text-[#191919]">
                                 <div className="text-xs">{z.type.toLowerCase()}</div>
-                                <div className="h-4 w-4 hidden hover:">
+                                {/* <div className="h-4 w-4  ">
                                     {z.type === "CLAUDE" ? 
                                     <img src={"./actiontriggerimages/claude.png"}></img> :
                                     z.type === "GEMINI" ? 
@@ -167,30 +178,43 @@ function CredHistory({allcreds,settoast} : {allcreds : any,settoast:Dispatch<Set
                                     z.type === "CHATGPT" ?
                                     <img src={"./actiontriggerimages/chatgpt.png"}></img>:""
                                 }
+                                </div> */}
+                            </div>
+                            <div className="flex justify-center items-center  w-[13%] text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-brand-dark-bg">0</div>
+                            <div className="flex justify-center items-center  w-[13%] text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-brand-dark-bg">No Activity</div>
+                            <div className="w-[13%]  flex items-center justify-center text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-brand-dark-bg">
+                                <RuntimeBadge isoString={z.updatedAt}></RuntimeBadge>/
+                                <RuntimeBadge isoString={z.createdAt}></RuntimeBadge>
+                            </div>
+                            <div className="w-[5%]  flex items-center justify-end">
+                                <div 
+                                    onClick={(a)=>{
+                                        if (option.id == index ) {
+                                            setoption({open: false , id : null})
+                                            return
+                                        }
+                                        setoption({open:!option.open , id : index})
+                                        setcrediddb(z.id)
+                                    }}
+                                    className=" select-none hover:bg-[#E9E9E9]  hover:dark:bg-[#151619] h-8 w-8  rounded-xl  flex justify-center  ">
+                                    <div className="leading-0 mt-3">
+                                    ...
+                                    </div>
+                                    
+                                    
                                 </div>
                             </div>
                             
-                            <div className="w-[10%]  flex items-center flex-row-reverse">
-                                <RuntimeBadge isoString={z.updatedAt}></RuntimeBadge>
-                            </div>
-                            <div className="w-[10%]  flex items-center flex-row-reverse">
-                                <RuntimeBadge isoString={z.createdAt}></RuntimeBadge>
-                            </div>
-                            {option.open}
-                            {/* <div onClick={()=>setoption({open : !option.open , id :index })} className="relative hover:bg-[#E9E9E9]  hover:dark:bg-[#151619] h-8 w-8  rounded-xl  flex justify-center  transition duration-150"> */}
-                            <div onClick={()=>setoption({open : true , id :index })} className="relative select-none hover:bg-[#E9E9E9]  hover:dark:bg-[#151619] h-8 w-8  rounded-xl  flex justify-center  transition duration-150">
-                                <div className="leading-0 mt-3">
-                                ...
-                                </div>
                                 { option.open && index == option.id? 
-                                <div ref={openmodalref}  className="absolute w-40 top-11 z-10 right-0 ">
+                                <div ref={openmodalref}  className="absolute  w-40 top-14 z-10 right-0 ">
                                     <Opneframe>
-                                            <div  className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
+                                            <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                 <div onClick={()=> {
-                                                    setupdateform(true)
                                                     setUpdateName(z.name)
                                                     setUpdateApikeys(z.value)
                                                     setUpdatetype(z.type)
+                                                    setupdateform(true)
+                                                    setoption({open:false , id : null})
                                                 }} className="m-1 ">
                                                     <MainButton name="Edit credential">
                                                         <Edit size="17"></Edit>
@@ -199,7 +223,20 @@ function CredHistory({allcreds,settoast} : {allcreds : any,settoast:Dispatch<Set
                                             </div>
                                             <div className="border-t border-[#C6C6C6] dark:border-[#2C3034]"></div>
                                             <div  className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
-                                                <div onClick={()=>{}} className="m-1 ">
+                                                <div onClick={async()=>{
+                                                    const response = await axios.delete(`${BACKEND_URL}/api/v1/credentials/delete`,{
+                                                         data : {
+                                                             apiId : z.id
+                                                         }
+                                                        })
+                                                        settoast({show : true , mess:response.data.msg})
+                                                        setTimeout(() => {
+                                                            settoast({show:false,mess:""})
+                                                        }, 4000);
+                                                        setRefreshTrigger((prev)=>!prev)
+                                                        setoption({open:false , id : null})
+
+                                                }} className="m-1 ">
                                                     <MainRedButton name="Delete credential">
                                                         <Bin size="17"></Bin>
                                                     </MainRedButton>
@@ -207,70 +244,47 @@ function CredHistory({allcreds,settoast} : {allcreds : any,settoast:Dispatch<Set
                                             </div>
                                     </Opneframe>
                                 </div> : ""}
-                                <div>
-                                { updateform ?
-                                    <Addform  callback={async()=>{
-                                        const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/update`,{
-                                                name : UpdateName,
-                                                apikey :UpdateApikey ,
-                                                type : Updatetype,
-                                                credid : z.id
-                                            })
-                                            settoast({show : true , mess:response.data.msg})
-                                            setupdateform(false)
-                                            setTimeout(() => {
-                                                settoast({show:false,mess:""})
-                                            }, 2000);
-
-                                    }} name={"Add credentials"} buttonname={"Update"} formopen={updateform} setformopen={setupdateform}>
-                                        
-                                        <div className="my-6 flex flex-col gap-4 w-115">
-                                            <Input placeholder="Credentials Name" name="Name" state={UpdateName}  statesetter={setUpdateName}></Input>
-                                                <div className="w-40 flex flex-col gap-2 text-sm font-medium">
-                                                    <div className="">Type</div>
-                                                    <OpenerBoxWithOptions options={["CHATGPT" , "GEMINI","CLAUDE"]} simplefilter={Updatetype} setsimplefilter={setUpdatetype} ></OpenerBoxWithOptions> 
-                                                </div>
-                                            <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" state={UpdateApikey} statesetter={setUpdateApikeys}></Input>
-                                        </div>
-
-                                    </Addform> : ""
-                                }
+                                
                             </div>
-                            </div>
-                            
-                            </div>
-                            
-                    
                     
                 </div>
             })}
-        
+            
+
+             { updateform ?
+                    <Addform  callback={async()=>{
+                        const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/update`,{
+                                name : UpdateName,
+                                apikey :UpdateApikey ,
+                                type : Updatetype,
+                                credid : crediddb
+                            })
+                            setupdateform(false)
+                            setRefreshTrigger((prev)=>!prev)
+                            settoast({show : true , mess:response.data.msg})
+                            setTimeout(() => {
+                                settoast({show:false,mess:""})
+                            }, 2000);
+                            
+                    }} name={"Add credentials"} buttonname={"Update"} formopen={updateform} setformopen={setupdateform}>
+                        
+                        <div className="my-6 flex flex-col gap-4 w-115">
+                            <Input placeholder="Credentials Name" name="Name" state={UpdateName}  statesetter={setUpdateName}></Input>
+                                <div className="w-40 flex flex-col gap-2 text-sm font-medium">
+                                    <div className="">Type</div>
+                                    <OpenerBoxWithOptions options={["CHATGPT" , "GEMINI","CLAUDE"]} simplefilter={Updatetype} setsimplefilter={setUpdatetype} ></OpenerBoxWithOptions> 
+                                </div>
+                            <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" state={UpdateApikey} statesetter={setUpdateApikeys}></Input>
+                        </div>
+
+                    </Addform> : ""
+                }
         </div>
 }
 
 
 
-export function formatRelativeTime(backendTime: string | number): string {
-  const start = new Date(backendTime).getTime();
-  const now = Date.now();
-  const diffInSeconds = Math.floor((now - start) / 1000);
 
-  if (diffInSeconds < 60) return "just now";
-  
-  const diffInMinutes = Math.floor(diffInSeconds / 60);
-  if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-  
-  const diffInHours = Math.floor(diffInMinutes / 60);
-  if (diffInHours < 24) return `${diffInHours}h ago`;
-  
-  const diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays < 7) return `${diffInDays}d ago`;
-
-  return new Date(backendTime).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-}
 
 export function Svgframe({children,status , big = false}: {children:ReactNode,status:string, big? : boolean}){
     return <div className={`h-8 w-8 flex items-center justify-center  border border-[#D6D6D6] dark:border-[#D2D6D5] ${big?  "h-20 w-20 rounded-3xl  border-3 dark:border-2" : "rounded-lg"} `}>
