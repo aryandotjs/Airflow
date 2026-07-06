@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Zap" ADD COLUMN     "runs" INTEGER NOT NULL DEFAULT 0;
