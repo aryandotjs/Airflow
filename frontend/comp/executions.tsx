@@ -9,7 +9,7 @@ import { OpenerButton } from "./buttons/openerButton";
 import { OpenOptions } from "./openoptions";
 import { OpenerBoxWithOptions } from "./OpenerBoxWithOptions";
 import { StatusButton } from "./buttons/statusbutton";
-import { RuntimeBadge } from "./RunTimeBadge";
+import { DateConverter } from "./RunTimeBadge";
 import { SvgforActionsTriggers } from "./SvgforActionsTriggers";
 import { Opneframe } from "./openframe";
 
@@ -150,7 +150,7 @@ function History({zapruns} :any){
                         <div className="bg-[#E9E9E9]  dark:bg-[#151619] text-xs px-2 rounded-lg py-0.5">{z.id}</div>
                     </div>
                     <div className="w-[15%]  flex items-center justify-end text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-[#191919]">
-                         <RuntimeBadge isoString={"1783223001331"}></RuntimeBadge>
+                         <DateConverter isoString={"1783223001331"}></DateConverter>
                     </div>
                 </div>
                 
@@ -240,35 +240,17 @@ const b = {
   "id": "1bbcc79e-d834-4a4c-8c8f-71a8c68aa748"
 }
 
-export function formatRelativeTime(backendTime: string | number): string {
-  const start = new Date(backendTime).getTime();
-  const now = Date.now();
-  const diffInSeconds = Math.floor((now - start) / 1000);
-
-  if (diffInSeconds < 60) return "just now";
-  
-  const diffInMinutes = Math.floor(diffInSeconds / 60);
-  if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-  
-  const diffInHours = Math.floor(diffInMinutes / 60);
-  if (diffInHours < 24) return `${diffInHours}h ago`;
-  
-  const diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays < 7) return `${diffInDays}d ago`;
-
-  return new Date(backendTime).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-}
-
 export function Svgframe({children,status , big = false}: {children:ReactNode,status:string, big? : boolean}){
     return <div className={`h-8 w-8 flex items-center justify-center  border border-[#D6D6D6] dark:border-[#D2D6D5] ${big?  "h-20 w-20 rounded-3xl  border-3 dark:border-2" : "rounded-lg"} `}>
         <div className={`bg-radial  border-brand-bg dark:border-brand-dark-bg h-full w-full flex items-center justify-center ${big?  "rounded-3xl border-3 dark:border-4" : " rounded-lg border-2 "} 
-            ${status === "Success" ? "bg-radial from-[#E4F4E9] to-[#E4F4E9] dark:from-[#3BD88C] dark:to-[#041E12] text-[#357557] dark:text-[#D2D6D5]" : 
+            ${
+            status === "Success" ? "bg-radial from-[#E4F4E9] to-[#E4F4E9] dark:from-[#3BD88C] dark:to-[#041E12] text-[#357557] dark:text-[#D2D6D5]" : 
+            status === "active" ? "bg-radial from-[#E4F4E9] to-[#E4F4E9] dark:from-[#3BD88C] dark:to-[#041E12] text-[#357557] dark:text-[#D2D6D5]" : 
             status === "Failed" ?  "bg-radial from-[#FCE9EA] to-[#FCE9EA] dark:from-[#9F4345] dark:to-[#2D040B] text-[#9E4245] dark:text-[#D2D6D5]"  :
             status === "Runing" ?  "bg-radial from-[#E4F2FC] to-[#E4F2FC] dark:from-[#0C74CE] dark:to-[#001B3A] text-[#0C74CE] dark:text-[#D2D6D5]"  :
-            status === "Disabled" ?  "bg-linear from-[#EEEEEE] to-[#EEEEEE] dark:from-[#414141] dark:to-[#191B1E] "  :""
+            status === "paused" ?  "bg-radial from-[#E4F2FC] to-[#E4F2FC] dark:from-[#0C74CE] dark:to-[#001B3A] text-[#0C74CE] dark:text-[#D2D6D5]"  :
+            status === "Disabled" ?  "bg-linear from-[#EEEEEE] to-[#EEEEEE] dark:from-[#414141] dark:to-[#191B1E] " :
+            status === "draft" ?  "bg-linear from-[#EEEEEE] to-[#EEEEEE] dark:from-[#414141] dark:to-[#191B1E] "  :""
          }`}>
           {children}
         </div>

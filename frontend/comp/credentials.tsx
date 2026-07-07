@@ -10,7 +10,7 @@ import { Input } from "./buttons/input"
 import { OpenerBoxWithOptions } from "./OpenerBoxWithOptions"
 import axios from "axios"
 import { Toast } from "./toast"
-import { RuntimeBadge } from "./RunTimeBadge"
+import { DateConverter } from "./RunTimeBadge"
 import { StatusButton } from "./buttons/statusbutton"
 import { SvgforActionsTriggers } from "./SvgforActionsTriggers"
 import { OpenComp } from "./opencomp"
@@ -96,12 +96,12 @@ export function Credentials(){
                             type : type
                           })
                     
-                        settoast({show : true , mess:response.data.msg})
                         setformopen(false)
                         setRefreshTrigger((Prev:any)=>!Prev)
+                        settoast({show : true , mess:response.data.msg})
                         setTimeout(() => {
                         settoast({show:false,mess:""})
-                    }, 2000);
+                        }, 2000);
 
                  }}  name={"Add credentials"} formopen={formopen} buttonname="Add" setformopen={setformopen}>
                     <div className="my-6 flex flex-col gap-4 w-115">
@@ -134,7 +134,7 @@ function CredHistory({allcreds,settoast,setRefreshTrigger} : {setRefreshTrigger:
             const clickeventfunc = (a:any) => {
                 if (openmodalref.current && !openmodalref.current.contains(a.target)) {
                     setoption((prev)=>{ 
-                       return {open : false , id : prev.id}
+                       return {open : false , id : null}
                     })
                 }
             }
@@ -183,30 +183,20 @@ function CredHistory({allcreds,settoast,setRefreshTrigger} : {setRefreshTrigger:
                             <div className="flex justify-center items-center  w-[13%] text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-brand-dark-bg">0</div>
                             <div className="flex justify-center items-center  w-[13%] text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-brand-dark-bg">No Activity</div>
                             <div className="w-[13%]  flex items-center justify-center text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-brand-dark-bg">
-                                <RuntimeBadge isoString={z.updatedAt}></RuntimeBadge>/
-                                <RuntimeBadge isoString={z.createdAt}></RuntimeBadge>
+                                <DateConverter isoString={z.updatedAt}></DateConverter>/
+                                <DateConverter isoString={z.createdAt}></DateConverter>
                             </div>
-                            <div className="w-[5%]  flex items-center justify-end">
+                            <div ref={option.open &&  option.id === index ? openmodalref : null} className="w-[5%]  flex items-center justify-end">
                                 <div 
                                     onClick={(a)=>{
-                                        if (option.id == index ) {
-                                            setoption({open: false , id : null})
-                                            return
-                                        }
                                         setoption({open:!option.open , id : index})
                                         setcrediddb(z.id)
                                     }}
-                                    className=" select-none hover:bg-[#E9E9E9]  hover:dark:bg-[#151619] h-8 w-8  rounded-xl  flex justify-center  ">
-                                    <div className="leading-0 mt-3">
+                                    className=" select-none hover:bg-[#E9E9E9] pt-1 hover:dark:bg-[#151619] h-8 w-8  rounded-xl  flex justify-center  ">
                                     ...
-                                    </div>
-                                    
-                                    
                                 </div>
-                            </div>
-                            
                                 { option.open && index == option.id? 
-                                <div ref={openmodalref}  className="absolute  w-40 top-14 z-10 right-0 ">
+                                <div  className="absolute  w-40 top-14 z-10 right-0 ">
                                     <Opneframe>
                                             <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                 <div onClick={()=> {
@@ -244,10 +234,13 @@ function CredHistory({allcreds,settoast,setRefreshTrigger} : {setRefreshTrigger:
                                             </div>
                                     </Opneframe>
                                 </div> : ""}
+                            </div>
+                            
+                                
                                 
                             </div>
                     
-                </div>
+                 </div>
             })}
             
 

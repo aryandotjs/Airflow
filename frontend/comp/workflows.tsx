@@ -7,18 +7,30 @@ import { DiscordConfigPanel } from "@/comp/discord";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { Add, Adjust, Bin, Duplicate, Edit, Play, Search } from "./svg/allsvg";
+import { Add, Adjust, Bin, Check, Duplicate, Edit, Pause, Play, Search } from "./svg/allsvg";
 import { OpenerBoxWithOptions } from "./OpenerBoxWithOptions";
 import { Svgframe } from "./executions";
 import { SvgforActionsTriggers } from "./SvgforActionsTriggers";
-import { RuntimeBadge } from "./RunTimeBadge";
+import { DateConverter} from "./RunTimeBadge";
 import { StatusButton } from "./buttons/statusbutton";
 import { Opneframe } from "./openframe";
+import { Toast } from "./toast";
+import { Addform } from "./addform";
+import { Input } from "./buttons/input";
+import { error } from "console";
 const BACKEND_URL = "http://localhost:3001";
-
+enum ZapStatus {
+  ACTIVE = "ACTIVE",
+  PAUSED = "PAUSED" ,
+  DRAFT = "DRAFT"
+}
 interface Zap {
   id : String ,
   userId : number,
+  name : string,
+  createdAt : string,
+  runs : number,
+  status : ZapStatus
   trigger : {
     id        : String,
     triggerId :  String,
@@ -117,16 +129,19 @@ export function Workflows({setcard}:{setcard:Dispatch<SetStateAction<string>>}){
 
 
 
-function ZapTable({ zaps,setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetStateAction<boolean>> ,zaps: Zap[]}) {
+function ZapTable({ zaps, setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetStateAction<boolean>> ,zaps: Zap[]}) {
     const [option,setoption] = useState<any>({open : false , id : null})
-    const [toast,settoast] = useState({show:false,mess:"."})
+    const [WorkflowName,setWorkflowName] = useState<any>("")
+    const [toasts,settoasts] = useState([{isError:true}])
+    const [workflowid,setworkflowid] = useState("")
+    const [updateform,setupdateform] = useState(false)
+
 
     const router = useRouter();
     const openmodalref = useRef<HTMLDivElement>(null)
 
      useEffect(()=>{
             const clickeventfunc = (a:any) => {
-                
                 if (openmodalref.current && !openmodalref.current.contains(a.target)) {
                     setoption((prev:any)=>{ 
                        return {open : false , id : prev.id}
@@ -139,112 +154,152 @@ function ZapTable({ zaps,setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetSt
             }
         },[])
     return <div className=" w-full">
-        {JSON.stringify(option)}
         {zaps.map((z,index) => 
           <div key={index} className=" relative py-3 px-3 flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold">
             <div className="w-[25%] flex-1 flex  gap-4">
-                <Svgframe status="Disabled">
+                <Svgframe status={z.status.toLowerCase()}>
                         <SvgforActionsTriggers size="18" name={"Workflow"}></SvgforActionsTriggers>
                 </Svgframe>
                 <div className="dark:text-[#F0F0F0] text-[#191919]  flex items-center gap-3 underline decoration-dashed decoration-[#EEEEEE] dark:decoration-[#191B1E] hover:decoration-blue-400 dark:hover:decoration-[#EEEEEE]  underline-offset-6 transition-all duration-400 text-sm font-normal dark:font-semibold">
-                      Untititled Workflow
+                      {z.name}
                 </div>
             </div>
 
             <div className="w-[25%] flex justify-center">{z.id}</div>
 
             <div className="w-[20%]  flex justify-center ">
-                <StatusButton status={"Disabled"}></StatusButton>
+                <StatusButton status={z.status.toString().toLowerCase()}></StatusButton>
             </div>
 
-            <div className="w-[15%] flex justify-center">5</div>
+            <div className="w-[15%] flex justify-center">{z.runs}</div>
 
              <div className="w-[15%] flex justify-center flex-row-reverse">
-                         <RuntimeBadge isoString={"1780922371720"}></RuntimeBadge>
+                         <DateConverter isoString={z.createdAt}></DateConverter>
             </div>
-            {/* {JSON.stringify(option)} */}
-            <div ref={openmodalref}  className="w-[5%]   flex items-center justify-end bg-amber-400">
+            <div className="w-[5%] flex items-center justify-end relative" 
+               ref={option.open && option.id == index ? openmodalref : null} >
+
                 <div 
                     onClick={(a)=>{
-                        
-                        setoption({open:!option.open , id : index})
-                        // setcrediddb(z.id)
+                        setoption({open: !option.open , id : index})
+                        setworkflowid(z.id as string)
                     }}
-                    className=" select-none hover:bg-[#E9E9E9]  hover:dark:bg-[#151619] h-8 w-8  rounded-xl  flex justify-center">
-                    <div className="leading-0 mt-3">
+                    className=" select-none hover:bg-[#E9E9E9] pt-1 hover:dark:bg-[#151619] h-8 w-8  rounded-xl  flex justify-center">
                     ...
-                    </div>
                 </div>
                 { option.open && index == option.id? 
-                                <div  className="absolute  w-45 top-14 z-10 right-0 ">
-                                    <Opneframe>
-                                            <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
-                                                <div onClick={()=> {
-                                                    // setUpdateName(z.name)
-                                                    // setUpdateApikeys(z.value)
-                                                    // setUpdatetype(z.type)
-                                                    // setupdateform(true)
-                                                    // setoption({open:false , id : null})
-                                                }} className="m-1">
-                                                    <MainButton name="Enable Workflow">
-                                                        <Play size="17"></Play>
-                                                    </MainButton>
-                                                </div>
-                                            </div>
-                                            <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
-                                                <div onClick={()=> {
-                                                    // setUpdateName(z.name)
-                                                    // setUpdateApikeys(z.value)
-                                                    // setUpdatetype(z.type)
-                                                    // setupdateform(true)
-                                                    // setoption({open:false , id : null})
-                                                }} className="m-1">
-                                                    <MainButton name="Rename Workflow">
-                                                        <Edit size="17"></Edit>
-                                                    </MainButton>
-                                                </div>
-                                            </div>
-                                            <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
-                                                <div onClick={()=> {
-                                                    // setUpdateName(z.name)
-                                                    // setUpdateApikeys(z.value)
-                                                    // setUpdatetype(z.type)
-                                                    // setupdateform(true)
-                                                    // setoption({open:false , id : null})
-                                                }} className="m-1">
-                                                    <MainButton name="Duplicate Workflow">
-                                                        <Duplicate size="17"></Duplicate>
-                                                    </MainButton>
-                                                </div>
-                                            </div>
-
-
-                                            <div className="border-t border-[#C6C6C6] dark:border-[#2C3034]"></div>
-                                            <div  className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
-                                                <div onClick={async()=>{
-                                                    const response = await axios.delete(`${BACKEND_URL}/api/v1/credentials/delete`,{
-                                                         data : {
-                                                             apiId : z.id
-                                                         }
-                                                        })
-                                                        settoast({show : true , mess:response.data.msg})
-                                                        setTimeout(() => {
-                                                            settoast({show:false,mess:""})
-                                                        }, 4000);
-                                                        setRefreshTrigger((prev)=>!prev)
+                                    <div className="absolute  w-45 top-14 z-10 right-0 ">
+                                        <Opneframe>
+                                                <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
+                                                    <div onClick={async()=> {
+                                                        const response = await StatusToggler(z.status,z.id)
+                                                        if (response.msg) {
+                                                            
+                                                        }
+                                                        // settoast({show : true , mess:response})
+                                                        // setTimeout(() => {
+                                                        // settoast({show:false,mess:""})}, 2000);
                                                         setoption({open:false , id : null})
-
-                                                }} className="m-1 ">
-                                                    <MainRedButton name="Delete credential">
-                                                        <Bin size="17"></Bin>
-                                                    </MainRedButton>
+                                                        setRefreshTrigger((prev)=>!prev)
+                                                    }} className="m-1">
+                                                        <MainButton name={z.status !== ZapStatus.ACTIVE ?"Active Workflow" : "Pause Workflow"}>
+                                                            {z.status !== ZapStatus.ACTIVE ?<Play size="17"></Play>  :<Pause size="19"></Pause>}
+                                                        </MainButton>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                    </Opneframe>
-                                </div> : ""}
+                                                <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
+                                                    <div onClick={()=> {
+                                                           setWorkflowName(z.name)
+                                                           setupdateform(true)
+                                                           setoption({open:false , id : null})
+                                                    }} className="m-1">
+                                                        <MainButton name="Rename Workflow">
+                                                            <Edit size="17"></Edit>
+                                                        </MainButton>
+                                                    </div>
+                                                </div>
+                                                <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
+                                                    <div onClick={async()=> {
+                                                        const response = await axios.post(`${BACKEND_URL}/api/v1/zap/duplicate`,{
+                                                                 workflowid 
+                                                            })
+                                                        //    settoast({show : true , mess:response.data.msg})
+                                                            setTimeout(() => {
+                                                                // settoast({show:false,mess:""})
+                                                            }, 4000);
+                                                            setoption({open:false , id : null})
+                                                            setRefreshTrigger((prev)=>!prev)
+                                                    }} className="m-1">
+                                                        <MainButton name="Duplicate Workflow">
+                                                            <Duplicate size="17"></Duplicate>
+                                                        </MainButton>
+                                                    </div>
+                                                </div>
+
+
+                                                <div className="border-t border-[#C6C6C6] dark:border-[#2C3034]"></div>
+                                                <div  className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
+                                                    <div onClick={async()=>{
+                                                        const response = await axios.delete(`${BACKEND_URL}/api/v1/zap/delete`,{
+                                                             data : {
+                                                                 name : z.name,
+                                                                 workflowid : workflowid
+                                                             }
+                                                            })
+                                                            // settoast({show : true , mess:response.data.msg})
+                                                            setTimeout(() => {
+                                                                // settoast({show:false,mess:""})
+                                                            }, 4000);
+                                                            setRefreshTrigger((prev)=>!prev)
+                                                            setoption({open:false , id : null})
+
+                                                    }} className="m-1 ">
+                                                        <MainRedButton name="Delete Workflow">
+                                                            <Bin size="17"></Bin>
+                                                        </MainRedButton>
+                                                    </div>
+                                                </div>
+                                        </Opneframe>
+                </div> : ""}
+
             </div>
-            
         </div>)}
+        <div className="fixed bottom-6 right-6 border h-full w-90 pointer-events-none flex flex-col-reverse">
+            {toasts.map((toast)=>(
+                <Toast isError={toast.isError} ></Toast>
+            ))}
+          
+        </div>
+
+        { updateform ?
+            <Addform  callback={async()=>{
+                const response : any= await axios.post(`${BACKEND_URL}/api/v1/zap/rename`,{
+                        newname : WorkflowName, 
+                        workflowid : workflowid
+                    })
+                    setupdateform(false)
+                    setRefreshTrigger((prev)=>!prev)
+                    // settoast({show : true , mess:response.data.msg})
+                    setTimeout(() => {
+                        // settoast({show:false,mess:""})
+                    }, 4000);
+                    
+            }} name={"Rename workflow"} buttonname={"Rename"} formopen={updateform} setformopen={setupdateform}>
+                <div className="my-6  w-115">
+                    <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="Name" state={WorkflowName} statesetter={setWorkflowName}></Input>
+                </div>
+
+            </Addform> : ""
+        }
     </div>
 
 }
+
+
+async function StatusToggler(crrstatus : ZapStatus,workflowid:String){
+    const zapstatus = await axios.post(`${BACKEND_URL}/api/v1/zap/togglestatus`,{
+        crrstatus,
+        workflowid
+    }) 
+    return zapstatus.data.msg
+}  
