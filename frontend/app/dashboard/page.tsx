@@ -37,7 +37,7 @@ import { useEffect, useState } from "react";
 // }
 
 export default function() {
-    const [card,setcard]= useState("Credentials")
+    const [card,setcard]= useState("Workflows")
 
     return <div className="flex h-screen ">
           <Sidebar setcard={setcard} card={card}></Sidebar>

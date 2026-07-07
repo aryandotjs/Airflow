@@ -7,16 +7,13 @@ import { ZapStatus } from "../generated/prisma/enums";
 export const zapRouter = Router()
 
 zapRouter.post("/", authmiddleware, async (req, res) => {
-    console.log(1)
     const Id = (req as any).userId
-    console.log(Id)
     const body = req.body;
     const parsedbody = ZapCreateSchema.safeParse(body)
     if (!parsedbody.success) {
         return res.status(401).json({ message: "invalid data" })
 
     }
-    console.log(parsedbody.data)
     const zap = await prisma.zap.create({
         data: {
             userId: parseInt(Id),
@@ -35,7 +32,6 @@ zapRouter.post("/", authmiddleware, async (req, res) => {
             }
         }
     })
-    console.log("done")
     res.json({
         zapId: zap.id
     })
@@ -69,18 +65,14 @@ zapRouter.post("/togglestatus", authmiddleware, async (req, res) => {
     const userid = 3
     const { crrstatus, workflowid } = req.body
     let status = crrstatus;
-    console.log(crrstatus, workflowid)
     try {
 
         if (crrstatus === ZapStatus.PAUSED ||
             crrstatus === ZapStatus.DRAFT) {
-            console.log("in first if")
             status = ZapStatus.ACTIVE
         }
-        console.log(crrstatus === ZapStatus.DRAFT, crrstatus, ZapStatus.PAUSED)
 
         if (crrstatus == ZapStatus.ACTIVE) {
-            console.log("in sec if")
 
             status = ZapStatus.PAUSED
         }
@@ -106,7 +98,7 @@ zapRouter.post("/togglestatus", authmiddleware, async (req, res) => {
 
 })
 
-zapRouter.post("/togglestatus", authmiddleware, async (req, res) => {
+zapRouter.post("/rename", authmiddleware, async (req, res) => {
     // const userId = (req as any).userId;
     const userid = 3
     const { newname, workflowid } = req.body
@@ -125,6 +117,7 @@ zapRouter.post("/togglestatus", authmiddleware, async (req, res) => {
             msg: `name changed to ${newname}`
         })
 
+
     } catch (error) {
         return res.json({
             msg: `Failed changing name`
@@ -133,9 +126,101 @@ zapRouter.post("/togglestatus", authmiddleware, async (req, res) => {
 
 })
 
+zapRouter.post("/duplicate", async (req, res) => {
+    // const userId = (req as any).userId;
+    const userid = 3
+    const { workflowid } = req.body
+
+    try {
+
+        const ogzap = await prisma.zap.findUnique({
+            where: {
+                id: workflowid
+            },
+            include: { actions: true, trigger: true }
+        })
+
+        if (!ogzap) return res.json({ msg: `Workflow not found` })
+
+        const duplicateZap = prisma.$transaction(async (tx) => {
+
+            const newzap = await tx.zap.create({
+                data: {
+                    name: `${ogzap.name} (copy)`,
+                    status: "DRAFT",
+                    userId: ogzap.userId
+                }
+            })
+
+            if (ogzap.trigger) {
+
+                await tx.trigger.create({
+                    data: {
+                        zapId: newzap.id,
+                        triggerId: ogzap.trigger.triggerId,
+                        metadata: ogzap.trigger.metadata ?? {}
+                    }
+                })
+            }
+
+            if (ogzap.actions.length > 0) {
+
+                await tx.action.createMany({
+                    data: ogzap.actions.map((action) => ({
+                        zapId: newzap.id,
+                        ActionId: action.ActionId,
+                        metadata: action.metadata ?? {},
+                        sortingOrder: action.sortingOrder
+                    }))
+                })
+            }
+
+            return newzap
+        })
+        return res.json({
+            msg: "Workflow duplicated",
+            workflow: duplicateZap
+        });
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            msg: "Failed duplicating workflow"
+        });
+    }
+
+
+
+})
+
+zapRouter.delete("/delete", async (req, res) => {
+    // const userId = (req as any).userId;
+    const userid = 3
+    const { name, workflowid } = req.body
+    try {
+        const response = await prisma.zap.delete({
+            where: {
+                id: workflowid
+            },
+        })
+
+        return res.json({
+            msg: `${name} deleted`
+        })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.json({
+            msg: `Failed deleting ${name} `
+        })
+    }
+
+})
+
+
 zapRouter.get("/all", async (req, res) => {
     // const userId = (req as any).userId;
-
     const zaps = await prisma.zaprun.findMany({
         where: {
             type: {

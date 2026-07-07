@@ -68,7 +68,7 @@ model Trigger {
   zapId     String           @unique
   metadata  Json             @default("{}")
   type      AvailableTrigger @relation(fields: [triggerId], references: [id])
-  Zap       Zap              @relation(fields: [zapId], references: [id])
+  Zap       Zap              @relation(fields: [zapId], references: [id], onDelete: Cascade)
 }
 
 model AvailableTrigger {
@@ -84,7 +84,7 @@ model Action {
   metadata     Json            @default("{}")
   sortingOrder Int             @default(0)
   zapId        String
-  Zap          Zap             @relation(fields: [zapId], references: [id])
+  Zap          Zap             @relation(fields: [zapId], references: [id], onDelete: Cascade)
   ActionId     String
   type         AvailableAction @relation(fields: [ActionId], references: [id])
 }
@@ -101,7 +101,7 @@ model Zaprun {
   id           String        @id @default(uuid())
   metadata     Json
   zapId        String
-  type         Zap           @relation(fields: [zapId], references: [id])
+  type         Zap           @relation(fields: [zapId], references: [id], onDelete: Cascade)
   zapRunOutBox zapRunOutBox?
 }
 
