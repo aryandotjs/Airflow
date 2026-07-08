@@ -115,10 +115,11 @@ function History({zapruns} :any){
 
      return <div className="px-2 pr-4 ">
         {iscardOpen ? 
-        <div className="absolute top-0 left-0 h-158.5 w-full bg-brand-bg dark:bg-brand-dark-bg px-24 overflow-y-scroll">
-         <DetailCard setiscardOpen={setiscardOpen} azaprun={"Untititled Workflow"}></DetailCard>
+        <div className="z-20 absolute top-0 left-0 h-158.5 w-full bg-brand-bg dark:bg-brand-dark-bg px-24 overflow-y-scroll">
+            {cardIndex}
+         <DetailCard setiscardOpen={setiscardOpen} azaprun={zapruns[cardIndex]}></DetailCard>
         </div> : ""}
-
+{cardIndex}
         {zapruns.map((z:any,index:any)=>{
             return <div key={index} className=" flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold ">
                 <div className="flex w-full h-8 my-3 gap-5 justify-between">
@@ -162,7 +163,7 @@ function History({zapruns} :any){
 
 
 function DetailCard({azaprun,setiscardOpen} : any){
-    return <div className="mt-8"> 
+    return <div className="mt-8 z-50"> 
         <div className="flex text-l font-medium items-center justify-between ">
             <div className=" gap-6 flex">
                 <Svgframe status={"Success"} big={true}>
@@ -182,29 +183,29 @@ function DetailCard({azaprun,setiscardOpen} : any){
         </div>
         <div className="flex my-6 w-full">
             <div className="w-[33%] flex flex-col gap-1">
-                <div className="text-[13px] font-normal ">CSJKNCEJCN</div>
+                <div className="text-[13px] font-normal ">Execution Name</div>
                 <div className="dark:text-[#F0F0F0] text-[#191919]">sdsdddc</div>
             </div>
             <div className="w-[33%] flex flex-col gap-1">
-                <div className="text-[13px] font-normal ">CSJKNCEJCN</div>
+                <div className="text-[13px] font-normal ">Duration</div>
                 <div className="dark:text-[#F0F0F0] text-[#191919]">sdsdddc</div>
             </div>
             <div className="w-[33%] flex flex-col gap-1">
-                <div className="text-[13px] font-normal ">CSJKNCEJCN</div>
+                <div className="text-[13px] font-normal ">Status</div>
                 <div className="w-14"><StatusButton status="Success"></StatusButton></div>
             </div>
         </div>
         <div className="flex my-6 w-full">
             <div className="w-[33%] flex flex-col gap-1">
-                <div className="text-[13px] font-normal ">CSJKNCEJCN</div>
+                <div className="text-[13px] font-normal ">Start Date</div>
                 <div className="dark:text-[#F0F0F0] text-[#191919]">sdsdddc</div>
             </div>
             <div className="w-[33%] flex flex-col gap-1">
-                <div className="text-[13px] font-normal ">CSJKNCEJCN</div>
+                <div className="text-[13px] font-normal ">End Date</div>
                 <div className="dark:text-[#F0F0F0] text-[#191919]">sdsdddc</div>
             </div>
             <div className="w-[33%] flex flex-col gap-1">
-                <div className="text-[13px] font-normal ">CSJKNCEJCN</div>
+                <div className="text-[13px] font-normal ">WorkFlow Id</div>
                 <div className="">
                     <div className="w-full h-full text-[14px] flex justify-between items-center rounded-lg font-semibold  px-2 bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040]">
                         <div className="my-0.5">sdsdvsdvs-12cdc-3f</div>

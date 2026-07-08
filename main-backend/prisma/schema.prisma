@@ -97,12 +97,24 @@ model AvailableAction {
   actions Action[]
 }
 
+enum ExecutionStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+}
+
 model Zaprun {
-  id           String        @id @default(uuid())
-  metadata     Json
-  zapId        String
-  type         Zap           @relation(fields: [zapId], references: [id], onDelete: Cascade)
-  zapRunOutBox zapRunOutBox?
+  id            String          @id @default(uuid())
+  name          String          @default("undefined-execution-name")
+  startDate     DateTime        @default(now())
+  completedDate DateTime        @default(now())
+  duration      Int             @default(0)
+  sucess        ExecutionStatus @default(SUCCESS)
+  metadata      Json
+  zapId         String
+  type          Zap             @relation(fields: [zapId], references: [id], onDelete: Cascade)
+  zapRunOutBox  zapRunOutBox?
 }
 
 model zapRunOutBox {
