@@ -18,6 +18,7 @@ import { Toast } from "./toast";
 import { Addform } from "./addform";
 import { Input } from "./buttons/input";
 import { error } from "console";
+import toastsetterremover from "./toastfunction";
 const BACKEND_URL = "http://localhost:3001";
 enum ZapStatus {
   ACTIVE = "ACTIVE",
@@ -69,7 +70,7 @@ function useZaps(refresh:boolean) {
             }
         })
             .then(res => {
-                setZaps(res.data.zaps);
+                setZaps(res.data.zaps.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
                 setLoading(false)
             })
     }, [refresh]);
@@ -79,7 +80,7 @@ function useZaps(refresh:boolean) {
     }
 }
 
-export function Workflows({setcard}:{setcard:Dispatch<SetStateAction<string>>}){
+export function Workflows({setcard ,settoasts}:{settoasts:Dispatch<SetStateAction<any>>,setcard:Dispatch<SetStateAction<string>>}){
     const [refreshTrigger, setRefreshTrigger] = useState(false);
 
     const { loading, zaps } = useZaps(refreshTrigger);
@@ -121,7 +122,7 @@ export function Workflows({setcard}:{setcard:Dispatch<SetStateAction<string>>}){
                                 <div className="w-[15%]  ">Created</div>
                             </div>
                         </Secondarybutton>
-                        {loading ? "Loading..." : <div className="flex justify-center"> <ZapTable setRefreshTrigger={setRefreshTrigger} zaps={zaps} /> </div>} 
+                        {loading ? "Loading..." : <div className="flex justify-center"> <ZapTable settoasts={settoasts} setRefreshTrigger={setRefreshTrigger} zaps={zaps} /> </div>} 
                     </div>
              </div>
 
@@ -129,10 +130,9 @@ export function Workflows({setcard}:{setcard:Dispatch<SetStateAction<string>>}){
 
 
 
-function ZapTable({ zaps, setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetStateAction<boolean>> ,zaps: Zap[]}) {
+function ZapTable({ zaps, setRefreshTrigger ,settoasts}: {settoasts:Dispatch<SetStateAction<any>>,setRefreshTrigger :Dispatch<SetStateAction<boolean>> ,zaps: Zap[]}) {
     const [option,setoption] = useState<any>({open : false , id : null})
     const [WorkflowName,setWorkflowName] = useState<any>("")
-    const [toasts,settoasts] = useState([{id:1 ,isError:false,isbig:true , message : "workflow added sucess" , submessage : "this is the main thssdc sdc sdc sd cs dc sdc sdcsdcsdcsd sc sdn dfjjdfjv s", show : true}])
     const [workflowid,setworkflowid] = useState("")
     const [updateform,setupdateform] = useState(false)
 
@@ -154,37 +154,7 @@ function ZapTable({ zaps, setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetS
             }
         },[])
     return <div className=" w-full">
-        <div onClick={() => {
-                      let id : any;
-
-            settoasts((prev:any) => {
-                id = prev.length > 0 
-                    ? prev[prev.length - 1].id + 1
-                    : 0;
-
-                return [
-                    ...prev,
-                    {
-                        id,
-                        isError: false,
-                        isbig: true,
-                        message: "workflow added success",
-                        submessage: "this is the main message",
-                        show: false
-                    }
-                ];
-            });
-
-            setTimeout(() => {
-                settoasts((prev:any) =>
-                    prev.map((toast:any) =>
-                        toast.id === id
-                            ? { ...toast, show:true }
-                            : toast
-                    )
-                );
-            }, 10);
-        }}>hiii</div>
+       
         {zaps.map((z,index) => 
           <div key={index} className=" relative py-3 px-3 flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold">
             <div className="w-[25%] flex-1 flex  gap-4">
@@ -224,12 +194,6 @@ function ZapTable({ zaps, setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetS
                                                 <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                     <div onClick={async()=> {
                                                         const response = await StatusToggler(z.status,z.id)
-                                                        if (response.msg) {
-                                                            
-                                                        }
-                                                        // settoast({show : true , mess:response})
-                                                        // setTimeout(() => {
-                                                        // settoast({show:false,mess:""})}, 2000);
                                                         setoption({open:false , id : null})
                                                         setRefreshTrigger((prev)=>!prev)
                                                     }} className="m-1">
@@ -251,15 +215,20 @@ function ZapTable({ zaps, setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetS
                                                 </div>
                                                 <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                     <div onClick={async()=> {
-                                                        const response = await axios.post(`${BACKEND_URL}/api/v1/zap/duplicate`,{
+                                                         try{
+                                                           const response = await axios.post(`${BACKEND_URL}/api/v1/zap/duplicate`,{
                                                                  workflowid 
                                                             })
-                                                        //    settoast({show : true , mess:response.data.msg})
-                                                            setTimeout(() => {
-                                                                // settoast({show:false,mess:""})
-                                                            }, 4000);
-                                                            setoption({open:false , id : null})
                                                             setRefreshTrigger((prev)=>!prev)
+                                                            toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                                                            setoption({open:false , id : null})
+
+                                                        }catch(err:any){
+                                                            setoption({open:false , id : null})
+                                                            toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                                                        }
+                                                        
+                                                           
                                                     }} className="m-1">
                                                         <MainButton name="Duplicate Workflow">
                                                             <Duplicate size="17"></Duplicate>
@@ -271,18 +240,21 @@ function ZapTable({ zaps, setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetS
                                                 <div className="border-t border-[#C6C6C6] dark:border-[#2C3034]"></div>
                                                 <div  className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                     <div onClick={async()=>{
-                                                        const response = await axios.delete(`${BACKEND_URL}/api/v1/zap/delete`,{
+                                                         try{
+                                                           const response = await axios.delete(`${BACKEND_URL}/api/v1/zap/delete`,{
                                                              data : {
                                                                  name : z.name,
                                                                  workflowid : workflowid
                                                              }
                                                             })
-                                                            // settoast({show : true , mess:response.data.msg})
-                                                            setTimeout(() => {
-                                                                // settoast({show:false,mess:""})
-                                                            }, 4000);
                                                             setRefreshTrigger((prev)=>!prev)
+                                                            toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
                                                             setoption({open:false , id : null})
+
+                                                        }catch(err:any){
+                                                            setoption({open:false , id : null})
+                                                            toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                                                        }
 
                                                     }} className="m-1 ">
                                                         <MainRedButton name="Delete Workflow">
@@ -294,25 +266,26 @@ function ZapTable({ zaps, setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetS
                     </div> : ""}
             </div>
         </div>)}
-        <div className="fixed bottom-6 right-6 w-90 flex flex-col-reverse gap-4 pointer-events-none">
-            {toasts.map((toast,index)=>(
-                <Toast key={toast.id} settoast={settoasts} toast={toast}></Toast>
-            ))}
-          
-        </div>
+        
 
         { updateform ?
             <Addform  callback={async()=>{
-                const response : any= await axios.post(`${BACKEND_URL}/api/v1/zap/rename`,{
+                try{
+                    const response : any= await axios.post(`${BACKEND_URL}/api/v1/zap/rename`,{
                         newname : WorkflowName, 
                         workflowid : workflowid
                     })
-                    setupdateform(false)
                     setRefreshTrigger((prev)=>!prev)
-                    // settoast({show : true , mess:response.data.msg})
-                    setTimeout(() => {
-                        // settoast({show:false,mess:""})
-                    }, 4000);
+                    toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                    setoption({open:false , id : null})
+                    setupdateform(false)
+                }catch(err:any){
+                    setupdateform(false)
+                    setoption({open:false , id : null})
+                    toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                }
+                
+                    
                     
             }} name={"Rename workflow"} buttonname={"Rename"} formopen={updateform} setformopen={setupdateform}>
                 <div className="my-6  w-115">

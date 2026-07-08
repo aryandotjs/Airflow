@@ -41,6 +41,7 @@ CredentialRouter.post("/update", async (req, res) => {
     const { credid, name, apikey, type } = req.body
 
     try {
+        if (!(credid && name && apikey && type)) throw new Error("inputs are incorrect")
         const cred = await prisma.credential.update({
             where: {
                 id: credid,
@@ -58,9 +59,8 @@ CredentialRouter.post("/update", async (req, res) => {
             credid: cred.id
         })
     } catch (err: any) {
-        console.log(err)
         res.status(400).json({
-            msg: "creadential didnt Updated"
+            err: err.message ?? "something went wrong"
         })
     }
 
@@ -82,7 +82,6 @@ CredentialRouter.get("/all", async (req, res) => {
             credential: creds
         })
     } catch (err: any) {
-        console.log(err)
         res.status(400).json({
             msg: "creadential didnt found"
         })
@@ -101,14 +100,12 @@ CredentialRouter.delete("/delete", async (req, res) => {
                 id: apiId
             }
         })
-
         return res.status(200).json({
             msg: "Creadential delete succesfully"
         })
     } catch (err: any) {
-        console.log(err)
         res.status(400).json({
-            msg: "Creadential didnt delete"
+            msg: err.message ?? "something went wrong"
         })
     }
 

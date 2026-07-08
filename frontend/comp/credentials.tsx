@@ -14,10 +14,12 @@ import { DateConverter } from "./RunTimeBadge"
 import { StatusButton } from "./buttons/statusbutton"
 import { SvgforActionsTriggers } from "./SvgforActionsTriggers"
 import { OpenComp } from "./opencomp"
+import { error } from "console"
+import toastsetterremover from "./toastfunction"
 
 const BACKEND_URL = "http://localhost:3001";
 
-export function Credentials(){
+export function Credentials({settoasts}:{settoasts:Dispatch<SetStateAction<any>>}){
      const [refreshTrigger, setRefreshTrigger] = useState(false);
     const [allcreds ,setallcreds] = useState()
      
@@ -29,12 +31,9 @@ export function Credentials(){
      const [formopen ,setformopen] = useState(false)
      const [filter1,setfilter1] = useState("discord")
 
-     const [toast,settoast] = useState({show:false,mess:"."})
-
-    
      useEffect(()=>{
          axios.get(`${BACKEND_URL}/api/v1/credentials/all`).then((a)=>{
-             setallcreds(a.data.credential)
+             setallcreds(a.data.credential.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()))
          })
      },[refreshTrigger])
     
@@ -74,34 +73,25 @@ export function Credentials(){
                     </div>
                 </Secondarybutton>
                 <div className="">
-                        { allcreds ? <CredHistory setRefreshTrigger={setRefreshTrigger}  settoast={settoast} allcreds={allcreds}></CredHistory> : "Loading...." }
+                        { allcreds ? <CredHistory setRefreshTrigger={setRefreshTrigger}  settoasts={settoasts} allcreds={allcreds}></CredHistory> : "Loading...." }
                 </div>
             </div>
-            <div className={`fixed bottom-8 right-8 transition-all duration-300 ease-in-out 
-                ${ toast.show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-13 pointer-events-none" }`}>
-                    {/* <Toast>
-                        <div className="flex items-center gap-2"> 
-                            <div className="flex items-center justify-center rounded-full bg-black text-white  dark:bg-[#151619] h-5 w-5">
-                            <Check size="13"></Check>
-                            </div>
-                            <div className="text-sm">{toast.mess}</div>
-                        </div>   
-                  </Toast> */}
-            </div>
+            
             {formopen ?
                  <Addform  callback={async()=>{
-                     const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/create`,{
-                            name : credName,
-                            apikey :Apikey ,
-                            type : type
+                     try{
+                          const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/create`,{
+                                name : credName,
+                                apikey :Apikey ,
+                                type : type
                           })
-                    
-                        setformopen(false)
-                        setRefreshTrigger((Prev:any)=>!Prev)
-                        settoast({show : true , mess:response.data.msg})
-                        setTimeout(() => {
-                        settoast({show:false,mess:""})
-                        }, 2000);
+                            setformopen(false)
+                            setRefreshTrigger((prev)=>!prev)
+                            toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                        }catch(err:any){
+                            setformopen(false)
+                            toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                        }
 
                  }}  name={"Add credentials"} formopen={formopen} buttonname="Add" setformopen={setformopen}>
                     <div className="my-6 flex flex-col gap-4 w-115">
@@ -118,7 +108,7 @@ export function Credentials(){
 }
 
 
-function CredHistory({allcreds,settoast,setRefreshTrigger} : {setRefreshTrigger:Dispatch<SetStateAction<boolean>>,allcreds : any,settoast:Dispatch<SetStateAction<any>>}){
+function CredHistory({allcreds,settoasts,setRefreshTrigger} : {setRefreshTrigger:Dispatch<SetStateAction<boolean>>,allcreds : any,settoasts:Dispatch<SetStateAction<any>>}){
 
         const [option,setoption] = useState({open : false , id : null})
         const [updateform,setupdateform] = useState(false)
@@ -214,18 +204,19 @@ function CredHistory({allcreds,settoast,setRefreshTrigger} : {setRefreshTrigger:
                                             <div className="border-t border-[#C6C6C6] dark:border-[#2C3034]"></div>
                                             <div  className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                 <div onClick={async()=>{
-                                                    const response = await axios.delete(`${BACKEND_URL}/api/v1/credentials/delete`,{
-                                                         data : {
-                                                             apiId : z.id
-                                                         }
-                                                        })
-                                                        settoast({show : true , mess:response.data.msg})
-                                                        setTimeout(() => {
-                                                            settoast({show:false,mess:""})
-                                                        }, 4000);
-                                                        setRefreshTrigger((prev)=>!prev)
+                                                     try{
+                                                        const response = await axios.delete(`${BACKEND_URL}/api/v1/credentials/delete`,{
+                                                            data : {
+                                                                apiId : z.id
+                                                            }
+                                                            })
                                                         setoption({open:false , id : null})
-
+                                                        setRefreshTrigger((prev)=>!prev)
+                                                        toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                                                    }catch(err:any){
+                                                        setoption({open:false , id : null})
+                                                        toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                                                    }
                                                 }} className="m-1 ">
                                                     <MainRedButton name="Delete credential">
                                                         <Bin size="17"></Bin>
@@ -246,7 +237,8 @@ function CredHistory({allcreds,settoast,setRefreshTrigger} : {setRefreshTrigger:
 
              { updateform ?
                     <Addform  callback={async()=>{
-                        const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/update`,{
+                        try{
+                             const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/update`,{
                                 name : UpdateName,
                                 apikey :UpdateApikey ,
                                 type : Updatetype,
@@ -254,10 +246,11 @@ function CredHistory({allcreds,settoast,setRefreshTrigger} : {setRefreshTrigger:
                             })
                             setupdateform(false)
                             setRefreshTrigger((prev)=>!prev)
-                            settoast({show : true , mess:response.data.msg})
-                            setTimeout(() => {
-                                settoast({show:false,mess:""})
-                            }, 2000);
+                            toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                        }catch(err:any){
+                            setupdateform(false)
+                            toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                        }
                             
                     }} name={"Add credentials"} buttonname={"Update"} formopen={updateform} setformopen={setupdateform}>
                         
@@ -291,5 +284,6 @@ export function Svgframe({children,status , big = false}: {children:ReactNode,st
         </div>
     </div>
 }
+
 
 
