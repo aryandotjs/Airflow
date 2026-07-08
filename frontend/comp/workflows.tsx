@@ -132,7 +132,7 @@ export function Workflows({setcard}:{setcard:Dispatch<SetStateAction<string>>}){
 function ZapTable({ zaps, setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetStateAction<boolean>> ,zaps: Zap[]}) {
     const [option,setoption] = useState<any>({open : false , id : null})
     const [WorkflowName,setWorkflowName] = useState<any>("")
-    const [toasts,settoasts] = useState([{isError:true}])
+    const [toasts,settoasts] = useState([{id:1 ,isError:false,isbig:true , message : "workflow added sucess" , submessage : "this is the main thssdc sdc sdc sd cs dc sdc sdcsdcsdcsd sc sdn dfjjdfjv s", show : true}])
     const [workflowid,setworkflowid] = useState("")
     const [updateform,setupdateform] = useState(false)
 
@@ -154,6 +154,37 @@ function ZapTable({ zaps, setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetS
             }
         },[])
     return <div className=" w-full">
+        <div onClick={() => {
+                      let id : any;
+
+            settoasts((prev:any) => {
+                id = prev.length > 0 
+                    ? prev[prev.length - 1].id + 1
+                    : 0;
+
+                return [
+                    ...prev,
+                    {
+                        id,
+                        isError: false,
+                        isbig: true,
+                        message: "workflow added success",
+                        submessage: "this is the main message",
+                        show: false
+                    }
+                ];
+            });
+
+            setTimeout(() => {
+                settoasts((prev:any) =>
+                    prev.map((toast:any) =>
+                        toast.id === id
+                            ? { ...toast, show:true }
+                            : toast
+                    )
+                );
+            }, 10);
+        }}>hiii</div>
         {zaps.map((z,index) => 
           <div key={index} className=" relative py-3 px-3 flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold">
             <div className="w-[25%] flex-1 flex  gap-4">
@@ -260,13 +291,12 @@ function ZapTable({ zaps, setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetS
                                                     </div>
                                                 </div>
                                         </Opneframe>
-                </div> : ""}
-
+                    </div> : ""}
             </div>
         </div>)}
-        <div className="fixed bottom-6 right-6 border h-full w-90 pointer-events-none flex flex-col-reverse">
-            {toasts.map((toast)=>(
-                <Toast isError={toast.isError} ></Toast>
+        <div className="fixed bottom-6 right-6 w-90 flex flex-col-reverse gap-4 pointer-events-none">
+            {toasts.map((toast,index)=>(
+                <Toast key={toast.id} settoast={settoasts} toast={toast}></Toast>
             ))}
           
         </div>

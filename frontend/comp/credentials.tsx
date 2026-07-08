@@ -79,14 +79,14 @@ export function Credentials(){
             </div>
             <div className={`fixed bottom-8 right-8 transition-all duration-300 ease-in-out 
                 ${ toast.show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-13 pointer-events-none" }`}>
-                    <Toast>
+                    {/* <Toast>
                         <div className="flex items-center gap-2"> 
                             <div className="flex items-center justify-center rounded-full bg-black text-white  dark:bg-[#151619] h-5 w-5">
                             <Check size="13"></Check>
                             </div>
                             <div className="text-sm">{toast.mess}</div>
                         </div>   
-                  </Toast>
+                  </Toast> */}
             </div>
             {formopen ?
                  <Addform  callback={async()=>{
