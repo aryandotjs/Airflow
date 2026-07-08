@@ -5,6 +5,7 @@ import { Credentials } from "@/comp/credentials";
 import { Executions } from "@/comp/executions";
 import { Sidebar } from "@/comp/sidebar";
 import { ThemeProvider } from "@/comp/theme-provider";
+import { Toast } from "@/comp/toast";
 import { Workflows } from "@/comp/workflows";
 import { CreateZap } from "@/comp/Zapcreate";
 import { useEffect, useState } from "react";
@@ -35,10 +36,18 @@ import { useEffect, useState } from "react";
 //         }
 //     }
 // }
-
+type Toasts = {
+        id : number ,
+        isError: boolean,
+        isbig: boolean,
+        message: string,
+        submessage: string,
+        show: boolean
+}[] 
 export default function() {
     const [card,setcard]= useState("Workflows")
-
+    const [toasts,settoasts] = useState<Toasts>([])
+    
     return <div className="flex h-screen ">
           <Sidebar setcard={setcard} card={card}></Sidebar>
           <div className="flex-1 ">
@@ -49,14 +58,19 @@ export default function() {
             </div>
             <div className="relative">
                 <div className=" h-158  overflow-y-auto  [&::-webkit-scrollbar]:hidden ">
-                    {card === "Credentials" ? <Credentials></Credentials> : ""}
+                    {card === "Credentials" ? <Credentials settoasts={settoasts}></Credentials> : ""}
                     {card === "Create" ? <CreateZap></CreateZap> : ""}
-                    {card === "Workflows" ? <Workflows setcard={setcard}></Workflows> : ""}
+                    {card === "Workflows" ? <Workflows setcard={setcard} settoasts={settoasts}></Workflows> : ""}
                     {card === "Executions" ? <Executions ></Executions> : ""}
                 </div>
             </div>
           </div>
-
+        <div className="fixed bottom-6 right-6 w-90 flex flex-col-reverse gap-4 pointer-events-none ">
+            {toasts.map((toast,index)=>(
+                <Toast key={toast.id} settoast={settoasts} toast={toast}></Toast>
+            ))}
+          
+        </div>
 
     </div>
 }
