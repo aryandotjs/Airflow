@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from "react"
+import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useRef, useState } from "react"
 import { Secondarybutton } from "./buttons/secondarybutton"
 import { Add, Bin, Check, DownArrow, Edit, Locksvg, Openup, Search, UpArrow } from "./svg/allsvg"
 import { MainButton, MainRedButton } from "./buttons/mainbutton"
@@ -21,7 +21,7 @@ const BACKEND_URL = "http://localhost:3001";
 
 export function Credentials({settoasts}:{settoasts:Dispatch<SetStateAction<any>>}){
      const [refreshTrigger, setRefreshTrigger] = useState(false);
-    const [allcreds ,setallcreds] = useState()
+     const [allcreds ,setallcreds] = useState([])
      
      const [credName ,setcredName] = useState("")
      const [Apikey ,setApikeys] = useState("")
@@ -29,13 +29,24 @@ export function Credentials({settoasts}:{settoasts:Dispatch<SetStateAction<any>>
 
 
      const [formopen ,setformopen] = useState(false)
-     const [filter1,setfilter1] = useState("discord")
+
+     const [filter1,setfilter1] = useState("ALL")
+     const [search,setsearch] = useState("")
 
      useEffect(()=>{
          axios.get(`${BACKEND_URL}/api/v1/credentials/all`).then((a)=>{
              setallcreds(a.data.credential.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()))
          })
      },[refreshTrigger])
+
+     
+     const filteredCreds = useMemo(()=>{
+          return allcreds.filter((a:any)=>{
+              const MatchFilter = filter1 == "ALL" || a.type === filter1 
+              const MatchSearch = a.name.toLowerCase().includes(search.toLowerCase())
+              return MatchSearch && MatchFilter
+           })
+     },[allcreds,search,filter1])
     
      return <div className="flex flex-col gap-4 px-24">
             <div className="flex justify-between mt-6 items-center ">
@@ -50,12 +61,12 @@ export function Credentials({settoasts}:{settoasts:Dispatch<SetStateAction<any>>
                     <Secondarybutton onclick={()=>{}}>
                         <div className="flex h-full items-center gap-2 w-full">
                             <Search size="16"></Search>
-                            <input className=" outline-0 flex-2" placeholder="Search..."></input>
+                            <input className=" outline-0 flex-2" value={search} onChange={(a)=> setsearch(a.target.value)} placeholder="Search..."></input>
                         </div>
                     </Secondarybutton>
                 </div>
                 <div className="w-[40%]">
-                     <OpenerBoxWithOptions options={["date" , "chatbot" , "emails","discord"]} simplefilter={filter1} setsimplefilter={setfilter1} ></OpenerBoxWithOptions> 
+                     <OpenerBoxWithOptions options={["ALL" , "GEMINI" , "CHATGPT","CLAUDE"]} simplefilter={filter1} setsimplefilter={setfilter1} ></OpenerBoxWithOptions> 
                 </div>
             </div>
             <div className=" h-8">
@@ -73,7 +84,7 @@ export function Credentials({settoasts}:{settoasts:Dispatch<SetStateAction<any>>
                     </div>
                 </Secondarybutton>
                 <div className="">
-                        { allcreds ? <CredHistory setRefreshTrigger={setRefreshTrigger}  settoasts={settoasts} allcreds={allcreds}></CredHistory> : "Loading...." }
+                        { allcreds ? <CredHistory setRefreshTrigger={setRefreshTrigger}  settoasts={settoasts} filteredCreds={filteredCreds}></CredHistory> : "Loading...." }
                 </div>
             </div>
             
@@ -108,7 +119,7 @@ export function Credentials({settoasts}:{settoasts:Dispatch<SetStateAction<any>>
 }
 
 
-function CredHistory({allcreds,settoasts,setRefreshTrigger} : {setRefreshTrigger:Dispatch<SetStateAction<boolean>>,allcreds : any,settoasts:Dispatch<SetStateAction<any>>}){
+function CredHistory({filteredCreds,settoasts,setRefreshTrigger} : {setRefreshTrigger:Dispatch<SetStateAction<boolean>>,filteredCreds : any,settoasts:Dispatch<SetStateAction<any>>}){
 
         const [option,setoption] = useState({open : false , id : null})
         const [updateform,setupdateform] = useState(false)
@@ -135,7 +146,7 @@ function CredHistory({allcreds,settoasts,setRefreshTrigger} : {setRefreshTrigger
         },[])
 
         return <div className="px-2 pr-4 ">
-            {allcreds.map((z:any,index:any)=>{
+            {filteredCreds.map((z:any,index:any)=>{
                 return <div key={index} className="relative flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold ">
                         <div className="flex w-full h-8 my-3 gap-2 ">
                             <div className="  flex items-center  gap-3 w-[30%] overflow-hidden">

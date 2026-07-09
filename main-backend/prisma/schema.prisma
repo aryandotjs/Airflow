@@ -110,7 +110,7 @@ model Zaprun {
   startDate     DateTime        @default(now())
   completedDate DateTime        @default(now())
   duration      Int             @default(0)
-  sucess        ExecutionStatus @default(SUCCESS)
+  status        ExecutionStatus @default(SUCCESS)
   metadata      Json
   zapId         String
   type          Zap             @relation(fields: [zapId], references: [id], onDelete: Cascade)
