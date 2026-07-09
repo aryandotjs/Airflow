@@ -16,12 +16,13 @@ import { SvgforActionsTriggers } from "./SvgforActionsTriggers"
 import { OpenComp } from "./opencomp"
 import { error } from "console"
 import toastsetterremover from "./toastfunction"
+import Spin from "./buttons/spinningwheel"
 
 const BACKEND_URL = "http://localhost:3001";
 
-export function Credentials({settoasts}:{settoasts:Dispatch<SetStateAction<any>>}){
+export function Credentials({settoasts,card}:{card:string,settoasts:Dispatch<SetStateAction<any>>}){
      const [refreshTrigger, setRefreshTrigger] = useState(false);
-     const [allcreds ,setallcreds] = useState([])
+     const [allcreds ,setallcreds] = useState()
      
      const [credName ,setcredName] = useState("")
      const [Apikey ,setApikeys] = useState("")
@@ -38,17 +39,16 @@ export function Credentials({settoasts}:{settoasts:Dispatch<SetStateAction<any>>
              setallcreds(a.data.credential.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()))
          })
      },[refreshTrigger])
-
      
      const filteredCreds = useMemo(()=>{
-          return allcreds.filter((a:any)=>{
+          return allcreds?allcreds:[].filter((a:any)=>{
               const MatchFilter = filter1 == "ALL" || a.type === filter1 
               const MatchSearch = a.name.toLowerCase().includes(search.toLowerCase())
               return MatchSearch && MatchFilter
            })
      },[allcreds,search,filter1])
-    
-     return <div className="flex flex-col gap-4 px-24">
+       
+        return <div className={`flex flex-col gap-4 px-24 `}>
             <div className="flex justify-between mt-6 items-center ">
                 <div className=" text-[28px] tracking-tight  font-semibold  dark:text-brand-bg text-brand-dark-bg">Credentials</div>
                 <div onClick={()=>{setformopen(!formopen)}} className=" flex transition-all duration-150 active:scale-95   font-semibold rounded-xl justify-center text-sm  px-2.5 h-7.5 gap-1.5 cursor-default items-center bg-brand-dark-bg text-brand-bg dark:bg-brand-bg  dark:text-brand-dark-bg">
@@ -83,12 +83,14 @@ export function Credentials({settoasts}:{settoasts:Dispatch<SetStateAction<any>>
                         <div className=""></div>
                     </div>
                 </Secondarybutton>
-                <div className="">
-                        { allcreds ? <CredHistory setRefreshTrigger={setRefreshTrigger}  settoasts={settoasts} filteredCreds={filteredCreds}></CredHistory> : "Loading...." }
-                </div>
+                    {!allcreds ? 
+                        <div className="bg-brand-bg dark:bg-brand-dark-bg  w-full flex justify-center mt-40 ">
+                            <Spin></Spin>
+                        </div> :
+                        <CredHistory setRefreshTrigger={setRefreshTrigger}  settoasts={settoasts} filteredCreds={filteredCreds}></CredHistory> 
+                    }
             </div>
             
-            {formopen ?
                  <Addform  callback={async()=>{
                      try{
                           const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/create`,{
@@ -114,9 +116,9 @@ export function Credentials({settoasts}:{settoasts:Dispatch<SetStateAction<any>>
                            <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" state={Apikey} statesetter={setApikeys}></Input>
                     </div>
                 </Addform>
-              : ""}
      </div>
-}
+     }
+     
 
 
 function CredHistory({filteredCreds,settoasts,setRefreshTrigger} : {setRefreshTrigger:Dispatch<SetStateAction<boolean>>,filteredCreds : any,settoasts:Dispatch<SetStateAction<any>>}){
@@ -196,8 +198,8 @@ function CredHistory({filteredCreds,settoasts,setRefreshTrigger} : {setRefreshTr
                                     className=" select-none hover:bg-[#E9E9E9] pt-1 hover:dark:bg-[#151619] h-8 w-8  rounded-xl  flex justify-center  ">
                                     ...
                                 </div>
-                                { option.open && index == option.id? 
-                                <div  className="absolute  w-40 top-14 z-10 right-0 ">
+                                    <div className={`absolute  w-45 top-11 z-10 right-0 transition duration-100 ${ option.open && index == option.id ?  "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
+
                                     <Opneframe>
                                             <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                 <div onClick={()=> {
@@ -235,7 +237,7 @@ function CredHistory({filteredCreds,settoasts,setRefreshTrigger} : {setRefreshTr
                                                 </div>
                                             </div>
                                     </Opneframe>
-                                </div> : ""}
+                                </div> 
                             </div>
                             
                                 
@@ -246,7 +248,6 @@ function CredHistory({filteredCreds,settoasts,setRefreshTrigger} : {setRefreshTr
             })}
             
 
-             { updateform ?
                     <Addform  callback={async()=>{
                         try{
                              const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/update`,{
@@ -274,8 +275,7 @@ function CredHistory({filteredCreds,settoasts,setRefreshTrigger} : {setRefreshTr
                             <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" state={UpdateApikey} statesetter={setUpdateApikeys}></Input>
                         </div>
 
-                    </Addform> : ""
-                }
+                    </Addform> 
         </div>
 }
 
