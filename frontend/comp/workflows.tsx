@@ -6,7 +6,7 @@ import { Secondarybutton } from "@/comp/buttons/secondarybutton";
 import { DiscordConfigPanel } from "@/comp/discord";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import { Add, Adjust, Bin, Check, Duplicate, Edit, Pause, Play, Search } from "./svg/allsvg";
 import { OpenerBoxWithOptions } from "./OpenerBoxWithOptions";
 import { Svgframe } from "./executions";
@@ -74,7 +74,8 @@ function useZaps(refresh:boolean) {
                 setLoading(false)
             })
     }, [refresh]);
-
+     
+    
     return {
         loading, zaps
     }
@@ -84,8 +85,19 @@ export function Workflows({setcard ,settoasts}:{settoasts:Dispatch<SetStateActio
     const [refreshTrigger, setRefreshTrigger] = useState(false);
 
     const { loading, zaps } = useZaps(refreshTrigger);
-    const [filter1,setfilter1] = useState("pending")
-    
+    const [filter1,setfilter1] = useState("ALL")
+    const [search,setsearch] = useState("")
+     
+    const filteredzap = useMemo(()=>{
+        return zaps.filter((zap)=>{
+           const MatchStatus =  filter1 == "ALL" || zap.status === filter1
+           
+           const MatchSearch =  zap.name.toLowerCase().includes(search.toLowerCase()) 
+
+           return MatchStatus && MatchSearch 
+        }) 
+    },[filter1,zaps,search])
+
     const router = useRouter();
     return <div className="flex flex-col gap-4 px-24">
                     <div className="flex justify-between mt-6 items-center ">
@@ -103,12 +115,12 @@ export function Workflows({setcard ,settoasts}:{settoasts:Dispatch<SetStateActio
                             <Secondarybutton onclick={()=>{}}>
                                 <div className="flex h-full items-center gap-2 w-full">
                                     <Search size="16"></Search>
-                                    <input className=" outline-0 flex-2" placeholder="Search..."></input>
+                                    <input onChange={(a:any)=> setsearch(a.target.value)} value={search} className=" outline-0 flex-2" placeholder="Search..."></input>
                                 </div>
                             </Secondarybutton>
                         </div>
                         <div className="w-[20%]">
-                             <OpenerBoxWithOptions options={["success","failed","pending"]} simplefilter={filter1} setsimplefilter={setfilter1} ></OpenerBoxWithOptions> 
+                             <OpenerBoxWithOptions options={["ALL","ACTIVE","PAUSED","DRAFT"]} simplefilter={filter1} setsimplefilter={setfilter1} ></OpenerBoxWithOptions> 
                         </div>
                         
                     </div>
@@ -122,7 +134,7 @@ export function Workflows({setcard ,settoasts}:{settoasts:Dispatch<SetStateActio
                                 <div className="w-[15%]  ">Created</div>
                             </div>
                         </Secondarybutton>
-                        {loading ? "Loading..." : <div className="flex justify-center"> <ZapTable settoasts={settoasts} setRefreshTrigger={setRefreshTrigger} zaps={zaps} /> </div>} 
+                        {loading ? "Loading..." : <div className="flex justify-center"> <ZapTable settoasts={settoasts} setRefreshTrigger={setRefreshTrigger} filteredzap={filteredzap} /> </div>} 
                     </div>
              </div>
 
@@ -130,7 +142,7 @@ export function Workflows({setcard ,settoasts}:{settoasts:Dispatch<SetStateActio
 
 
 
-function ZapTable({ zaps, setRefreshTrigger ,settoasts}: {settoasts:Dispatch<SetStateAction<any>>,setRefreshTrigger :Dispatch<SetStateAction<boolean>> ,zaps: Zap[]}) {
+function ZapTable({ filteredzap, setRefreshTrigger ,settoasts}: {settoasts:Dispatch<SetStateAction<any>>,setRefreshTrigger :Dispatch<SetStateAction<boolean>> ,filteredzap: Zap[]}) {
     const [option,setoption] = useState<any>({open : false , id : null})
     const [WorkflowName,setWorkflowName] = useState<any>("")
     const [workflowid,setworkflowid] = useState("")
@@ -155,13 +167,15 @@ function ZapTable({ zaps, setRefreshTrigger ,settoasts}: {settoasts:Dispatch<Set
         },[])
     return <div className=" w-full">
        
-        {zaps.map((z,index) => 
+        {filteredzap.map((z,index) => 
           <div key={index} className=" relative py-3 px-3 flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold">
             <div className="w-[25%] flex-1 flex  gap-4">
-                <Svgframe status={z.status.toLowerCase()}>
-                        <SvgforActionsTriggers size="18" name={"Workflow"}></SvgforActionsTriggers>
-                </Svgframe>
-                <div className="dark:text-[#F0F0F0] text-[#191919]  flex items-center gap-3 underline decoration-dashed decoration-[#EEEEEE] dark:decoration-[#191B1E] hover:decoration-blue-400 dark:hover:decoration-[#EEEEEE]  underline-offset-6 transition-all duration-400 text-sm font-normal dark:font-semibold">
+                <div>
+                    <Svgframe status={z.status.toLowerCase()}>
+                            <SvgforActionsTriggers size="18" name={"Workflow"}></SvgforActionsTriggers>
+                    </Svgframe>
+                 </div>
+                <div className="overflow-scroll min-w-[70%] scrollbar-none dark:text-[#F0F0F0] text-[#191919]  flex items-center gap-3 underline decoration-dashed decoration-[#EEEEEE] dark:decoration-[#191B1E] hover:decoration-blue-400 dark:hover:decoration-[#EEEEEE]  underline-offset-6 transition-all duration-400 text-sm font-normal dark:font-semibold">
                       {z.name}
                 </div>
             </div>

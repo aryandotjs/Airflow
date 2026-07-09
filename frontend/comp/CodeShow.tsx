@@ -1,4 +1,5 @@
 import JsonView from "react18-json-view";
+import { Copy } from "./svg/allsvg";
 
 
 
@@ -10,13 +11,11 @@ export function CodeShow({header , code}:{header:string , code :JSON}){
             </div>
            <div className="w-full bg-brand-dark-bg rounded-[14px] px-4 py-3 font-mono text-md select-text relative ">
                 <button 
+                onClick={()=>{navigator.clipboard.writeText(JSON.stringify(code))}}
                     // onClick={() => navigator.clipboard.writeText(JSON.stringify(rawJsonData, null, 2))}
-                    className="transition-all active:scale-80 duration-150 absolute top-4 right-4 text-[#71767B] hover:text-[#E1E8ED]  z-10"
+                    className="transition-all active:scale-80 duration-150 absolute top-4 right-4 text-[#71767B] hover:text-[#E1E8ED]   hover:bg-[#2C3034] rounded-md p-0.5 z-10"
                 >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
+                                                <Copy size="19"></Copy>
                 </button>
                 <div className="text-left overflow-x-auto [&::-webkit-scrollbar]:hidden">
                     <JsonView 

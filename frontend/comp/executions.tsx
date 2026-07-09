@@ -58,7 +58,6 @@ export  function Executions(){
             //     "authorization" : `Bearer ${localStorage.getItem("token")}`
             // }
         }).then((a)=>{
-            console.log(a.data.zaps[0])
                setzapruns(a.data.zaps)
         })
     },[])
@@ -98,7 +97,7 @@ export  function Executions(){
                             <div className="w-[20%]  text-start">Name</div>
                             <div className="w-[15%] text-start">Status</div>
                             <div className="w-[25%]">Id</div>
-                            <div className="w-[15%] flex flex-row-reverse ">Created</div>
+                            <div className="w-[15%] flex flex-row-reverse ">Started</div>
                         </div>
                     </Secondarybutton>
                     <div className="">
@@ -110,16 +109,13 @@ export  function Executions(){
 }
 
 function History({zapruns} :any){
-    const [iscardOpen , setiscardOpen] = useState(false)
-    const [cardIndex , setcardIndex] = useState(0)
-
+    const [selectedcard , setselectedcard] = useState({open:false,index:null})
+   console.log(zapruns)
      return <div className="px-2 pr-4 ">
-        {iscardOpen ? 
+        {selectedcard.open ? 
         <div className="z-20 absolute top-0 left-0 h-158.5 w-full bg-brand-bg dark:bg-brand-dark-bg px-24 overflow-y-scroll">
-            {cardIndex}
-         <DetailCard setiscardOpen={setiscardOpen} azaprun={zapruns[cardIndex]}></DetailCard>
+         <DetailCard setselectedcard={setselectedcard} zaprun={zapruns[selectedcard.index?selectedcard.index : 0]}></DetailCard>
         </div> : ""}
-{cardIndex}
         {zapruns.map((z:any,index:any)=>{
             return <div key={index} className=" flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold ">
                 <div className="flex w-full h-8 my-3 gap-5 justify-between">
@@ -139,19 +135,18 @@ function History({zapruns} :any){
                     </div>
                     
                     <div  onClick={()=>{ 
-                        setiscardOpen(!iscardOpen)
-                        setcardIndex(index)
+                        setselectedcard({open:true,index:index})
                         }} className="w-[20%] dark:text-[#F0F0F0] text-[#191919] text-xs flex items-center gap-3 underline decoration-dashed decoration-[#EEEEEE] dark:decoration-[#191B1E] hover:decoration-blue-400 dark:hover:decoration-[#EEEEEE]  underline-offset-6 transition-all duration-400  font-normal dark:font-medium ">
-                      Untititled Workflow
+                      {z.name}
                     </div>
                     <div className="w-[15%]  flex items-center ">
-                        <StatusButton status={"Success"}></StatusButton>
+                        <StatusButton status={z.status?.toLowerCase()}></StatusButton>
                     </div>
                     <div className="w-[25%]  flex items-center ">
                         <div className="bg-[#E9E9E9]  dark:bg-[#151619] text-xs px-2 rounded-lg py-0.5">{z.id}</div>
                     </div>
                     <div className="w-[15%]  flex items-center justify-end text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-[#191919]">
-                         <DateConverter isoString={"1783223001331"}></DateConverter>
+                         <DateConverter isoString={z.startDate}></DateConverter>
                     </div>
                 </div>
                 
@@ -162,7 +157,8 @@ function History({zapruns} :any){
 }
 
 
-function DetailCard({azaprun,setiscardOpen} : any){
+function DetailCard({setselectedcard,zaprun} : any){
+    const [check,setcheck] = useState({first:false,second:false,third:false})
     return <div className="mt-8 z-50"> 
         <div className="flex text-l font-medium items-center justify-between ">
             <div className=" gap-6 flex">
@@ -172,44 +168,45 @@ function DetailCard({azaprun,setiscardOpen} : any){
                 </Svgframe>
                 <div className=" flex flex-col justify-center">
                     <div>Execution</div>
-                    <div className="dark:text-[#F0F0F0] text-[#191919] text-xl font-semibold">{azaprun}</div>
+                    <div className="dark:text-[#F0F0F0] text-[#191919] text-xl font-semibold">{zaprun.name}</div>
                 </div>
             </div>
-            <div onClick={()=>{setiscardOpen(false)}} className="h-8 flex items-center ease-in-out active:scale-80 transition-transform">
+            <div onClick={()=>{setselectedcard({open:false,index:null})}} className="h-8 flex items-center ease-in-out active:scale-80 transition-transform">
                     <Secondarybutton small={true}>
                     <Prev size="20"></Prev>
                     </Secondarybutton>
             </div>
         </div>
         <div className="flex my-6 w-full">
-            <div className="w-[33%] flex flex-col gap-1">
-                <div className="text-[13px] font-normal ">Execution Name</div>
-                <div className="dark:text-[#F0F0F0] text-[#191919]">sdsdddc</div>
-            </div>
+            
             <div className="w-[33%] flex flex-col gap-1">
                 <div className="text-[13px] font-normal ">Duration</div>
-                <div className="dark:text-[#F0F0F0] text-[#191919]">sdsdddc</div>
+                <div className="dark:text-[#F0F0F0] text-[#191919]">{zaprun.name}</div>
             </div>
             <div className="w-[33%] flex flex-col gap-1">
                 <div className="text-[13px] font-normal ">Status</div>
-                <div className="w-14"><StatusButton status="Success"></StatusButton></div>
+                <div className="w-14"><StatusButton status={zaprun.status.toLowerCase()}></StatusButton></div>
             </div>
         </div>
         <div className="flex my-6 w-full">
             <div className="w-[33%] flex flex-col gap-1">
                 <div className="text-[13px] font-normal ">Start Date</div>
-                <div className="dark:text-[#F0F0F0] text-[#191919]">sdsdddc</div>
+                <div className="dark:text-[#F0F0F0] text-[#191919]">
+                     <DateConverter isoString={zaprun.startDate}></DateConverter>
+                </div>
             </div>
             <div className="w-[33%] flex flex-col gap-1">
                 <div className="text-[13px] font-normal ">End Date</div>
-                <div className="dark:text-[#F0F0F0] text-[#191919]">sdsdddc</div>
+                <div className="dark:text-[#F0F0F0] text-[#191919]">
+                     <DateConverter isoString={zaprun.completedDate}></DateConverter>
+                </div>
             </div>
             <div className="w-[33%] flex flex-col gap-1">
                 <div className="text-[13px] font-normal ">WorkFlow Id</div>
                 <div className="">
                     <div className="w-full h-full text-[14px] flex justify-between items-center rounded-lg font-semibold  px-2 bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040]">
-                        <div className="my-0.5">sdsdvsdvs-12cdc-3f</div>
-                        <div className=" transition-all active:scale-80 duration-150 hover:bg-[#C6C6C6] dark:hover:bg-[#2C3034] rounded-md p-0.5">
+                        <div className="my-0.5">{zaprun.id}</div>
+                        <div onClick={()=>{navigator.clipboard.writeText(zaprun.id)}} className=" transition-all active:scale-80 duration-150 hover:bg-[#C6C6C6] dark:hover:bg-[#2C3034] rounded-md p-0.5">
                             <Copy size="19"></Copy>
                         </div>
                     </div>
