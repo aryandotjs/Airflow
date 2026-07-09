@@ -58,10 +58,10 @@ export default function() {
             </div>
             <div className="relative">
                 <div className=" h-158  overflow-y-auto  [&::-webkit-scrollbar]:hidden ">
-                    {card === "Credentials" ? <Credentials settoasts={settoasts}></Credentials> : ""}
-                    {card === "Create" ? <CreateZap></CreateZap> : ""}
-                    {card === "Workflows" ? <Workflows setcard={setcard} settoasts={settoasts}></Workflows> : ""}
-                    {card === "Executions" ? <Executions ></Executions> : ""}
+                    {card === "Credentials" ? <Credentials card={card} settoasts={settoasts}></Credentials>  : ""}
+                    {card === "Create" ? <CreateZap card={card}></CreateZap> : ""}
+                    {card === "Workflows" ? <Workflows card={card} setcard={setcard} settoasts={settoasts}></Workflows> : ""}
+                    {card === "Executions" ? <Executions card={card} ></Executions> : ""}
                 </div>
             </div>
           </div>

@@ -19,12 +19,14 @@ import { Addform } from "./addform";
 import { Input } from "./buttons/input";
 import { error } from "console";
 import toastsetterremover from "./toastfunction";
+import Spin from "./buttons/spinningwheel";
 const BACKEND_URL = "http://localhost:3001";
 enum ZapStatus {
   ACTIVE = "ACTIVE",
   PAUSED = "PAUSED" ,
   DRAFT = "DRAFT"
 }
+
 interface Zap {
   id : String ,
   userId : number,
@@ -81,7 +83,7 @@ function useZaps(refresh:boolean) {
     }
 }
 
-export function Workflows({setcard ,settoasts}:{settoasts:Dispatch<SetStateAction<any>>,setcard:Dispatch<SetStateAction<string>>}){
+export function Workflows({setcard ,settoasts,card}:{card:string,settoasts:Dispatch<SetStateAction<any>>,setcard:Dispatch<SetStateAction<string>>}){
     const [refreshTrigger, setRefreshTrigger] = useState(false);
 
     const { loading, zaps } = useZaps(refreshTrigger);
@@ -102,7 +104,6 @@ export function Workflows({setcard ,settoasts}:{settoasts:Dispatch<SetStateActio
     return <div className="flex flex-col gap-4 px-24">
                     <div className="flex justify-between mt-6 items-center ">
                         <div className=" text-[28px] tracking-tight  font-semibold text-[#191919] dark:text-[#F0F0F0] ">Automations</div>
-                    </div>
                     <div className="flex flex-row-reverse gap-3">
                         <div onClick={()=> setcard("Create")} className="w-43 flex  transition-all duration-150 active:scale-95   font-semibold rounded-xl justify-center text-sm  px-2.5 h-7.5 gap-1.5 cursor-default items-center bg-brand-dark-bg text-brand-bg dark:bg-brand-bg  dark:text-brand-dark-bg">
                             <Add size="18"></Add>
@@ -110,7 +111,8 @@ export function Workflows({setcard ,settoasts}:{settoasts:Dispatch<SetStateActio
                             
                         </div>
                     </div>
-                    <div className="flex justify-between mt-2 items-center gap-2">
+                    </div>
+                    <div className="flex justify-between mt-5 items-center gap-2">
                         <div className="h-8 w-[80%]">
                             <Secondarybutton onclick={()=>{}}>
                                 <div className="flex h-full items-center gap-2 w-full">
@@ -134,7 +136,10 @@ export function Workflows({setcard ,settoasts}:{settoasts:Dispatch<SetStateActio
                                 <div className="w-[15%]  ">Created</div>
                             </div>
                         </Secondarybutton>
-                        {loading ? "Loading..." : <div className="flex justify-center"> <ZapTable settoasts={settoasts} setRefreshTrigger={setRefreshTrigger} filteredzap={filteredzap} /> </div>} 
+                        {loading ? <div className="bg-brand-bg dark:bg-brand-dark-bg h-screen w-full flex justify-center mt-40">
+                                     <Spin></Spin>
+                                </div>
+                              : <div className="flex justify-center"> <ZapTable settoasts={settoasts} setRefreshTrigger={setRefreshTrigger} filteredzap={filteredzap} /> </div>} 
                     </div>
              </div>
 
@@ -202,8 +207,7 @@ function ZapTable({ filteredzap, setRefreshTrigger ,settoasts}: {settoasts:Dispa
                     className=" select-none hover:bg-[#E9E9E9] pt-1 hover:dark:bg-[#151619] h-8 w-8  rounded-xl  flex justify-center">
                     ...
                 </div>
-                { option.open && index == option.id? 
-                                    <div className="absolute  w-45 top-14 z-10 right-0 ">
+                                    <div className={`absolute  w-45 top-8 z-10 right-0 transition duration-100 ${ option.open && index == option.id ?  "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
                                         <Opneframe>
                                                 <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                     <div onClick={async()=> {
@@ -277,7 +281,7 @@ function ZapTable({ filteredzap, setRefreshTrigger ,settoasts}: {settoasts:Dispa
                                                     </div>
                                                 </div>
                                         </Opneframe>
-                    </div> : ""}
+                    </div> 
             </div>
         </div>)}
         

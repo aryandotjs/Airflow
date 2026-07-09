@@ -46,12 +46,14 @@ import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 import { CodeShow } from "./CodeShow";
+import Spin from "./buttons/spinningwheel";
 
-export  function Executions(){
+export  function Executions({card}:{card:string}){
     const [zapruns,setzapruns] = useState()
-    const [filter1,setfilter1] = useState("pending")
+    const [filter1,setfilter1] = useState("ALL")
     const [filter2,setfilter2] = useState("")
     const [filter3,setfilter3] = useState("")
+    const [search,setsearch] = useState("")
     useEffect(()=>{
         axios.get(`${BACKEND_URL}/api/v1/zap/all`,{
             // headers : {
@@ -62,6 +64,13 @@ export  function Executions(){
         })
     },[])
     
+    //  const filteredCreds = useMemo(()=>{
+    //           return allcreds.filter((a:any)=>{
+    //               const MatchFilter = filter1 == "ALL" || a.type === filter1 
+    //               const MatchSearch = a.name.toLowerCase().includes(search.toLowerCase())
+    //               return MatchSearch && MatchFilter
+    //            })
+    //      },[allcreds,search,filter1])
     return  <div className="flex flex-col gap-4 px-24 ">
                 <div className="flex justify-between mt-6 items-center ">
                     <div className=" text-[28px] tracking-tight  font-semibold    dark:text-brand-bg text-brand-dark-bg">Executions</div>
@@ -76,13 +85,13 @@ export  function Executions(){
                         </Secondarybutton>
                     </div>
                     <div className="w-[20%]">
-                         <OpenerBoxWithOptions options={["success","failed","pending"]} simplefilter={filter1} setsimplefilter={setfilter1} ></OpenerBoxWithOptions> 
+                         <OpenerBoxWithOptions options={[ "ALL","PENDING","RUNNING","SUCCESS","FAILED"]} simplefilter={filter1} setsimplefilter={setfilter1} ></OpenerBoxWithOptions> 
                     </div>
                     <div className="w-[20%]">
-                         <OpenerBoxWithOptions options={["success","failed","pending"]} simplefilter={filter1} setsimplefilter={setfilter1} ></OpenerBoxWithOptions> 
+                         <OpenerBoxWithOptions options={["1day","failed","pending"]} simplefilter={filter1} setsimplefilter={setfilter2} ></OpenerBoxWithOptions> 
                     </div>
                     <div className="w-[20%]">
-                         <OpenerBoxWithOptions options={["success","failed","pending"]} simplefilter={filter1} setsimplefilter={setfilter1} ></OpenerBoxWithOptions> 
+                         <OpenerBoxWithOptions options={["success","failed","pending"]} simplefilter={filter1} setsimplefilter={setfilter3} ></OpenerBoxWithOptions> 
                     </div>
                     <div className="h-8">
                          <Secondarybutton small={true}>
@@ -100,9 +109,13 @@ export  function Executions(){
                             <div className="w-[15%] flex flex-row-reverse ">Started</div>
                         </div>
                     </Secondarybutton>
-                    <div className="">
-                        {zapruns ? <History zapruns={zapruns}></History> : "Loading...." }
-                    </div>
+                    
+                    {zapruns ? 
+                          <History zapruns={zapruns}></History>:
+                          <div className="bg-brand-bg dark:bg-brand-dark-bg h-screen w-full flex justify-center mt-40">
+                                <Spin></Spin>
+                        </div>
+                    }
                 </div>
                     
          </div>
@@ -110,12 +123,13 @@ export  function Executions(){
 
 function History({zapruns} :any){
     const [selectedcard , setselectedcard] = useState({open:false,index:null})
-   console.log(zapruns)
+    if (!zapruns) {
+        return <div>loading</div>
+    }
      return <div className="px-2 pr-4 ">
-        {selectedcard.open ? 
-        <div className="z-20 absolute top-0 left-0 h-158.5 w-full bg-brand-bg dark:bg-brand-dark-bg px-24 overflow-y-scroll">
-         <DetailCard setselectedcard={setselectedcard} zaprun={zapruns[selectedcard.index?selectedcard.index : 0]}></DetailCard>
-        </div> : ""}
+        <div className="">
+         <DetailCard setselectedcard={setselectedcard} selectedcard={selectedcard} zaprun={zapruns[selectedcard.index?selectedcard.index : 0]}></DetailCard>
+        </div> 
         {zapruns.map((z:any,index:any)=>{
             return <div key={index} className=" flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold ">
                 <div className="flex w-full h-8 my-3 gap-5 justify-between">
@@ -157,9 +171,10 @@ function History({zapruns} :any){
 }
 
 
-function DetailCard({setselectedcard,zaprun} : any){
+function DetailCard({setselectedcard,zaprun,selectedcard} : any){
     const [check,setcheck] = useState({first:false,second:false,third:false})
-    return <div className="mt-8 z-50"> 
+    return <div className={` transition duration-150  ${selectedcard.open ?   "opacity-100 " : " opacity-0 pointer-events-none " }z-20 absolute top-0 left-0 h-158.5 w-full bg-brand-bg dark:bg-brand-dark-bg px-24 overflow-y-scroll`}>
+    <div className={` mt-8 z-50`}> 
         <div className="flex text-l font-medium items-center justify-between ">
             <div className=" gap-6 flex">
                 <Svgframe status={"Success"} big={true}>
@@ -181,7 +196,7 @@ function DetailCard({setselectedcard,zaprun} : any){
             
             <div className="w-[33%] flex flex-col gap-1">
                 <div className="text-[13px] font-normal ">Duration</div>
-                <div className="dark:text-[#F0F0F0] text-[#191919]">{zaprun.name}</div>
+                <div className="dark:text-[#F0F0F0] text-[#191919]">{zaprun.duration} sec</div>
             </div>
             <div className="w-[33%] flex flex-col gap-1">
                 <div className="text-[13px] font-normal ">Status</div>
@@ -220,6 +235,7 @@ function DetailCard({setselectedcard,zaprun} : any){
         <div className="my-8">
         <CodeShow header="Response Body" code={j}></CodeShow>
         </div>
+    </div>
     </div>
 }
 const j = {

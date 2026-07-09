@@ -221,7 +221,7 @@ import { ReactWorkflow } from "./ReactWorkflow";
 //     </div>
 // }
 
-export function CreateZap(){
+export function CreateZap({card}:{card:string}){
     return <>
        <ReactWorkflow></ReactWorkflow>
       </>
