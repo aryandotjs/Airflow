@@ -49,6 +49,7 @@ export function Credentials({settoasts,card}:{card:string,settoasts:Dispatch<Set
      },[allcreds,search,filter1])
        
         return <div className={`flex flex-col gap-4 px-24 `}>
+            
             <div className="flex justify-between mt-6 items-center ">
                 <div className=" text-[28px] tracking-tight  font-semibold  dark:text-brand-bg text-brand-dark-bg">Credentials</div>
                 <div onClick={()=>{setformopen(!formopen)}} className=" flex transition-all duration-150 active:scale-95   font-semibold rounded-xl justify-center text-sm  px-2.5 h-7.5 gap-1.5 cursor-default items-center bg-brand-dark-bg text-brand-bg dark:bg-brand-bg  dark:text-brand-dark-bg">
