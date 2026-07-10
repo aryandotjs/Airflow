@@ -45,7 +45,7 @@ type Toasts = {
         show: boolean
 }[] 
 export default function() {
-    const [card,setcard]= useState("Executions")
+    const [card,setcard]= useState("Create")
     const [toasts,settoasts] = useState<Toasts>([])
     
     return <div className="flex h-screen ">

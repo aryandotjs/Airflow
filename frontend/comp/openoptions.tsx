@@ -6,7 +6,7 @@ import { Check } from "./svg/allsvg"
 
 
 
-export function OpenOptions({open ,setsimplefilter, children,simplefilter , options , setopen }:{simplefilter:string ,open:boolean ,setopen : Dispatch<SetStateAction<boolean>> ,setsimplefilter : Dispatch<SetStateAction<string>> ,children? : ReactNode , options? : string[]}){
+export function OpenOptions({open ,setsimplefilter, children,simplefilter , options , setopen }:{simplefilter:string ,open:boolean ,setopen : Dispatch<SetStateAction<boolean>> ,setsimplefilter : Dispatch<SetStateAction<string|ReactNode>> ,children? : ReactNode , options? : string[]}){
     return <div className={`h-full w-full `} onClick={()=>{}}>
              <div>{options?
             <Opneframe> {options.map((a:string,b)=>{ 

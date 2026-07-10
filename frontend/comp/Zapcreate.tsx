@@ -224,5 +224,6 @@ import { ReactWorkflow } from "./ReactWorkflow";
 export function CreateZap({card}:{card:string}){
     return <>
        <ReactWorkflow></ReactWorkflow>
+       
       </>
 }

@@ -50,19 +50,11 @@ export default function Trigger({id,data:{name,metadata}}: TriggerNodeProp) {
 
 export  function Action({id,data:{name,metadata}}: TriggerNodeProp) {
   const {setNodes} = useReactFlow();
-  const [formopen,setformopen] = useState(false)
   return (
     <div  className=''>
-       {formopen ? 
           <div>
-            {/* we are not using this addform this si credential specific   */}
-            <Addform name={"Add credentials"} formopen={formopen} setformopen={setformopen}>
-                <div className="my-6 flex flex-col gap-4 w-115">
-                      {/* <Input placeholder="Credentials Name" name="Name" setcredName={setcredName}></Input>
-                      <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" setcredName={setApikeys}></Input> */}
-                </div>
-            </Addform>
-          </div>   : ""}
+            
+          </div>   
        <div className='p-3 border rounded-sm  border-[#DCDFE2] dark:border-[#2C3034] hover:dark:bg-[#212327] bg-brand-bg hover:bg-[#E9E9E9] transition-colors dark:bg-[#151619]'>
            <img src={`./actiontriggerimages/${name}.png`} className='h-8'></img>
        </div>
@@ -83,7 +75,6 @@ export  function Action({id,data:{name,metadata}}: TriggerNodeProp) {
                  <Cross size='14'></Cross>
               </div>
               <div className='hover:bg-[#E9E9E9] hover:dark:bg-[#212327] h-5 w-5 rounded-sm flex justify-center items-center cursor-default' onClick={()=>{ 
-                setformopen(!formopen)
                }}>
                  <Adjust size='14'></Adjust>
               </div>
