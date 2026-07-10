@@ -26,7 +26,7 @@ export function Credentials({settoasts,card}:{card:string,settoasts:Dispatch<Set
      
      const [credName ,setcredName] = useState("")
      const [Apikey ,setApikeys] = useState("")
-     const [type ,settype] = useState("GEMINI")
+     const [type ,settype] = useState("ALL")
 
 
      const [formopen ,setformopen] = useState(false)
@@ -41,7 +41,7 @@ export function Credentials({settoasts,card}:{card:string,settoasts:Dispatch<Set
      },[refreshTrigger])
      
      const filteredCreds = useMemo(()=>{
-          return allcreds?allcreds:[].filter((a:any)=>{
+          return (allcreds ?? []).filter((a:any)=>{
               const MatchFilter = filter1 == "ALL" || a.type === filter1 
               const MatchSearch = a.name.toLowerCase().includes(search.toLowerCase())
               return MatchSearch && MatchFilter
