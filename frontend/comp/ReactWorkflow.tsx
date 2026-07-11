@@ -1,20 +1,18 @@
-import { metadata } from "@/app/layout";
 import { ReactFlow , Node, Background, Controls, Edge, useNodesState, useEdgesState, Connection, addEdge, ReactFlowProvider } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useCallback, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import RightsideBar from "./rightsidebar";
 import Trigger, { Action } from "./trigger";
 import { Add } from "./svg/allsvg";
-import { MainButton } from "./buttons/mainbutton";
-import { Secondarybutton } from "./buttons/secondarybutton";
+import axios from "axios";
+import AiForm from "./AiForm";
 import { Addform } from "./addform";
 import { Input } from "./buttons/input";
-import { OpenerBoxWithOptions } from "./OpenerBoxWithOptions";
-import axios from "axios";
-import { Opneframe } from "./openframe";
+import { BigInput } from "./biggerinput";
 import { OpenerButton } from "./buttons/openerButton";
 import { OpenOptions } from "./openoptions";
-import { BigInput } from "./biggerinput";
+import { Opneframe } from "./openframe";
+import { MainButton } from "./buttons/mainbutton";
 
 // export let InitialNodes : Node<{name :string , metadata :string , onDelete : ()=>void}>[] = [{
 //     id : '1',
@@ -50,18 +48,29 @@ function WorkflowContent(){
 
 
     // from here only for diffpur
-    const {creds} = UseCred()
-    const [form,setform] = useState(true)
-    const [credName,setcredName] = useState("") 
-    const [type,settype] = useState<any>() 
-    const [open,setopen] = useState<any>(false) 
-    const [systemprompt,setsystemprompt] = useState<any>("") 
+    // const {creds} = UseCred()
+    const [form,setform] = useState(false)
+    const [form1,setform1] = useState(false)
+    const [form2,setform2] = useState(false)
+    const [disform,setdisform] = useState(false)
+    const [notion,setnotion] = useState(false)
+    const [sheet,setsheet] = useState(false)
+    const [gform,setgform] = useState(false)
+    // const [credName,setcredName] = useState("") 
+    // const [type,settype] = useState<any>() 
+    // const [open,setopen] = useState<any>(false) 
+    // const [systemprompt,setsystemprompt] = useState<any>("") 
     // till here only for diffpur
     
     return <div 
          className="h-160 w-322 ">
-            {JSON.stringify(type)}
-            <button onClick={()=>{setform(!form)}}>tucker</button>
+            <button onClick={()=>{setform(!form)}} className="border p-3 m-3">tucker</button>
+            <button onClick={()=>{setform1(!form1)}} className="border p-3 m-3">tucker1</button>
+            <button onClick={()=>{setform2(!form2)}} className="border p-3 m-3">tucker2</button>
+            <button onClick={()=>{setdisform(!disform)}} className="border p-3 m-3">dis</button>
+            <button onClick={()=>{setnotion(!notion)}} className="border p-3 m-3">notion</button>
+            <button onClick={()=>{setsheet(!sheet)}} className="border p-3 m-3">sheeet</button>
+            <button onClick={()=>{setgform(!gform)}} className="border p-3 m-3">form</button>
             <RightsideBar setsidebaropen={setsidebaropen} sidebaropen={sidebaropen}></RightsideBar>
             <button onClick={()=>setsidebaropen(true)} className="absolute right-5 top-5 z-10  transition duration-100 ">
                 <div className="h-8 rounded-sm  flex items-center bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] w-8 justify-center">
@@ -78,78 +87,401 @@ function WorkflowContent(){
                     <Background/>
                     <Controls/>
             </ReactFlow>
-            <Addform buttonname="Save" name="OpenAi Configuration" callback={()=>{}} formopen={form} setformopen={setform} >
-                <div>
-                     <div className="my-6 flex flex-col gap-4 w-115">
-                        <div>
-                            <Input placeholder="lable-OpenAi-variable" name="Variable Name" state={credName} statesetter={setcredName}></Input>
-                            <div className="mt-1 text-xs">{"Name of the variable to store the response :{{myOpenAI.text}}"}</div>
-                        </div>
-                        <div className="w-full flex flex-col gap-1 text-sm font-medium">
-                            <div className="">Type</div>
-                            <div className="w-full relative z-10 " >
-                                        <OpenerButton simplefilter={
-                                             type ?
-                                                <div className="flex gap-1 items-center">
-                                                    <div className="h-5 w-5">
-                                                        {type.type === "CLAUDE" ? 
-                                                        <img src={"./actiontriggerimages/claude.png"}></img> :
-                                                        type.type === "GEMINI" ? 
-                                                        <img src={"./actiontriggerimages/gemini.png"}></img> :
-                                                        type.type === "CHATGPT" ?
-                                                        <img src={"./actiontriggerimages/chatgpt.png"}></img>:""}
-                                                    </div> 
-                                                    <div>{type.name}</div>
-                                                </div> : "Select a credential"
-
-                                                } open={open} setopen={setopen}></OpenerButton>
-                                        <div className={`absolute w-full top-7 transition duration-150 ${open ? "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
-                                            <OpenOptions simplefilter={type} open={open} setopen={setopen} setsimplefilter={settype}>
-                                                    <Opneframe>
-                                                            {creds.map((z:any,index)=>{
-                                                                return <div 
-                                                                    key={index}
-                                                                    onClick={()=>{
-                                                                        settype(z)
-                                                                        setopen(false)
-                                                                    }}
-                                                                    className="m-1.5 ">
-                                                                    <MainButton>
-                                                                        <div className="flex gap-2 font-normal ">
-                                                                            <div className="h-5 w-5">
-                                                                                {z.type === "CLAUDE" ? 
-                                                                                <img src={"./actiontriggerimages/claude.png"}></img> :
-                                                                                z.type === "GEMINI" ? 
-                                                                                <img src={"./actiontriggerimages/gemini.png"}></img> :
-                                                                                z.type === "CHATGPT" ?
-                                                                                <img src={"./actiontriggerimages/chatgpt.png"}></img>:""}
-                                                                            </div>
-                                                                            <div className="text-xs">{z.name}</div>
-                                                                        </div>
-                                                                    </MainButton>
-                                                                </div>
-                                                            })}
-                                                    </Opneframe>
-                                            </OpenOptions>
-                                        </div>
-                                    </div>
-                                     
-                        </div>
-                        <div>
-                        <BigInput placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="System Prompt (Optional)" state={systemprompt} statesetter={setsystemprompt}></BigInput> 
-                           <div className="mt-1 text-xs">{"Sets the behavior of the assistant. Use {{variables}} for simple values or {{json variable}} to stringify objects"}</div>
-                        </div>
-                        <div>
-                        <BigInput placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="System Prompt (Optional)" state={systemprompt} statesetter={setsystemprompt}></BigInput> 
-                           <div className="mt-1 text-xs">{"The prompt to send to the AI.Use{{variables}} for simple values or {{json variables}} to stringify objects"}</div>
-                        </div>
-                     </div> 
-                </div>
-            </Addform>
+            <AiForm setform={setform} form={form} AiName="Anthropic" AiType={"CLAUDE"}></AiForm>
+            <AiForm setform={setform1} form={form1} AiName="Gemini" AiType={"GEMINI"}></AiForm>
+            <AiForm setform={setform2} form={form2} AiName="OpenAi" AiType={"CHATGPT"}></AiForm>
+            <DiscordForm setform={setdisform} form={disform} ></DiscordForm>
+            <NotionTriggerForm setform={setnotion} form={notion} ></NotionTriggerForm>
+            <GoogleSheetTriggerForm setform={setsheet} form={sheet} ></GoogleSheetTriggerForm>
+            <GoogleFormTriggerForm setform={setgform} form={gform} ></GoogleFormTriggerForm>
     </div>
 }
 
 
+function DiscordForm({setform,form}:{setform:Dispatch<SetStateAction<boolean>>,form:boolean}){
+     const {creds} = UseCred()
+        const [credName,setcredName] = useState("") 
+        const [type,settype] = useState<any>() 
+        const [open,setopen] = useState<any>(false) 
+        const [systemprompt,setsystemprompt] = useState<any>("") 
+        const [userprompt,setuserprompt] = useState<any>("") 
+        return <Addform buttonname="Save" name={`Discord Configuration`} callback={()=>{}} formopen={form} setformopen={setform} >
+                    <div className="">
+                         <div className="my-6 flex flex-col gap-6 w-115 overflow-y-scroll max-h-100 p-2 ">
+                            <div>
+                                <Input placeholder={`my-Discord-variable`} name="Variable Name" state={credName} statesetter={setcredName}></Input>
+                                <div className="mt-1 text-xs">{`Name of the variable to store the response :{{$My-Discord-response.text}}`}</div>
+                            </div>
+                            <div>
+                                <Input placeholder={`http://discort.com/api/webhooks/...`} name="Webhook Url" state={credName} statesetter={setcredName}></Input>
+                                <div className="mt-1 text-xs">{`Get this from Discord Channel Settings - Integrations - New Webhook`}</div>
+                            </div>
+                            
+                            
+                            <div>
+                               <BigInput placeholder="Summary: {{myGemini:text}}" name="Content" state={userprompt} statesetter={setuserprompt}></BigInput> 
+                               <div className=" text-xs">{"The message to send. Use {{variables}} for simple values or {{json variable}} to stringify objects"}</div>
+                            </div>
+                            <div>
+                                <Input placeholder={`automation-bot`} name="Username (Optional)" state={credName} statesetter={setcredName}></Input>
+                                <div className="mt-1 text-xs">{`The username to use for the webhook`}</div>
+                            </div>
+                         </div> 
+                    </div>
+                </Addform>
+    }
+// this notion one is creepy
+function NotionTriggerForm({
+  setform,
+  form,
+}: {
+  setform: Dispatch<SetStateAction<boolean>>;
+  form: boolean;
+}) {
+  const [database, setDatabase] = useState("");
+
+  return (
+    <Addform
+      buttonname="Save"
+      name="Notion Trigger Configuration"
+      callback={() => {}}
+      formopen={form}
+      setformopen={setform}
+    >
+      <div className="my-6 flex flex-col gap-6 w-115 overflow-y-scroll max-h-100 p-2">
+
+        <div className="text-sm">
+          Connect your Notion database to trigger this workflow when a new
+          page is created or updated.
+        </div>
+
+        <div className="text-xs flex flex-col gap-2">
+          <p>Setup instructions:</p>
+
+          <p>1. Open your Notion database</p>
+          <p>2. Click Share → Invite your integration</p>
+          <p>3. Copy the Database ID</p>
+          <p>4. Paste it below</p>
+          <p>5. Save the workflow</p>
+        </div>
+
+
+        <Input
+          placeholder="Notion Database ID"
+          name="Database ID"
+          state={database}
+          statesetter={setDatabase}
+        />
+
+
+        <div className="text-xs">
+          <p className="mb-2">Available Variables</p>
+
+          <p>{"{{notion.page.id}}"} - Page ID</p>
+          <p>{"{{notion.page.title}}"} - Page title</p>
+          <p>{"{{notion.page.properties}}"} - Database properties</p>
+          <p>{"{{json notion.page}}"} - Complete page data as JSON</p>
+        </div>
+
+      </div>
+    </Addform>
+  );
+}
+ function GoogleSheetTriggerForm({
+    setform,
+    form
+}: {
+    setform: Dispatch<SetStateAction<boolean>>;
+    form: boolean;
+}) {
+
+    const [credName, setcredName] = useState("");
+    const [spreadsheetId, setspreadsheetId] = useState("");
+    const [sheetName, setsheetName] = useState("");
+
+    const [event, setevent] = useState<any>();
+    const [open, setopen] = useState(false);
+
+
+    return (
+        <Addform
+            buttonname="Save"
+            name="Google Sheet Trigger Configuration"
+            callback={()=>{}}
+            formopen={form}
+            setformopen={setform}
+        >
+
+            <div className="my-6 flex flex-col gap-4 w-115 overflow-y-scroll h-100 p-2">
+
+
+                <div>
+                    <Input
+                        placeholder="my-google-sheet-variable"
+                        name="Variable Name"
+                        state={credName}
+                        statesetter={setcredName}
+                    />
+
+                    <div className="mt-1 text-xs">
+                        Name of the variable to store the response:
+                        {" {{googleSheet.rows}}"}
+                    </div>
+                </div>
+
+
+
+                <div>
+                    <Input
+                        placeholder="Spreadsheet ID"
+                        name="Spreadsheet ID"
+                        state={spreadsheetId}
+                        statesetter={setspreadsheetId}
+                    />
+
+                    <div className="mt-1 text-xs">
+                        ID of the Google Spreadsheet to watch.
+                    </div>
+                </div>
+
+
+
+                <div>
+                    <Input
+                        placeholder="Sheet1"
+                        name="Sheet Name"
+                        state={sheetName}
+                        statesetter={setsheetName}
+                    />
+
+                    <div className="mt-1 text-xs">
+                        Name of the sheet where new data will be detected.
+                    </div>
+                </div>
+
+
+
+                <div className="w-full flex flex-col gap-1 text-sm font-medium">
+
+                    <div>
+                        Trigger Event
+                    </div>
+
+
+                    <div className="relative z-10">
+
+                        <OpenerButton
+                            simplefilter={
+                                event ? event : "Select Event"
+                            }
+                            open={open}
+                            setopen={setopen}
+                        />
+
+
+                        <div
+                            className={`absolute w-full top-7 transition duration-150 ${
+                                open
+                                ? "opacity-100 translate-y-3"
+                                : "translate-y-0 opacity-0 pointer-events-none"
+                            }`}
+                        >
+
+                            <OpenOptions
+                                simplefilter={event}
+                                open={open}
+                                setopen={setopen}
+                                setsimplefilter={setevent}
+                            >
+
+                                <Opneframe>
+
+                                    {
+                                        [
+                                            "New Row Added",
+                                            "Row Updated"
+                                        ].map((item,index)=>(
+                                            <div
+                                                key={index}
+                                                onClick={()=>{
+                                                    setevent(item);
+                                                    setopen(false);
+                                                }}
+                                                className="m-1.5"
+                                            >
+
+                                                <MainButton>
+
+                                                    <div className="text-xs font-normal">
+                                                        {item}
+                                                    </div>
+
+                                                </MainButton>
+
+                                            </div>
+                                        ))
+                                    }
+
+                                </Opneframe>
+
+                            </OpenOptions>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+
+                <div className="text-xs mt-2">
+
+                    <div className="font-medium mb-2">
+                        Available Variables
+                    </div>
+
+
+                    <div className="flex flex-col gap-1">
+
+                        <div>
+                            {"{{googleSheet.row}}"} - Latest row data
+                        </div>
+
+                        <div>
+                            {"{{googleSheet.row['Column Name']}}"} - Specific column value
+                        </div>
+
+                        <div>
+                            {"{{json googleSheet.row}}"} - Complete row as JSON
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </Addform>
+    )
+}
+ function GoogleFormTriggerForm({
+    setform,
+    form
+}: {
+    setform: Dispatch<SetStateAction<boolean>>;
+    form: boolean;
+}) {
+
+    const [credName, setcredName] = useState("");
+    const [formId, setformId] = useState("");
+
+
+    return (
+        <Addform
+            buttonname="Save"
+            name="Google Form Trigger Configuration"
+            callback={()=>{}}
+            formopen={form}
+            setformopen={setform}
+        >
+
+            <div className="my-6 flex flex-col gap-4 w-115 overflow-y-scroll h-100 p-2">
+
+
+                <div>
+
+                    <Input
+                        placeholder="my-google-form-variable"
+                        name="Variable Name"
+                        state={credName}
+                        statesetter={setcredName}
+                    />
+
+                    <div className="mt-1 text-xs">
+                        Name of the variable to store the response:
+                        {" {{googleForm.responses}}"}
+                    </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <Input
+                        placeholder="Google Form ID"
+                        name="Form ID"
+                        state={formId}
+                        statesetter={setformId}
+                    />
+
+                    <div className="mt-1 text-xs">
+                        ID of the Google Form that will trigger this workflow.
+                    </div>
+
+                </div>
+
+
+
+                <div className="text-sm font-medium">
+
+                    Trigger Event
+
+                    <div className="mt-2 p-3 border rounded text-xs">
+
+                        When a response is submitted
+
+                    </div>
+
+
+                    <div className="mt-1 text-xs font-normal">
+                        This workflow will start whenever someone submits the form.
+                    </div>
+
+                </div>
+
+
+
+
+                <div className="text-xs mt-2">
+
+                    <div className="font-medium mb-2">
+                        Available Variables
+                    </div>
+
+
+                    <div className="flex flex-col gap-1">
+
+                        <div>
+                            {"{{googleForm.respondentEmail}}"} - Respondent's email
+                        </div>
+
+
+                        <div>
+                            {"{{googleForm.responses['Question Name']}}"} - 
+                            Response to a specific question
+                        </div>
+
+
+                        <div>
+                            {"{{json googleForm.responses}}"} -
+                            All responses as JSON
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </Addform>
+    )
+}
 export const UseCred =()=>{
     const [creds, setcreds] = useState([]);
 
