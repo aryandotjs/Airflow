@@ -50,7 +50,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                         position : { x : 280 , y: 280},
                         type : "trigger",
                         data : {
-                           name : "Google-Sheet" ,
+                           name : "Google-sheet" ,
                            metadata : "",
                            onDelete : (id :string)=>{}
                         }
@@ -95,7 +95,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                </div>
 
 
-               <div 
+               {/* <div 
                   onClick={()=>{
                      setNodes((prev)=>{
                         return [...prev,{
@@ -118,7 +118,35 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                      <div  className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'> Webhook </div>
                      <div className='text-xs text-[#949494]'> Runs the workflow instantly when data is sent to a unique URL </div>
                   </div>
+               </div> */}
+
+               <div className='py-4'>
+               <div 
+                  onClick={()=>{
+                  setNodes((prev)=>{
+                     return [...prev,{
+                        id : (getNodes().length).toString() ,
+                        position : { x : 280 , y: 280},
+                        type : "trigger",
+                        data : {
+                           name : "google-forms" ,
+                           metadata : "",
+                           onDelete : (id :string)=>{}
+                        }
+                     }]
+                  })
+               }} 
+               className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99 hover:bg-black/3'>
+                  <div className='flex w-15 justify-center'>
+                     <img className='h-5 ' src="./actiontriggerimages/google-forms.png"></img>
+                  </div>
+
+                  <div> 
+                     <div className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'> Google Form </div>
+                     <div className='text-xs text-[#949494]'> Runs the workflow when Google form is submitted</div>
+                  </div>
                </div>
+
             </div>
             
             <div className='border-b text-[#E9E9E9] dark:text-white/10'></div>
@@ -224,6 +252,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                
             </div>
             
+    </div>
     </div>
     </div>
   )
