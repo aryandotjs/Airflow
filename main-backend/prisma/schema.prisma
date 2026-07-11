@@ -13,112 +13,129 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
+  id String @id @default(cuid())
 
-  zaps         Zap[]
-  caredentials Credential[]
+  name  String
+  email String @unique
+
+  passwordHash String?
+
+  emailVerified Boolean @default(false)
+  image         String?
+
+  workflows   Workflow[]
+  credentials Credential[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Credential {
-  id        String          @id @default(uuid())
-  name      String
-  value     String
-  type      CredentialsType
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
+  id String @id @default(cuid())
 
-  user   User? @relation(fields: [userId], references: [id])
-  userId Int?
+  name String
+  type String
+
+  value Json
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  nodes Node[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-enum CredentialsType {
-  CLAUDE
-  GEMINI
-  CHATGPT
+model Workflow {
+  id String @id @default(cuid())
+
+  name String @default("unnamed-workflow")
+
+  runs Int @default(0)
+
+  status WorkflowStatus @default(DRAFT)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  nodes       Node[]
+  connections Connection[]
+  executions  Execution[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-enum ZapStatus {
+model Node {
+  id String @id @default(cuid())
+
+  workflowId String
+  workflow   Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  name String
+
+  type String
+
+  position Json
+
+  data Json @default("{}")
+
+  credentialId String?
+  credential   Credential? @relation(fields: [credentialId], references: [id], onDelete: SetNull)
+
+  outputConnections Connection[] @relation("FromNode")
+  inputConnections  Connection[] @relation("ToNode")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Connection {
+  id String @id @default(cuid())
+
+  workflowId String
+  workflow   Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  fromNodeId String
+  fromNode   Node   @relation("FromNode", fields: [fromNodeId], references: [id], onDelete: Cascade)
+
+  toNodeId String
+  toNode   Node   @relation("ToNode", fields: [toNodeId], references: [id], onDelete: Cascade)
+
+  fromOutput String @default("main")
+  toInput    String @default("main")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([fromNodeId, toNodeId, fromOutput, toInput])
+}
+
+model Execution {
+  id String @id @default(cuid())
+
+  workflowId String
+  workflow   Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  status ExecutionStatus @default(RUNNING)
+
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  input  Json?
+  output Json?
+  error  String? @db.Text
+}
+
+enum WorkflowStatus {
   ACTIVE
   PAUSED
   DRAFT
 }
 
-// dont for get to remove this defoult now in update at 
-// dont for get to add a last used table 
-model Zap {
-  id        String    @id @default(uuid())
-  name      String    @default("unnamed-workflow")
-  runs      Int       @default(0)
-  status    ZapStatus @default(DRAFT)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now()) @updatedAt
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id])
-  trigger   Trigger?
-  actions   Action[]
-  zapRuns   Zaprun[]
-}
-
-model Trigger {
-  id        String           @id @default(uuid())
-  triggerId String
-  zapId     String           @unique
-  metadata  Json             @default("{}")
-  type      AvailableTrigger @relation(fields: [triggerId], references: [id])
-  Zap       Zap              @relation(fields: [zapId], references: [id], onDelete: Cascade)
-}
-
-model AvailableTrigger {
-  id    String @id @default(uuid())
-  name  String @unique
-  image String
-
-  triggers Trigger[]
-}
-
-model Action {
-  id           String          @id @default(uuid())
-  metadata     Json            @default("{}")
-  sortingOrder Int             @default(0)
-  zapId        String
-  Zap          Zap             @relation(fields: [zapId], references: [id], onDelete: Cascade)
-  ActionId     String
-  type         AvailableAction @relation(fields: [ActionId], references: [id])
-}
-
-model AvailableAction {
-  id    String @id @default(uuid())
-  name  String @unique
-  image String
-
-  actions Action[]
-}
-
 enum ExecutionStatus {
-  PENDING
   RUNNING
   SUCCESS
   FAILED
-}
-
-model Zaprun {
-  id            String          @id @default(uuid())
-  name          String          @default("undefined-execution-name")
-  startDate     DateTime        @default(now())
-  completedDate DateTime        @default(now())
-  duration      Int             @default(0)
-  status        ExecutionStatus @default(SUCCESS)
-  metadata      Json
-  zapId         String
-  type          Zap             @relation(fields: [zapId], references: [id], onDelete: Cascade)
-  zapRunOutBox  zapRunOutBox?
-}
-
-model zapRunOutBox {
-  id       String @id @default(uuid())
-  zaprunId String @unique
-  type     Zaprun @relation(fields: [zaprunId], references: [id])
 }
