@@ -8,26 +8,26 @@ export const CredentialRouter = Router()
 // add the middleware 
 CredentialRouter.post("/create", async (req, res) => {
     // const id = (req as any).userId
-    const id = 3
+    const id = "test-user"
     const { name, apikey, type } = req.body
 
     try {
         const cred = await prisma.credential.create({
             data: {
                 name: name,
-                value: apikey,
                 type: type,
+                value: {
+                    apikey
+                },
                 userId: id
             }
         })
 
-
         return res.status(200).json({
-            msg: "creadential created",
+            msg: "credential created",
             credid: cred.id
         })
     } catch (err: any) {
-        console.log(err)
         res.status(400).json({
             msg: "creadential creation failed"
         })
@@ -37,7 +37,7 @@ CredentialRouter.post("/create", async (req, res) => {
 
 CredentialRouter.post("/update", async (req, res) => {
     // const id = (req as any).userId
-    const userid = 3
+    const userid = "test-user"
     const { credid, name, apikey, type } = req.body
 
     try {
@@ -49,7 +49,9 @@ CredentialRouter.post("/update", async (req, res) => {
             },
             data: {
                 name: name,
-                value: apikey,
+                value: {
+                    apikey
+                },
                 type: type,
             }
         })
@@ -68,7 +70,7 @@ CredentialRouter.post("/update", async (req, res) => {
 
 CredentialRouter.get("/all", async (req, res) => {
     // const id = (req as any).userId
-    const id = 3
+    const id = "test-user"
     // const { name, apikey, type } = req.body
 
     try {
@@ -91,7 +93,7 @@ CredentialRouter.get("/all", async (req, res) => {
 
 CredentialRouter.delete("/delete", async (req, res) => {
     // const id = (req as any).userId
-    const id = 3
+    const id = "test-user"
     const { apiId } = req.body
 
     try {
@@ -110,4 +112,5 @@ CredentialRouter.delete("/delete", async (req, res) => {
     }
 
 })
+
 

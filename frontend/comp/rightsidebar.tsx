@@ -52,7 +52,8 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                         data : {
                            name : "Google-sheet" ,
                            metadata : "",
-                           onDelete : (id :string)=>{}
+                           onDelete : (id :string)=>{
+                           }
                         }
                      }]
                   })

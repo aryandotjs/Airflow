@@ -61,44 +61,45 @@ interface Zap {
 
 
 
-function useZaps(refresh:boolean) {
+function useWorkflow(refresh:boolean) {
     const [loading, setLoading] = useState(true);
-    const [zaps, setZaps] = useState<Zap[]>([]);
+    const [workflows, setworkflows] = useState<Zap[]>([]);
 
     useEffect(() => {
-        axios.get(`${BACKEND_URL}/api/v1/zap`, {
-            headers: {
-                "authorization": `Bearer ${localStorage.getItem("token")}`
-            }
+        axios.get(`${BACKEND_URL}/api/v1/workflow/all`, {
+            // headers: {
+            //     "authorization": `Bearer ${localStorage.getItem("token")}`
+            // }
         })
             .then(res => {
-                setZaps(res.data.zaps.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
+                // setZaps(res.data.workflow.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
+                setworkflows(res.data.workflows);
                 setLoading(false)
             })
     }, [refresh]);
      
     
     return {
-        loading, zaps
+        loading, workflows
     }
 }
 
 export function Workflows({setcard ,settoasts,card}:{card:string,settoasts:Dispatch<SetStateAction<any>>,setcard:Dispatch<SetStateAction<string>>}){
     const [refreshTrigger, setRefreshTrigger] = useState(false);
 
-    const { loading, zaps } = useZaps(refreshTrigger);
+    const { loading, workflows } = useWorkflow(refreshTrigger);
     const [filter1,setfilter1] = useState("ALL")
     const [search,setsearch] = useState("")
-     
+     console.log("here",workflows)
     const filteredzap = useMemo(()=>{
-        return zaps.filter((zap)=>{
-           const MatchStatus =  filter1 == "ALL" || zap.status === filter1
+        return workflows.filter((workflow)=>{
+           const MatchStatus =  filter1 == "ALL" || workflow.status === filter1
            
-           const MatchSearch =  zap.name.toLowerCase().includes(search.toLowerCase()) 
+           const MatchSearch =  workflow.name.toLowerCase().includes(search.toLowerCase()) 
 
            return MatchStatus && MatchSearch 
         }) 
-    },[filter1,zaps,search])
+    },[filter1,workflows,search])
 
     const router = useRouter();
     return <div className="flex flex-col gap-4 px-24">

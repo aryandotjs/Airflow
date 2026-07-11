@@ -150,6 +150,7 @@ function CredHistory({filteredCreds,settoasts,setRefreshTrigger} : {setRefreshTr
 
         return <div className="px-2 pr-4 ">
             {filteredCreds.map((z:any,index:any)=>{
+                console.log(z)
                 return <div key={index} className="relative flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold ">
                         <div className="flex w-full h-8 my-3 gap-2 ">
                             <div className="  flex items-center  gap-3 w-[30%] overflow-hidden">
@@ -168,7 +169,7 @@ function CredHistory({filteredCreds,settoasts,setRefreshTrigger} : {setRefreshTr
                         
                             <div className="w-[15%] flex justify-start pl-3  items-center overflow-hidden">
                                 <div className="bg-[#E9E9E9]  dark:bg-[#151619] py-0.5 px-2 rounded-lg">
-                                <div className="">{z.value.slice(0,10)}.....</div>
+                                <div className="">{z.value.apikey.slice(0,10)}.....</div>
                                 </div>
                             </div>
 
@@ -205,7 +206,7 @@ function CredHistory({filteredCreds,settoasts,setRefreshTrigger} : {setRefreshTr
                                             <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                 <div onClick={()=> {
                                                     setUpdateName(z.name)
-                                                    setUpdateApikeys(z.value)
+                                                    setUpdateApikeys(z.value.apikey)
                                                     setUpdatetype(z.type)
                                                     setupdateform(true)
                                                     setoption({open:false , id : null})
