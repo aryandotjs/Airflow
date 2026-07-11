@@ -1,9 +1,0 @@
--- CreateEnum
-CREATE TYPE "ExecutionStatus" AS ENUM ('PENDING', 'RUNNING', 'SUCCESS', 'FAILED');
-
--- AlterTable
-ALTER TABLE "Zaprun" ADD COLUMN     "completedDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "duration" INTEGER NOT NULL DEFAULT 0,
-ADD COLUMN     "name" TEXT NOT NULL DEFAULT 'undefined-execution-name',
-ADD COLUMN     "startDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "sucess" "ExecutionStatus" NOT NULL DEFAULT 'SUCCESS';
