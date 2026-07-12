@@ -5,37 +5,52 @@ import { ZapCreateSchema } from "../types";
 // import { ZapStatus } from "../generated/prisma/enums";
 
 export const WorkflowRouter = Router()
+const name1 = [
+    "NebulaVortex",
+    "QuantumShadow",
+    "ApexTitan",
+    "CyberPulse",
+    "EchoChroma",
+    "SolarFlint",
+    "AetherShift",
+    "NovaScribe",
+    "VectorGrip",
+    "BeaconGrid"
+]
 
-// zapRouter.post("/", authmiddleware, async (req, res) => {
-//     const Id = (req as any).userId
-//     const body = req.body;
-//     const parsedbody = ZapCreateSchema.safeParse(body)
-//     if (!parsedbody.success) {
-//         return res.status(401).json({ message: "invalid data" })
+const name2 = [
+    "ZephyrForge",
+    "VortexDrive",
+    "TitanSpire",
+    "ShadowFlux",
+    "PulseMatrix",
+    "OracleCore",
+    "LunaCrypt",
+    "HelixFrost",
+    "GlitchBound",
+    "AlphaPrism"
+]
 
-//     }
-//     const zap = await prisma.zap.create({
-//         data: {
-//             userId: parseInt(Id),
-//             trigger: {
-//                 create: {
-//                     triggerId: parsedbody.data.availableTriggerId,
-//                     metadata: parsedbody.data.triggerMetadata
-//                 }
-//             },
-//             actions: {
-//                 create: parsedbody.data?.actions.map((a, b) => ({
-//                     ActionId: a.availableActionId,
-//                     sortingOrder: b,
-//                     metadata: a.actionMetadata
-//                 }))
-//             }
-//         }
-//     })
-//     res.json({
-//         zapId: zap.id
-//     })
-// })
+WorkflowRouter.post("/", async (req, res) => {
+    // const Id = (req as any).userId
+    // const body = req.body;
+    // const parsedbody = ZapCreateSchema.safeParse(body)
+    // if (!parsedbody.success) {
+    //     return res.status(401).json({ message: "invalid data" })
+
+    // }
+    const id = "test-user"
+    const name = name1[Math.floor(Math.random() * 10)] + "-" + name1[Math.floor(Math.random() * 10)]
+    const workflow = await prisma.workflow.create({
+        data: {
+            name: name,
+            userId: id
+        }
+    })
+    res.json({
+        workflow
+    })
+})
 
 // zapRouter.get("/", authmiddleware, async (req, res) => {
 //     // const userId = (req as any).userId;
@@ -195,7 +210,7 @@ export const WorkflowRouter = Router()
 
 WorkflowRouter.delete("/delete", async (req, res) => {
     // const userId = (req as any).userId;
-    const userid = 3
+    const userid = "test-user"
     const { name, workflowid } = req.body
     try {
         const response = await prisma.workflow.delete({
