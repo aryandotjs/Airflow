@@ -10,51 +10,18 @@ import { Workflows } from "@/comp/workflows";
 import { CreateZap } from "@/comp/Zapcreate";
 import { useEffect, useState } from "react";
 
-// interface Zap {
-//     "id": string,
-//     "triggerId": string,
-//     "userId": number,
-//     "actions": {
-//         "id": string,
-//         "zapId": string,
-//         "actionId": string,
-//         "sortingOrder": number,
-//         "type": {
-//             "id": string,
-//             "name": string
-//             "image": string
-//         }
-//     }[],
-//     "trigger": {
-//         "id": string,
-//         "zapId": string,
-//         "triggerId": string,
-//         "type": {
-//             "id": string,
-//             "name": string,
-//             "image": string
-//         }
-//     }
-// }
-type Toasts = {
-        id : number ,
-        isError: boolean,
-        isbig: boolean,
-        message: string,
-        submessage: string,
-        show: boolean
-}[] 
+
+
+
 export default function() {
-    const [card,setcard]= useState("Credentials")
-    const [toasts,settoasts] = useState<Toasts>([])
+    
     
     return <div className="flex h-screen ">
-          <Sidebar setcard={setcard} card={card}></Sidebar>
-          <div className="flex-1 ">
+        
+          {/* <div className="flex-1 ">
             <div className="border-b border-b-brand-border dark:border-b-dark-border  h-15 flex items-center flex-row-reverse px-7 gap-6 select-none">
                 <div className="flex h-8 ">
-                    <ThemeProvider></ThemeProvider>
-                </div>
+                </div>how the 
             </div>
             <div className="relative">
                 <div className=" h-158  overflow-y-auto  [&::-webkit-scrollbar]:hidden ">
@@ -70,7 +37,7 @@ export default function() {
                 <Toast key={toast.id} settoast={settoasts} toast={toast}></Toast>
             ))}
           
-        </div>
+        </div> */}
 
     </div>
 }
