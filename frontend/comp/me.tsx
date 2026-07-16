@@ -16,8 +16,8 @@ export function Me(){
 
 export function Me2(){
      const [open , setopen] =  useState(false)
-     return <div onClick={()=> setopen(!open)} className="h-15 flex items-center w-full select-none ">
-          <div className="border-2 dark:border-[#151619] w-full rounded-2xl border-[#C6C6C6] flex pr-3 dark:hover:bg-[#151619] hover:bg-[#E9E9E9] ">
+     return <div onClick={()=> setopen(!open)} className="relative h-15 flex items-center w-full select-none ">
+          <div className=" border-2 dark:border-[#151619] w-full rounded-2xl border-[#C6C6C6] flex pr-3 dark:hover:bg-[#151619] hover:bg-[#E9E9E9] ">
             <MainButton  name={"aryanloahrchawand"} size="small"> 
                <div className="h-6 w-6 rounded-full bg-linear-to-r from-[#E9E9E9] to-[#C6C6C6] dark:bg-linear-to-r dark:from-[#151619] dark:to-[#2C3034]">{"A"}</div>
             </MainButton>
@@ -25,7 +25,7 @@ export function Me2(){
              <Openup size="20"></Openup>
             </div>
           </div>
-          {open? <OpenComp></OpenComp> : ""}
+          {open? <div className="absolute top-[-34] w-full"> <OpenComp></OpenComp> </div> : ""}
           
         </div>
 }

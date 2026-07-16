@@ -50,15 +50,3 @@ NodeRouter.post("/create", async (req, res) => {
     }
 
 })
-
-NodeRouter.get("/all", async (req, res) => {
-    const workflows = await prisma.workflow.findMany({
-        where: {
-            userId: "test-user"
-        },
-        orderBy: {
-            updatedAt: "desc"
-        }
-    });
-    res.json(workflows);
-})
