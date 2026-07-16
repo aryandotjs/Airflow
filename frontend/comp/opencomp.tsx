@@ -1,11 +1,10 @@
 import { MainButton } from "./buttons/mainbutton";
 import { Opneframe } from "./openframe";
 import { Locksvg, Logout } from "./svg/allsvg";
-import { ThemeProvider } from "./theme-provider";
 
 
 export function OpenComp(){
-    return <div className="fixed bottom-24 w-full max-w-53.5">
+    return <div className=" w-full max-w-53.5">
 
      <Opneframe>
          <div  className="border-b border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">

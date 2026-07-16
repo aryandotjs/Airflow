@@ -1,3 +1,4 @@
+"use client"
 import { useEffect, useState } from "react";
 import { Secondarybutton } from "./buttons/secondarybutton";
 import { Day, Night } from "./svg/allsvg";
