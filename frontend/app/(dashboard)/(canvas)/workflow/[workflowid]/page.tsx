@@ -6,7 +6,7 @@ export default async function({params}:{params:Promise<{ workflowid: string }>})
      const { workflowid} = await params 
     return <div className="flex h-screen ">
          {workflowid}
-         <Workflows card={card} setcard={setcard} settoasts={settoasts}></Workflows> 
+         {/* {card <Workflows card={card} setcard={setcard} settoasts={settoasts}></Workflows> : ""} */}
     </div>
 }
 
