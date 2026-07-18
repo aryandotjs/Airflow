@@ -60,7 +60,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                }} 
                className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99 hover:bg-black/3'>
                   <div className='flex w-15 justify-center'>
-                     <img className='h-5 ' src="./actiontriggerimages/google-sheet.png"></img>
+                     <img className='h-5 ' src="/actiontriggerimages/google-sheet.png"></img>
                   </div>
 
                   <div> 
@@ -86,8 +86,8 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                }} 
               className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99 hover:bg-black/3'>
                   <div className='flex w-15 justify-center'>
-                     <img className='h-5  hidden dark:block' src="./actiontriggerimages/darknotion.png"></img>
-                     <img className='h-5  dark:hidden' src="./actiontriggerimages/notion.png"></img>
+                     <img className='h-5  hidden dark:block' src="/actiontriggerimages/darknotion.png"></img>
+                     <img className='h-5  dark:hidden' src="/actiontriggerimages/notion.png"></img>
                   </div>
                   <div> 
                      <div className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'>Notion  </div>
@@ -112,8 +112,8 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                      })
                   }}   className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99 hover:bg-black/3'>
                   <div className='flex w-15 justify-center'>
-                     <img className='h-6  hidden dark:block' src="./actiontriggerimages/darkwebhook.png"></img>
-                     <img className='h-6  dark:hidden' src="./actiontriggerimages/webhook.png"></img>
+                     <img className='h-6  hidden dark:block' src="/actiontriggerimages/darkwebhook.png"></img>
+                     <img className='h-6  dark:hidden' src="/actiontriggerimages/webhook.png"></img>
                   </div>
                   <div> 
                      <div  className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'> Webhook </div>
@@ -139,7 +139,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                }} 
                className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99 hover:bg-black/3'>
                   <div className='flex w-15 justify-center'>
-                     <img className='h-5 ' src="./actiontriggerimages/google-forms.png"></img>
+                     <img className='h-5 ' src="/actiontriggerimages/google-forms.png"></img>
                   </div>
 
                   <div> 
@@ -171,7 +171,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                   })
                }} className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99  hover:bg-black/3'>
                   <div className='flex w-15 justify-center'>
-                     <img className='h-6' src="./actiontriggerimages/discord.png"></img>
+                     <img className='h-6' src="/actiontriggerimages/discord.png"></img>
                   </div>
                   <div> 
                      <div  className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'> Discord </div>
@@ -195,7 +195,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                   })
                }} className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99  hover:bg-black/3'>
                    <div className='flex w-15 justify-center'>
-                     <img className='h-6' src="./actiontriggerimages/gemini.png"></img>
+                     <img className='h-6' src="/actiontriggerimages/gemini.png"></img>
                   </div>
                   <div> 
                      <div  className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'> Gemini </div>
@@ -219,7 +219,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                   })
                }}   className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99  hover:bg-black/3'>
                   <div className='flex w-15 justify-center'>
-                     <img className='h-6' src="./actiontriggerimages/chatgpt.png"></img>
+                     <img className='h-6' src="/actiontriggerimages/chatgpt.png"></img>
                   </div>
                   <div> 
                      <div  className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'>  Chatgpt </div>
@@ -243,7 +243,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                   })
                }}  className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99  hover:bg-black/3'>
                   <div className='flex w-15 justify-center'>
-                     <img className='h-6' src="./actiontriggerimages/claude.png"></img>
+                     <img className='h-6' src="/actiontriggerimages/claude.png"></img>
                   </div>
                   <div> 
                      <div  className='text-sm font-semibold dark:font-normal dark:text-[#F0F0F0]'>  Claude</div>

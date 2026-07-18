@@ -253,3 +253,55 @@ WorkflowRouter.get("/all", async (req, res) => {
 })
 
 
+
+
+WorkflowRouter.get("/:workflowid", authmiddleware, async (req, res) => {
+    // const userId = (req as any).userId;
+    const { workflowid } = req.params
+    const workflow = await prisma.workflow.findFirst({
+        where: {
+            id: workflowid
+        },
+        include: {
+            nodes: true
+        }
+    })
+    return res.json(workflow?.nodes)
+})
+
+
+WorkflowRouter.put("/:workflowid", async (req, res) => {
+    // const userId = (req as any).userId;
+    const { workflowid } = req.params
+    const { nodes } = req.body
+    try {
+
+        await prisma.$transaction(async (tsx) => {
+            await tsx.node.deleteMany({
+                where: {
+                    workflowId: workflowid
+                }
+            })
+            await tsx.node.createMany({
+                data: nodes.map((node: any) => ({
+                    name: node.data.name,
+                    position: node.position,
+                    type: node.type,
+                    workflowId: workflowid,
+                    data: node.data.metadata
+                }))
+            })
+        })
+
+        res.json({
+            success: true,
+        });
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            success: false,
+            message: "Failed to save workflow",
+        });
+    }
+})

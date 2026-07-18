@@ -1,26 +1,20 @@
+"use client"
 import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useRef, useState } from "react"
 import { Secondarybutton } from "./buttons/secondarybutton"
 import { Add, Bin, Check, DownArrow, Edit, Locksvg, Openup, Search, UpArrow } from "./svg/allsvg"
 import { MainButton, MainRedButton } from "./buttons/mainbutton"
 import { Opneframe } from "./openframe"
-import { OpenerButton } from "./buttons/openerButton"
-import { OpenOptions } from "./openoptions"
 import { Addform } from "./addform"
 import { Input } from "./buttons/input"
 import { OpenerBoxWithOptions } from "./OpenerBoxWithOptions"
 import axios from "axios"
-import { Toast } from "./toast"
 import { DateConverter } from "./RunTimeBadge"
-import { StatusButton } from "./buttons/statusbutton"
 import { SvgforActionsTriggers } from "./SvgforActionsTriggers"
-import { OpenComp } from "./opencomp"
-import { error } from "console"
-import toastsetterremover from "./toastfunction"
 import Spin from "./buttons/spinningwheel"
 
-const BACKEND_URL = "http://localhost:3001";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export function Credentials({settoasts,card}:{card:string,settoasts:Dispatch<SetStateAction<any>>}){
+export function Credentials(){
      const [refreshTrigger, setRefreshTrigger] = useState(false);
      const [allcreds ,setallcreds] = useState()
      
@@ -48,8 +42,7 @@ export function Credentials({settoasts,card}:{card:string,settoasts:Dispatch<Set
            })
      },[allcreds,search,filter1])
        
-        return <div className={`flex flex-col gap-4 px-24 `}>
-            
+        return <div className={`flex flex-col gap-4 px-24 h-screen`}>
             <div className="flex justify-between mt-6 items-center ">
                 <div className=" text-[28px] tracking-tight  font-semibold  dark:text-brand-bg text-brand-dark-bg">Credentials</div>
                 <div onClick={()=>{setformopen(!formopen)}} className=" flex transition-all duration-150 active:scale-95   font-semibold rounded-xl justify-center text-sm  px-2.5 h-7.5 gap-1.5 cursor-default items-center bg-brand-dark-bg text-brand-bg dark:bg-brand-bg  dark:text-brand-dark-bg">
@@ -88,7 +81,7 @@ export function Credentials({settoasts,card}:{card:string,settoasts:Dispatch<Set
                         <div className="bg-brand-bg dark:bg-brand-dark-bg  w-full flex justify-center mt-40 ">
                             <Spin></Spin>
                         </div> :
-                        <CredHistory setRefreshTrigger={setRefreshTrigger}  settoasts={settoasts} filteredCreds={filteredCreds}></CredHistory> 
+                        <CredHistory setRefreshTrigger={setRefreshTrigger} filteredCreds={filteredCreds}></CredHistory> 
                     }
             </div>
             
@@ -101,10 +94,10 @@ export function Credentials({settoasts,card}:{card:string,settoasts:Dispatch<Set
                           })
                             setformopen(false)
                             setRefreshTrigger((prev)=>!prev)
-                            toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                            // toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
                         }catch(err:any){
                             setformopen(false)
-                            toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                            // toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
                         }
 
                  }}  name={"Add credentials"} formopen={formopen} buttonname="Add" setformopen={setformopen}>
@@ -122,7 +115,7 @@ export function Credentials({settoasts,card}:{card:string,settoasts:Dispatch<Set
      
 
 
-function CredHistory({filteredCreds,settoasts,setRefreshTrigger} : {setRefreshTrigger:Dispatch<SetStateAction<boolean>>,filteredCreds : any,settoasts:Dispatch<SetStateAction<any>>}){
+function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Dispatch<SetStateAction<boolean>>,filteredCreds : any}){
 
         const [option,setoption] = useState({open : false , id : null})
         const [updateform,setupdateform] = useState(false)
@@ -227,10 +220,10 @@ function CredHistory({filteredCreds,settoasts,setRefreshTrigger} : {setRefreshTr
                                                             })
                                                         setoption({open:false , id : null})
                                                         setRefreshTrigger((prev)=>!prev)
-                                                        toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                                                        // toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
                                                     }catch(err:any){
                                                         setoption({open:false , id : null})
-                                                        toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                                                        // toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
                                                     }
                                                 }} className="m-1 ">
                                                     <MainRedButton name="Delete credential">
@@ -260,10 +253,10 @@ function CredHistory({filteredCreds,settoasts,setRefreshTrigger} : {setRefreshTr
                             })
                             setupdateform(false)
                             setRefreshTrigger((prev)=>!prev)
-                            toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                            // toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
                         }catch(err:any){
                             setupdateform(false)
-                            toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                            // toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
                         }
                             
                     }} name={"Add credentials"} buttonname={"Update"} formopen={updateform} setformopen={setupdateform}>
@@ -280,10 +273,6 @@ function CredHistory({filteredCreds,settoasts,setRefreshTrigger} : {setRefreshTr
                     </Addform> 
         </div>
 }
-
-
-
-
 
 export function Svgframe({children,status , big = false}: {children:ReactNode,status:string, big? : boolean}){
     return <div className={`h-8 w-8 flex items-center justify-center  border border-[#D6D6D6] dark:border-[#D2D6D5] ${big?  "h-20 w-20 rounded-3xl  border-3 dark:border-2" : "rounded-lg"} `}>

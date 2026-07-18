@@ -7,13 +7,8 @@ export default function DashboardLayout({children}:{children : React.ReactNode})
          <div className="">
             <Sidebar></Sidebar>
          </div>
-         <div className="w-full">
-            <div >
-               <Navbar></Navbar>
-            </div>
-            <div>
-               {children}
-            </div>
+         <div className="w-full ">
+           {children}
          </div>
       </div>
 }

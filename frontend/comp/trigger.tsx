@@ -18,13 +18,13 @@ export default function Trigger({id,data:{name,metadata}}: TriggerNodeProp) {
   return (
     <div  className=''>
        <div className='p-3 border rounded-l-2xl rounded-r-sm  border-[#DCDFE2] dark:border-[#2C3034] bg-brand-bg hover:bg-[#E9E9E9] hover:dark:bg-[#212327] transition-colors dark:bg-[#151619]'>
-           <img  src={`./actiontriggerimages/${name}.png`} className='h-8 dark:hidden'></img>
-           <img  src={`./actiontriggerimages/dark${name}.png`} className='h-8 hidden dark:block'></img>
+           <img  src={`/actiontriggerimages/${name}.png`} className='h-8 dark:hidden'></img>
+           <img  src={`/actiontriggerimages/dark${name}.png`} className='h-8 hidden dark:block'></img>
        </div>
        <Handle type="source" position={Position.Right}></Handle>
        <div className='absolute text-xs font-semibold '>
           <div className='m-1 ml-2'>
-           {name}{id}
+           {name}
           </div>
         </div>
        <div className='absolute top-[-25] left-2'>
@@ -56,13 +56,13 @@ export  function Action({id,data:{name,metadata}}: TriggerNodeProp) {
             
           </div>   
        <div className='p-3 border rounded-sm  border-[#DCDFE2] dark:border-[#2C3034] hover:dark:bg-[#212327] bg-brand-bg hover:bg-[#E9E9E9] transition-colors dark:bg-[#151619]'>
-           <img src={`./actiontriggerimages/${name}.png`} className='h-8'></img>
+           <img src={`/actiontriggerimages/${name}.png`} className='h-8'></img>
        </div>
        <Handle type="source" position={Position.Right}></Handle>
        <Handle type="source" position={Position.Left}></Handle>
        <div className='absolute text-xs font-semibold '>
           <div className='m-1 ml-2'>
-           {name}{id}
+           {name}
           </div>
         </div>
        <div className='absolute top-[-25] left-2'>
