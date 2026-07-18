@@ -1,5 +1,4 @@
 "use client"
-import { Appbar } from "@/comp/Appbar";
 import axios from "axios"
 import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } from "react"
 import { Add, Adjust, Copy, Cross, Prev, Search } from "./svg/allsvg";
@@ -55,7 +54,7 @@ import "react18-json-view/src/dark.css";
 import { CodeShow } from "./CodeShow";
 import Spin from "./buttons/spinningwheel";
 
-export  function Executions({card}:{card:string}){
+export  function Executions(){
     const [refreshTrigger, setRefreshTrigger] = useState(false);
     const [zapruns,setzapruns] = useState()
     const [filter1,setfilter1] = useState("ALL")
@@ -82,7 +81,7 @@ export  function Executions({card}:{card:string}){
                }) 
          },[zapruns,search,filter1,filter2])
 console.log(filteredZapruns[0]?filteredZapruns[0].startDate : "","hii")
-    return  <div className="flex flex-col gap-4 px-24 ">
+    return  <div className="flex flex-col gap-4 px-24  h-screen ">
                 <div className="flex justify-between mt-6 items-center ">
                     <div className=" text-[28px] tracking-tight  font-semibold    dark:text-brand-bg text-brand-dark-bg">Executions</div>
                 </div>
@@ -118,8 +117,9 @@ console.log(filteredZapruns[0]?filteredZapruns[0].startDate : "","hii")
                         </div>
                     </Secondarybutton>
                     
-                    {filteredZapruns ? 
-                          <History filteredZapruns={filteredZapruns}></History>:
+                    {zapruns ? 
+                          <History filteredZapruns={filteredZapruns}></History>
+                          :
                           <div className="bg-brand-bg dark:bg-brand-dark-bg h-screen w-full flex justify-center mt-40">
                                 <Spin></Spin>
                           </div>

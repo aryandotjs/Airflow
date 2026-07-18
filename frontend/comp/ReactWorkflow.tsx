@@ -1,9 +1,10 @@
+"use client"
 import { ReactFlow , Node, Background, Controls, Edge, useNodesState, useEdgesState, Connection, addEdge, ReactFlowProvider } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import RightsideBar from "./rightsidebar";
 import Trigger, { Action } from "./trigger";
-import { Add } from "./svg/allsvg";
+import { Add, Save } from "./svg/allsvg";
 import axios from "axios";
 import AiForm from "./AiForm";
 import { Addform } from "./addform";
@@ -13,19 +14,22 @@ import { OpenerButton } from "./buttons/openerButton";
 import { OpenOptions } from "./openoptions";
 import { Opneframe } from "./openframe";
 import { MainButton } from "./buttons/mainbutton";
+import { Secondarybutton } from "./buttons/secondarybutton";
+import { ThemeProvider } from "./theme-provider";
+import { useRouter } from "next/navigation";
 
-// export let InitialNodes : Node<{name :string , metadata :string , onDelete : ()=>void}>[] = [{
+// export let InitialNodes : Node<{name :string , metadata :string , onDelete : (id:any)=>void}>[] = [{
 //     id : '1',
 //     position : { x : 340 , y: 340},
 //     type : "trigger",
 //     data : {
 //        name : "Aryan" ,
 //        metadata : "",
-//        onDelete : (id :string)=>{}
+//        onDelete : (id)=>{}
 //     }
 // }]
 
-export let InitialNodes : Node<{name :string , metadata :string , onDelete : ()=>void}>[] = []
+
 const BACKEND_URL = "http://localhost:3001";
 
 export const  nodeTypes  = {
@@ -35,8 +39,8 @@ export const  nodeTypes  = {
 
 export const InitialEdges : Edge [] = []
 
-function WorkflowContent(){
-    const [nodes,setNodes,onNodesChange] = useNodesState(InitialNodes)
+export function WorkflowContent({workflowid}:{workflowid:any}){
+    const [nodes,setNodes,onNodesChange] = useNodesState([])
     const [edges,setEdges,onEdgesChange] = useEdgesState(InitialEdges)
     const [ sidebaropen , setsidebaropen ] = useState(false)
     
@@ -45,6 +49,7 @@ function WorkflowContent(){
         setEdges(( prevEdges : any) =>  addEdge(edge,prevEdges));
 
     },[]) 
+    
 
 
     // from here only for diffpur
@@ -62,19 +67,64 @@ function WorkflowContent(){
     // const [systemprompt,setsystemprompt] = useState<any>("") 
     // till here only for diffpur
     
+    useEffect(() => {
+        axios
+            .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/workflow/${workflowid}`)
+            .then((a: any) => {
+            console.log("hiii", a.data);
+
+            const structuredNodes = a.data.map((n: any) => ({
+                id: n.id,
+                position: n.position,
+                type: n.type,
+                data: {
+                name: n.name,
+                },
+            }));
+
+            setNodes(structuredNodes);
+            });
+    }, [workflowid]);
+
+const Router = useRouter();
     return <div 
-         className="h-160 w-322 ">
-            <button onClick={()=>{setform(!form)}} className="border p-3 m-3">tucker</button>
+         className="h-160 w-full  relative">
+             <div className="h-15 border-b w-full items-center justify-between  border-b-brand-border dark:border-b-dark-border   px-6  normal font-semibold flex    "> 
+                <div className="flex gap-2 text-sm font-normal">
+                    <div onClick={()=>Router.push("/workflows")} className="cursor-pointer">{"workflows"}</div>
+                    <div>{">"}</div>
+                    <div>{`${workflowid}`}</div>
+                </div>
+                <div className="h-8">
+                  <ThemeProvider></ThemeProvider>
+                </div>
+             </div>
+            {/* <button onClick={()=>{setform(!form)}} className="border p-3 m-3">tucker</button>
             <button onClick={()=>{setform1(!form1)}} className="border p-3 m-3">tucker1</button>
             <button onClick={()=>{setform2(!form2)}} className="border p-3 m-3">tucker2</button>
             <button onClick={()=>{setdisform(!disform)}} className="border p-3 m-3">dis</button>
             <button onClick={()=>{setnotion(!notion)}} className="border p-3 m-3">notion</button>
             <button onClick={()=>{setsheet(!sheet)}} className="border p-3 m-3">sheeet</button>
-            <button onClick={()=>{setgform(!gform)}} className="border p-3 m-3">form</button>
+            <button onClick={()=>{setgform(!gform)}} className="border p-3 m-3">form</button> */}
             <RightsideBar setsidebaropen={setsidebaropen} sidebaropen={sidebaropen}></RightsideBar>
-            <button onClick={()=>setsidebaropen(true)} className="absolute right-5 top-5 z-10  transition duration-100 ">
+            {JSON.stringify(nodes)}
+
+            <button onClick={()=>setsidebaropen(true)} className="absolute right-5 top-20 z-10  transition duration-100 ">
                 <div className="h-8 rounded-sm  flex items-center bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] w-8 justify-center">
                      <Add size="22"></Add>
+                </div>
+            </button>
+            <button onClick={async()=>{
+           
+                 const response = await axios.put(`${BACKEND_URL}/api/v1/workflow/${workflowid}`,{
+                        nodes 
+                 })
+
+                 Router.push("/workflows")
+            }} className="absolute right-5 top-30 z-10 gap-0.5 ">
+                <div className="h-8 rounded-sm px-2 active:scale-95 duration-100  flex items-center bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] text-xs font-semibold justify-center">
+                    <div>Save</div>
+                     <Save size="14"></Save>
                 </div>
             </button>
             <ReactFlow
@@ -87,13 +137,13 @@ function WorkflowContent(){
                     <Background/>
                     <Controls/>
             </ReactFlow>
-            <AiForm setform={setform} form={form} AiName="Anthropic" AiType={"CLAUDE"}></AiForm>
+            {/* <AiForm setform={setform} form={form} AiName="Anthropic" AiType={"CLAUDE"}></AiForm>
             <AiForm setform={setform1} form={form1} AiName="Gemini" AiType={"GEMINI"}></AiForm>
             <AiForm setform={setform2} form={form2} AiName="OpenAi" AiType={"CHATGPT"}></AiForm>
             <DiscordForm setform={setdisform} form={disform} ></DiscordForm>
             <NotionTriggerForm setform={setnotion} form={notion} ></NotionTriggerForm>
             <GoogleSheetTriggerForm setform={setsheet} form={sheet} ></GoogleSheetTriggerForm>
-            <GoogleFormTriggerForm setform={setgform} form={gform} ></GoogleFormTriggerForm>
+            <GoogleFormTriggerForm setform={setgform} form={gform} ></GoogleFormTriggerForm> */}
     </div>
 }
 
@@ -492,7 +542,6 @@ export const UseCred =()=>{
             // }
         })
             .then(res => {
-                console.log(res.data.credential,"bus")
                 setcreds(res.data.credential.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
             })
     },[])
@@ -501,9 +550,5 @@ export const UseCred =()=>{
     }
 }
 
-export function ReactWorkflow(){
-   return <ReactFlowProvider>
-       <WorkflowContent/>
-   </ReactFlowProvider>
-}
+
 

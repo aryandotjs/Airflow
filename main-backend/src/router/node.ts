@@ -29,19 +29,15 @@ const name2 = [
     "ZeroDay",
     "ShadowCopy"
 ];
+
 NodeRouter.post("/create", async (req, res) => {
     const userid = "test-user"
-    const { position, type, workflowid } = req.body
+    const { Allnodes } = req.body
     const name = name1[Math.floor(Math.random() * 10)] + "-" + name1[Math.floor(Math.random() * 10)]
-    console.log(name, position, type, workflowid)
+    console.log(Allnodes)
     try {
-        const Node = await prisma.node.create({
-            data: {
-                name: name,
-                position: position,
-                type: type,
-                workflowId: workflowid
-            }
+        const Node = await prisma.node.createMany({
+            data: Allnodes
         })
         res.json({ msg: 'node created', Node })
     } catch (error) {

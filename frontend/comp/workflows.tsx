@@ -1,4 +1,4 @@
-import { Appbar } from "@/comp/Appbar";
+"use client"
 import { DarkButton } from "@/comp/buttons/darkbutton";
 import { MainButton, MainRedButton } from "@/comp/buttons/mainbutton";
 import { Namebox } from "@/comp/buttons/namebox";
@@ -20,7 +20,7 @@ import { Input } from "./buttons/input";
 import { error } from "console";
 import toastsetterremover from "./toastfunction";
 import Spin from "./buttons/spinningwheel";
-const BACKEND_URL = "http://localhost:3001";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 enum ZapStatus {
   ACTIVE = "ACTIVE",
   PAUSED = "PAUSED" ,
@@ -84,9 +84,9 @@ function useWorkflow(refresh:boolean) {
     }
 }
 
-export function Workflows({setcard ,settoasts,card}:{card:string,settoasts:Dispatch<SetStateAction<any>>,setcard:Dispatch<SetStateAction<string>>}){
-    const [refreshTrigger, setRefreshTrigger] = useState(false);
-
+// export function Workflows({setcard ,settoasts,card}:{card:string,settoasts:Dispatch<SetStateAction<any>>,setcard:Dispatch<SetStateAction<string>>}){
+    export function  Workflows(){
+        const [refreshTrigger, setRefreshTrigger] = useState(false);
     const { loading, workflows } = useWorkflow(refreshTrigger);
     const [filter1,setfilter1] = useState("ALL")
     const [search,setsearch] = useState("")
@@ -102,14 +102,16 @@ export function Workflows({setcard ,settoasts,card}:{card:string,settoasts:Dispa
     },[filter1,workflows,search])
 
     const router = useRouter();
-    return <div className="flex flex-col gap-4 px-24">
+    return <div className="flex flex-col gap-4 px-24  w-full">
                     <div className="flex justify-between mt-6 items-center ">
-                        <div className=" text-[28px] tracking-tight  font-semibold text-[#191919] dark:text-[#F0F0F0] ">Automations</div>
+                        <div className=" text-[28px] tracking-tight  font-semibold text-[#191919] dark:text-[#F0F0F0] "> Automations </div>
                     <div className="flex flex-row-reverse gap-3">
-                        <div onClick={()=> setcard("Create")} className="w-43 flex  transition-all duration-150 active:scale-95   font-semibold rounded-xl justify-center text-sm  px-2.5 h-7.5 gap-1.5 cursor-default items-center bg-brand-dark-bg text-brand-bg dark:bg-brand-bg  dark:text-brand-dark-bg">
+                        <div onClick={()=>{}} className="w-43 flex  transition-all duration-150 active:scale-95   font-semibold rounded-xl justify-center text-sm  px-2.5 h-7.5 gap-1.5 cursor-default items-center bg-brand-dark-bg text-brand-bg dark:bg-brand-bg  dark:text-brand-dark-bg">
                             <Add size="18"></Add>
-                            <div>Create Automation</div>
-                            
+                            <div onClick={async()=>{
+                                 const workflow = await axios.post(`${BACKEND_URL}/api/v1/workflow`)
+                                 router.push(`/workflow/${workflow.data.workflow.id}`)
+                            }}>Create Automation</div>
                         </div>
                     </div>
                     </div>
@@ -140,7 +142,7 @@ export function Workflows({setcard ,settoasts,card}:{card:string,settoasts:Dispa
                         {loading ? <div className="bg-brand-bg dark:bg-brand-dark-bg h-screen w-full flex justify-center mt-40">
                                      <Spin></Spin>
                                 </div>
-                              : <div className="flex justify-center"> <ZapTable settoasts={settoasts} setRefreshTrigger={setRefreshTrigger} filteredzap={filteredzap} /> </div>} 
+                              : <div className="flex justify-center"> <ZapTable setRefreshTrigger={setRefreshTrigger} filteredzap={filteredzap} /> </div>} 
                     </div>
              </div>
 
@@ -148,7 +150,7 @@ export function Workflows({setcard ,settoasts,card}:{card:string,settoasts:Dispa
 
 
 
-function ZapTable({ filteredzap, setRefreshTrigger ,settoasts}: {settoasts:Dispatch<SetStateAction<any>>,setRefreshTrigger :Dispatch<SetStateAction<boolean>> ,filteredzap: Zap[]}) {
+function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetStateAction<boolean>> ,filteredzap: Zap[]}) {
     const [option,setoption] = useState<any>({open : false , id : null})
     const [WorkflowName,setWorkflowName] = useState<any>("")
     const [workflowid,setworkflowid] = useState("")
@@ -181,7 +183,7 @@ function ZapTable({ filteredzap, setRefreshTrigger ,settoasts}: {settoasts:Dispa
                             <SvgforActionsTriggers size="18" name={"Workflow"}></SvgforActionsTriggers>
                     </Svgframe>
                  </div>
-                <div className="overflow-scroll min-w-[70%] scrollbar-none dark:text-[#F0F0F0] text-[#191919]  flex items-center gap-3 underline decoration-dashed decoration-[#EEEEEE] dark:decoration-[#191B1E] hover:decoration-blue-400 dark:hover:decoration-[#EEEEEE]  underline-offset-6 transition-all duration-400 text-sm font-normal dark:font-semibold">
+                <div onClick={()=>router.push(`/workflow/${z.id}`)} className="overflow-scroll min-w-[70%] scrollbar-none dark:text-[#F0F0F0] text-[#191919]  flex items-center gap-3 underline decoration-dashed decoration-[#EEEEEE] dark:decoration-[#191B1E] hover:decoration-blue-400 dark:hover:decoration-[#EEEEEE]  underline-offset-6 transition-all duration-400 text-sm font-normal dark:font-semibold">
                       {z.name}
                 </div>
             </div>
@@ -239,12 +241,12 @@ function ZapTable({ filteredzap, setRefreshTrigger ,settoasts}: {settoasts:Dispa
                                                                  workflowid 
                                                             })
                                                             setRefreshTrigger((prev)=>!prev)
-                                                            toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                                                            // toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
                                                             setoption({open:false , id : null})
 
                                                         }catch(err:any){
                                                             setoption({open:false , id : null})
-                                                            toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                                                            // toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
                                                         }
                                                         
                                                            
@@ -260,19 +262,19 @@ function ZapTable({ filteredzap, setRefreshTrigger ,settoasts}: {settoasts:Dispa
                                                 <div  className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                     <div onClick={async()=>{
                                                          try{
-                                                           const response = await axios.delete(`${BACKEND_URL}/api/v1/zap/delete`,{
+                                                           const response = await axios.delete(`${BACKEND_URL}/api/v1/workflow/delete`,{
                                                              data : {
                                                                  name : z.name,
                                                                  workflowid : workflowid
                                                              }
                                                             })
                                                             setRefreshTrigger((prev)=>!prev)
-                                                            toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                                                            // toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
                                                             setoption({open:false , id : null})
 
                                                         }catch(err:any){
                                                             setoption({open:false , id : null})
-                                                            toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                                                            // toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
                                                         }
 
                                                     }} className="m-1 ">
@@ -295,13 +297,13 @@ function ZapTable({ filteredzap, setRefreshTrigger ,settoasts}: {settoasts:Dispa
                         workflowid : workflowid
                     })
                     setRefreshTrigger((prev)=>!prev)
-                    toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                    // toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
                     setoption({open:false , id : null})
                     setupdateform(false)
                 }catch(err:any){
                     setupdateform(false)
                     setoption({open:false , id : null})
-                    toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                    // toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
                 }
                 
                     
