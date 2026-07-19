@@ -14,7 +14,7 @@ type TriggerNodeProp = NodeProps<BuiltInNode> & {
       }
 }
 export default function Trigger({id,data:{name,metadata}}: TriggerNodeProp) {
-  const {setNodes} = useReactFlow();
+  const {setNodes , setEdges} = useReactFlow();
   return (
     <div  className=''>
        <div className='p-3 border rounded-l-2xl rounded-r-sm  border-[#DCDFE2] dark:border-[#2C3034] bg-brand-bg hover:bg-[#E9E9E9] hover:dark:bg-[#212327] transition-colors dark:bg-[#151619]'>
@@ -33,6 +33,9 @@ export default function Trigger({id,data:{name,metadata}}: TriggerNodeProp) {
                  setNodes((prev:any )=>{
                     return prev.filter((a:any)=> a.id !== id )
                  })
+                  setEdges((prev:any)=>{
+                   return prev.filter((a:any)=> a.source !== id && a.target !== id)
+                 }) 
               }}>
                  <Cross size='14'></Cross>
               </div>
@@ -49,7 +52,7 @@ export default function Trigger({id,data:{name,metadata}}: TriggerNodeProp) {
 
 
 export  function Action({id,data:{name,metadata}}: TriggerNodeProp) {
-  const {setNodes} = useReactFlow();
+  const {setNodes ,setEdges} = useReactFlow();
   return (
     <div  className=''>
           <div>
@@ -71,6 +74,9 @@ export  function Action({id,data:{name,metadata}}: TriggerNodeProp) {
                  setNodes((prev:any )=>{
                     return prev.filter((a:any)=> a.id !== id )
                  })
+                 setEdges((prev:any)=>{
+                   return prev.filter((a:any)=> a.source !== id && a.target !== id)
+                 }) 
               }}>
                  <Cross size='14'></Cross>
               </div>
