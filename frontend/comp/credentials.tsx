@@ -11,6 +11,9 @@ import axios from "axios"
 import { DateConverter } from "./RunTimeBadge"
 import { SvgforActionsTriggers } from "./SvgforActionsTriggers"
 import Spin from "./buttons/spinningwheel"
+import toastsetterremover from "./toastfunction"
+import { useToast } from "./toastprovider"
+import useToastSetterRemover from "./toastfunction"
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -27,7 +30,10 @@ export function Credentials(){
 
      const [filter1,setfilter1] = useState("ALL")
      const [search,setsearch] = useState("")
-
+         const {toasts, setToasts} = useToast()
+     
+     const showToast = useToastSetterRemover()
+    
      useEffect(()=>{
          axios.get(`${BACKEND_URL}/api/v1/credentials/all`).then((a)=>{
              setallcreds(a.data.credential.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()))
@@ -98,10 +104,10 @@ export function Credentials(){
                           })
                             setformopen(false)
                             setRefreshTrigger((prev)=>!prev)
-                            // toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                            showToast({msg :response.data.msg,isError:false})
                         }catch(err:any){
                             setformopen(false)
-                            // toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                            showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
                         }
 
                  }}  name={"Add credentials"} formopen={formopen} buttonname="Add" setformopen={setformopen}>
@@ -130,7 +136,7 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
         const [Updatetype ,setUpdatetype] = useState("GEMINI")
         const [crediddb ,setcrediddb] = useState("")
 
-
+        const showToast = useToastSetterRemover()
         useEffect(()=>{
             const clickeventfunc = (a:any) => {
                 if (openmodalref.current && !openmodalref.current.contains(a.target)) {
@@ -147,7 +153,6 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
 
         return <div className="px-2 pr-4 ">
             {filteredCreds.map((z:any,index:any)=>{
-                console.log(z)
                 return <div key={index} className="relative flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold ">
                         <div className="flex w-full h-8 my-3 gap-2 ">
                             <div className="  flex items-center  gap-3 w-[30%] overflow-hidden">
@@ -224,10 +229,11 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                                             })
                                                         setoption({open:false , id : null})
                                                         setRefreshTrigger((prev)=>!prev)
-                                                        // toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                                                        showToast({msg :response.data.msg,isError:false})
+
                                                     }catch(err:any){
                                                         setoption({open:false , id : null})
-                                                        // toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                                                        showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
                                                     }
                                                 }} className="m-1 ">
                                                     <MainRedButton name="Delete credential">
@@ -257,10 +263,11 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                             })
                             setupdateform(false)
                             setRefreshTrigger((prev)=>!prev)
-                            // toastsetterremover(settoasts,{msg :response.data.msg,isError:false})
+                            
+                            showToast({msg :response.data.msg,isError:false})
                         }catch(err:any){
                             setupdateform(false)
-                            // toastsetterremover(settoasts,{msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                            showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
                         }
                             
                     }} name={"Add credentials"} buttonname={"Update"} formopen={updateform} setformopen={setupdateform}>
