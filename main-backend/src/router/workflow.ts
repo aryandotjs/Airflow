@@ -41,15 +41,24 @@ WorkflowRouter.post("/", async (req, res) => {
     // }
     const id = "test-user"
     const name = name1[Math.floor(Math.random() * 10)] + "-" + name1[Math.floor(Math.random() * 10)]
-    const workflow = await prisma.workflow.create({
-        data: {
-            name: name,
-            userId: id
-        }
-    })
-    res.json({
-        workflow
-    })
+    try {
+
+        const workflow = await prisma.workflow.create({
+            data: {
+                name: name,
+                userId: id
+            }
+        })
+        res.json({
+            msg: `Workflow ${workflow.name} created`,
+            workflow
+        })
+
+    } catch (error) {
+        res.json({
+            msg: `creadential creation failed`,
+        })
+    }
 })
 
 // zapRouter.get("/", authmiddleware, async (req, res) => {
@@ -176,7 +185,6 @@ WorkflowRouter.post("/duplicate", async (req, res) => {
             workflow: duplicateZap
         });
     } catch (error) {
-        console.log(error);
 
         return res.status(500).json({
             msg: "Failed duplicating workflow"
@@ -342,6 +350,5 @@ WorkflowRouter.get("/executions/all", async (req, res) => {
         }
         ,
     })
-    console.log(allExecutions)
     return res.json(allExecutions)
 })
