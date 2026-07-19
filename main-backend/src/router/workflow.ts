@@ -263,7 +263,8 @@ WorkflowRouter.get("/:workflowid", authmiddleware, async (req, res) => {
             id: workflowid
         },
         include: {
-            nodes: true
+            nodes: true,
+            connections: true
         }
     })
     return res.json(workflow)
@@ -273,11 +274,16 @@ WorkflowRouter.get("/:workflowid", authmiddleware, async (req, res) => {
 WorkflowRouter.put("/:workflowid", async (req, res) => {
     // const userId = (req as any).userId;
     const { workflowid } = req.params
-    const { nodes } = req.body
+    const { nodes, edges } = req.body
     try {
 
         await prisma.$transaction(async (tsx) => {
             await tsx.node.deleteMany({
+                where: {
+                    workflowId: workflowid
+                }
+            })
+            await tsx.connection.deleteMany({
                 where: {
                     workflowId: workflowid
                 }
@@ -291,6 +297,14 @@ WorkflowRouter.put("/:workflowid", async (req, res) => {
                     workflowId: workflowid,
                     data: node.data.metadata,
 
+                }))
+            })
+
+            await tsx.connection.createMany({
+                data: edges.map((edge: any) => ({
+                    workflowId: workflowid,
+                    fromNodeId: edge.source,
+                    toNodeId: edge.target,
                 }))
             })
         })
