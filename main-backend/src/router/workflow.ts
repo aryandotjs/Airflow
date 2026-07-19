@@ -266,7 +266,7 @@ WorkflowRouter.get("/:workflowid", authmiddleware, async (req, res) => {
             nodes: true
         }
     })
-    return res.json(workflow?.nodes)
+    return res.json(workflow)
 })
 
 
@@ -284,11 +284,13 @@ WorkflowRouter.put("/:workflowid", async (req, res) => {
             })
             await tsx.node.createMany({
                 data: nodes.map((node: any) => ({
+                    id: node.id,
                     name: node.data.name,
                     position: node.position,
                     type: node.type,
                     workflowId: workflowid,
-                    data: node.data.metadata
+                    data: node.data.metadata,
+
                 }))
             })
         })
