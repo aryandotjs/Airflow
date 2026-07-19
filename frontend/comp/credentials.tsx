@@ -20,7 +20,7 @@ export function Credentials(){
      
      const [credName ,setcredName] = useState("")
      const [Apikey ,setApikeys] = useState("")
-     const [type ,settype] = useState("ALL")
+     const [type ,settype] = useState("CHATGPT")
 
 
      const [formopen ,setformopen] = useState(false)
@@ -87,6 +87,10 @@ export function Credentials(){
             
                  <Addform  callback={async()=>{
                      try{
+                          if (!credName.length || !Apikey.length) {
+                            setformopen(false)
+                            return ;
+                          }
                           const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/create`,{
                                 name : credName,
                                 apikey :Apikey ,
