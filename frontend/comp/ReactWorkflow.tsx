@@ -36,7 +36,9 @@ export const  nodeTypes  = {
     "trigger": Trigger,
     "action" : Action
 }
-
+type workflow = {
+    name :string
+}
 export const InitialEdges : Edge [] = []
 
 export function WorkflowContent({workflowid}:{workflowid:any}){
@@ -44,13 +46,16 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
     const [edges,setEdges,onEdgesChange] = useEdgesState(InitialEdges)
     const [ sidebaropen , setsidebaropen ] = useState(false)
     
-    const onConnect = useCallback((Connection:Connection)=>{
-        const edge = { ...Connection , id : `${edges.length}+1`}
-        setEdges(( prevEdges : any) =>  addEdge(edge,prevEdges));
-
-    },[]) 
+    // const onConnect = useCallback((Connection:Connection)=>{
+    //     const edge = { ...Connection , id : `${edges.length}+1`}
+    //     setEdges(( prevEdges : any) =>  addEdge(edge,prevEdges));
+        
+    // },[]) 
+    const onConnect = useCallback((connection: Connection) => {
+    setEdges((prevEdges) => addEdge(connection, prevEdges));
+  }, [setEdges]);
     
-
+    const [ wholeworkflow , setwholeworkflow ] = useState<workflow|null>()
 
     // from here only for diffpur
     // const {creds} = UseCred()
@@ -71,9 +76,8 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
         axios
             .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/workflow/${workflowid}`)
             .then((a: any) => {
-            console.log("hiii", a.data);
-
-            const structuredNodes = a.data.map((n: any) => ({
+            setwholeworkflow(a.data)
+            const structuredNodes = a.data.nodes.map((n: any) => ({
                 id: n.id,
                 position: n.position,
                 type: n.type,
@@ -89,11 +93,12 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
 const Router = useRouter();
     return <div 
          className="h-160 w-full  relative">
+            {JSON.stringify(edges)}
              <div className="h-15 border-b w-full items-center justify-between  border-b-brand-border dark:border-b-dark-border   px-6  normal font-semibold flex    "> 
                 <div className="flex gap-2 text-sm font-normal">
                     <div onClick={()=>Router.push("/workflows")} className="cursor-pointer">{"workflows"}</div>
                     <div>{">"}</div>
-                    <div>{`${workflowid}`}</div>
+                    <div>{`${wholeworkflow?.name ?? workflowid}`}</div>
                 </div>
                 <div className="h-8">
                   <ThemeProvider></ThemeProvider>
@@ -107,7 +112,7 @@ const Router = useRouter();
             <button onClick={()=>{setsheet(!sheet)}} className="border p-3 m-3">sheeet</button>
             <button onClick={()=>{setgform(!gform)}} className="border p-3 m-3">form</button> */}
             <RightsideBar setsidebaropen={setsidebaropen} sidebaropen={sidebaropen}></RightsideBar>
-            {JSON.stringify(nodes)}
+            {/* {JSON.stringify(nodes)} */}
 
             <button onClick={()=>setsidebaropen(true)} className="absolute right-5 top-20 z-10  transition duration-100 ">
                 <div className="h-8 rounded-sm  flex items-center bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] w-8 justify-center">

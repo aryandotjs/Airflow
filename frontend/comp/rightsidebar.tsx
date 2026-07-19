@@ -2,6 +2,7 @@ import { NodeProps, useReactFlow } from '@xyflow/react'
 import React, { Dispatch, SetStateAction, useEffect, useRef } from 'react'
 import { Cross, Execution, Sphere, Webhook, WorkflowIcon } from './svg/allsvg'
 import { MainButton } from './buttons/mainbutton'
+import { nanoid } from 'nanoid'
 
 export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen:boolean , setsidebaropen : Dispatch<SetStateAction<boolean>>}) {
   const modalref = useRef<HTMLDivElement>(null)
@@ -46,7 +47,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                   onClick={()=>{
                   setNodes((prev)=>{
                      return [...prev,{
-                        id : (getNodes().length).toString() ,
+                        id : nanoid() ,
                         position : { x : 280 , y: 280},
                         type : "trigger",
                         data : {
@@ -73,7 +74,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                   onClick={()=>{
                   setNodes((prev)=>{
                      return [...prev,{
-                        id : (getNodes().length).toString() ,
+                        id : nanoid() ,
                         position : { x : 280 , y: 280},
                         type : "trigger",
                         data : {
@@ -100,7 +101,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                   onClick={()=>{
                      setNodes((prev)=>{
                         return [...prev,{
-                           id : (getNodes().length).toString() ,
+                           id : nanoid() ,
                            position : { x : 280 , y: 280},
                            type : "trigger",
                            data : {
@@ -126,7 +127,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                   onClick={()=>{
                   setNodes((prev)=>{
                      return [...prev,{
-                        id : (getNodes().length).toString() ,
+                        id : nanoid() ,
                         position : { x : 280 , y: 280},
                         type : "trigger",
                         data : {
@@ -159,7 +160,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                   onClick={()=>{
                   setNodes((prev)=>{
                      return [...prev,{
-                        id : (getNodes().length).toString() ,
+                        id : nanoid() ,
                         position : { x : 680 , y: 280},
                         type : "action",
                         data : {
@@ -183,7 +184,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                   onClick={()=>{
                   setNodes((prev)=>{
                      return [...prev,{
-                        id : (getNodes().length).toString() ,
+                        id : nanoid() ,
                         position : { x : 680 , y: 280},
                         type : "action",
                         data : {
@@ -207,7 +208,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                   onClick={()=>{
                   setNodes((prev)=>{
                      return [...prev,{
-                        id : (getNodes().length).toString() ,
+                        id : nanoid() ,
                         position : { x : 680 , y: 280},
                         type : "action",
                         data : {

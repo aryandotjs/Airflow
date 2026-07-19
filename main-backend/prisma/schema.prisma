@@ -68,7 +68,7 @@ model Workflow {
 }
 
 model Node {
-  id String @id @default(cuid())
+  id String @id
 
   workflowId String
   workflow   Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
