@@ -39,10 +39,11 @@ export const  nodeTypes  = {
 type workflow = {
     name :string
 }
+export const InitialNodes : [] = []
 export const InitialEdges : Edge [] = []
 
 export function WorkflowContent({workflowid}:{workflowid:any}){
-    const [nodes,setNodes,onNodesChange] = useNodesState([])
+    const [nodes,setNodes,onNodesChange] = useNodesState(InitialNodes)
     const [edges,setEdges,onEdgesChange] = useEdgesState(InitialEdges)
     const [ sidebaropen , setsidebaropen ] = useState(false)
     
@@ -77,6 +78,7 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
             .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/workflow/${workflowid}`)
             .then((a: any) => {
             setwholeworkflow(a.data)
+            console.log(a.data)
             const structuredNodes = a.data.nodes.map((n: any) => ({
                 id: n.id,
                 position: n.position,
@@ -85,8 +87,14 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
                 name: n.name,
                 },
             }));
+            const structuredEdges = a.data.connections.map((c: any) => ({
+                source:c.fromNodeId,
+                target:c.toNodeId,
+                id: `xy-edge__${c.fromNodeId}-${c.toNodeId}`
+            }));
 
             setNodes(structuredNodes);
+            setEdges(structuredEdges)
             });
     }, [workflowid]);
 
@@ -122,9 +130,9 @@ const Router = useRouter();
             <button onClick={async()=>{
            
                  const response = await axios.put(`${BACKEND_URL}/api/v1/workflow/${workflowid}`,{
-                        nodes 
+                        nodes , edges
                  })
-
+                
                  Router.push("/workflows")
             }} className="absolute right-5 top-30 z-10 gap-0.5 ">
                 <div className="h-8 rounded-sm px-2 active:scale-95 duration-100  flex items-center bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] text-xs font-semibold justify-center">
