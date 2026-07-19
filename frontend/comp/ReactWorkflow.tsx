@@ -101,7 +101,6 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
 const Router = useRouter();
     return <div 
          className="h-160 w-full  relative">
-            {JSON.stringify(edges)}
              <div className="h-15 border-b w-full items-center justify-between  border-b-brand-border dark:border-b-dark-border   px-6  normal font-semibold flex    "> 
                 <div className="flex gap-2 text-sm font-normal">
                     <div onClick={()=>Router.push("/workflows")} className="cursor-pointer">{"workflows"}</div>

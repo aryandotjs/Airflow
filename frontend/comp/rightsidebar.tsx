@@ -232,7 +232,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen }:{sidebaropen
                   onClick={()=>{
                   setNodes((prev)=>{
                      return [...prev,{
-                        id :(getNodes().length).toString() ,
+                        id : nanoid() ,
                         position : { x : 680 , y: 280},
                         type : "action",
                         data : {
