@@ -23,11 +23,7 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | null>(null);
 
-export function ToastProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export function ToastProvider({children,}: {children: ReactNode;}) {
   const [toasts, setToasts] = useState<ToastType[]>([]);
 
   return (

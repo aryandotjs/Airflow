@@ -237,7 +237,7 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                                                 <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                     <div onClick={async()=> {
                                                          try{
-                                                           const response = await axios.post(`${BACKEND_URL}/api/v1/zap/duplicate`,{
+                                                           const response = await axios.post(`${BACKEND_URL}/api/v1/workflow/duplicate`,{
                                                                  workflowid 
                                                             })
                                                             setRefreshTrigger((prev)=>!prev)
@@ -292,7 +292,7 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
         { updateform ?
             <Addform  callback={async()=>{
                 try{
-                    const response : any= await axios.post(`${BACKEND_URL}/api/v1/zap/rename`,{
+                    const response : any= await axios.put(`${BACKEND_URL}/api/v1/workflow/rename`,{
                         newname : WorkflowName, 
                         workflowid : workflowid
                     })
@@ -321,9 +321,9 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
 
 
 async function StatusToggler(crrstatus : ZapStatus,workflowid:String){
-    const zapstatus = await axios.post(`${BACKEND_URL}/api/v1/zap/togglestatus`,{
-        crrstatus,
-        workflowid
-    }) 
-    return zapstatus.data.msg
+    // const zapstatus = await axios.put(`${BACKEND_URL}/api/v1/workflow/rename`,{
+    //     crrstatus,
+    //     workflowid
+    // }) 
+    // return zapstatus.data.msg
 }  

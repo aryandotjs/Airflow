@@ -113,100 +113,79 @@ WorkflowRouter.post("/", async (req, res) => {
 
 // })
 
-// zapRouter.post("/rename", authmiddleware, async (req, res) => {
-//     // const userId = (req as any).userId;
-//     const userid = 3
-//     const { newname, workflowid } = req.body
-//     try {
-//         const response = await prisma.zap.update({
-//             where: {
-//                 userId: userid,
-//                 id: workflowid
-//             },
-//             data: {
-//                 name: newname
-//             }
-//         })
-
-//         return res.json({
-//             msg: `name changed to ${newname}`
-//         })
 
 
-//     } catch (error) {
-//         return res.json({
-//             msg: `Failed changing name`
-//         })
-//     }
+WorkflowRouter.post("/duplicate", async (req, res) => {
+    // const userId = (req as any).userId;
+    const userid = "test-user"
+    const { workflowid } = req.body
 
-// })
+    try {
 
-// zapRouter.post("/duplicate", async (req, res) => {
-//     // const userId = (req as any).userId;
-//     const userid = 3
-//     const { workflowid } = req.body
+        const ogWorkflow = await prisma.workflow.findUnique({
+            where: {
+                id: workflowid
+            },
+            include: { nodes: true, connections: true }
+        })
 
-//     try {
+        if (!ogWorkflow) return res.json({ msg: `Workflow not found` })
 
-//         const ogzap = await prisma.zap.findUnique({
-//             where: {
-//                 id: workflowid
-//             },
-//             include: { actions: true, trigger: true }
-//         })
+        const duplicateZap = prisma.$transaction(async (tx) => {
 
-//         if (!ogzap) return res.json({ msg: `Workflow not found` })
+            const newWorkflow = await tx.workflow.create({
+                data: {
+                    name: `${ogWorkflow.name} (copy)`,
+                    userId: ogWorkflow.userId
+                }
+            })
 
-//         const duplicateZap = prisma.$transaction(async (tx) => {
+            const idMap = new Map()
 
-//             const newzap = await tx.zap.create({
-//                 data: {
-//                     name: `${ogzap.name} (copy)`,
-//                     status: "DRAFT",
-//                     userId: ogzap.userId
-//                 }
-//             })
 
-//             if (ogzap.trigger) {
+            await tx.node.createMany({
+                data: ogWorkflow.nodes.map((node: any) => {
+                    const newId = crypto.randomUUID()
+                    idMap.set(node.id, newId)
+                    return {
+                        id: newId,
+                        name: node.name,
+                        position: node.position,
+                        type: node.type,
+                        workflowId: newWorkflow.id,
+                        data: node.metadata,
+                    }
+                })
+            })
 
-//                 await tx.trigger.create({
-//                     data: {
-//                         zapId: newzap.id,
-//                         triggerId: ogzap.trigger.triggerId,
-//                         metadata: ogzap.trigger.metadata ?? {}
-//                     }
-//                 })
-//             }
+            await tx.connection.createMany({
+                data: ogWorkflow.connections.map((c) => {
 
-//             if (ogzap.actions.length > 0) {
+                    return {
+                        workflowId: newWorkflow.id,
+                        fromNodeId: idMap.get(c.fromNodeId),
+                        toNodeId: idMap.get(c.toNodeId),
+                    }
+                })
+            })
 
-//                 await tx.action.createMany({
-//                     data: ogzap.actions.map((action) => ({
-//                         zapId: newzap.id,
-//                         ActionId: action.ActionId,
-//                         metadata: action.metadata ?? {},
-//                         sortingOrder: action.sortingOrder
-//                     }))
-//                 })
-//             }
+            return newWorkflow
+        })
+        return res.json({
+            msg: "Workflow duplicated",
+            workflow: duplicateZap
+        });
+    } catch (error) {
+        console.log(error);
 
-//             return newzap
-//         })
-//         return res.json({
-//             msg: "Workflow duplicated",
-//             workflow: duplicateZap
-//         });
-//     } catch (error) {
-//         console.log(error);
-
-//         return res.status(500).json({
-//             msg: "Failed duplicating workflow"
-//         });
-//     }
+        return res.status(500).json({
+            msg: "Failed duplicating workflow"
+        });
+    }
 
 
 
-// })
+})
 
 WorkflowRouter.delete("/delete", async (req, res) => {
     // const userId = (req as any).userId;
@@ -252,7 +231,33 @@ WorkflowRouter.get("/all", async (req, res) => {
 
 })
 
+WorkflowRouter.put("/rename", authmiddleware, async (req, res) => {
+    // const userId = (req as any).userId;
+    const userid = "test-user"
+    const { newname, workflowid } = req.body
+    try {
+        const response = await prisma.workflow.update({
+            where: {
+                userId: userid,
+                id: workflowid
+            },
+            data: {
+                name: newname
+            }
+        })
 
+        return res.json({
+            msg: `name changed to ${newname}`
+        })
+
+
+    } catch (error) {
+        return res.json({
+            msg: `Failed changing name`
+        })
+    }
+
+})
 
 
 WorkflowRouter.get("/:workflowid", authmiddleware, async (req, res) => {
@@ -320,4 +325,23 @@ WorkflowRouter.put("/:workflowid", async (req, res) => {
             message: "Failed to save workflow",
         });
     }
+})
+
+
+WorkflowRouter.get("/executions/all", async (req, res) => {
+    // const userId = (req as any).userId;
+    const userid = "test-user"
+    const allExecutions = await prisma.execution.findMany({
+        where: {
+            workflow: {
+                userId: userid
+            }
+        },
+        orderBy: {
+            completedAt: "desc",
+        }
+        ,
+    })
+    console.log(allExecutions)
+    return res.json(allExecutions)
 })

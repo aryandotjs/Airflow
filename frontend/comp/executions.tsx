@@ -61,12 +61,15 @@ export  function Executions(){
     const [filter2,setfilter2] = useState("Last 15 days")
     const [search,setsearch] = useState("")
     useEffect(()=>{
-        axios.get(`${BACKEND_URL}/api/v1/zap/all`,{
+        // axios.get(`${BACKEND_URL}/api/v1/workflow/executions/all`,{
+        axios.get(`${BACKEND_URL}/api/v1/workflow/executions/al`,{
             // headers : {
             //     "authorization" : `Bearer ${localStorage.getItem("token")}`
             // }
         }).then((a)=>{
-               setzapruns(a.data.zaps.sort((a:any,b:any) =>  { return new Date(b.startDate).getTime() - new Date(a.startDate).getTime()} ))
+            setzapruns(null)
+            console.log("nahhh",a.data)
+            //    setzapruns(a.data.zaps.sort((a:any,b:any) =>  { return new Date(b.startDate).getTime() - new Date(a.startDate).getTime()} ))
         })
     },[])
      const filteredZapruns : any = useMemo(()=>{

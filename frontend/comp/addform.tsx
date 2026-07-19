@@ -16,7 +16,7 @@ export function Addform({children , callback , name ,setformopen, formopen , but
                 </div>
                 {children}
                 <div  className="flex gap-2 w-full">
-                    <div onClick={callback} className="h-8 w-30 transition-all duration-150 active:scale-95">
+                    <div onClick={callback} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
                         <SecondarybuttonNegative>
                             <div className=" px-1 text-brand-bg text-sm pb-0.5 dark:text-brand-dark-bg dark:font-semibold">
                                 {buttonname}
