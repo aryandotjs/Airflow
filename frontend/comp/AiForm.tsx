@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { UseCred } from "./ReactWorkflow"
 import { Addform } from "./addform"
 import { Input } from "./buttons/input"
@@ -8,14 +8,20 @@ import { Opneframe } from "./openframe"
 import { MainButton } from "./buttons/mainbutton"
 import { BigInput } from "./biggerinput"
 
-export default function AiForm({setform,form,AiName,AiType}:{setform:Dispatch<SetStateAction<boolean>>,form:boolean,AiName:string,AiType:string}){
+export default function AiForm({NodeFormDetail,setNodeFormDetail,AiName,AiType}:{NodeFormDetail:any,setNodeFormDetail:Dispatch<SetStateAction<any>>,AiName:string,AiType:string}){
     const {creds} = UseCred()
     const [credName,setcredName] = useState("") 
     const [type,settype] = useState<any>() 
     const [open,setopen] = useState<any>(false) 
     const [systemprompt,setsystemprompt] = useState<any>("") 
     const [userprompt,setuserprompt] = useState<any>("") 
-    return <Addform buttonname="Save" name={`${AiName} Configuration`} callback={()=>{}} formopen={form} setformopen={setform} >
+    const [openform,setopenform] = useState(false)
+    useEffect(()=>{
+        if (NodeFormDetail === "claude") {
+            setNodeFormDetail({ name : "claude", open :true})
+        }
+    },[openform])
+    return <Addform buttonname="Save" name={`${AiName} Configuration`} callback={()=>{}} formopen={openform} setformopen={setopenform} >
                 <div className="">
                      <div className="my-6 flex flex-col gap-4 w-115 overflow-y-scroll h-100 p-2 ">
                         <div>

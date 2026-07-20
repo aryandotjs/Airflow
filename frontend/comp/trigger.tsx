@@ -1,5 +1,5 @@
 import { BuiltInNode, Edge, Handle, Node, NodeProps, Position, useReactFlow } from '@xyflow/react'
-import React, { useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import { Opneframe } from './openframe'
 import { Secondarybutton } from './buttons/secondarybutton'
 import { Namebox } from './buttons/namebox'
@@ -11,9 +11,10 @@ type TriggerNodeProp = NodeProps<BuiltInNode> & {
       data : {
         name :string ,
         metadata : string
+        openForm : Dispatch<SetStateAction<any>>
       }
 }
-export default function Trigger({id,data:{name,metadata}}: TriggerNodeProp) {
+export default function Trigger({id,data:{name,metadata,openForm}}: TriggerNodeProp) {
   const {setNodes , setEdges} = useReactFlow();
   return (
     <div  className=''>
@@ -36,10 +37,13 @@ export default function Trigger({id,data:{name,metadata}}: TriggerNodeProp) {
                   setEdges((prev:any)=>{
                    return prev.filter((a:any)=> a.source !== id && a.target !== id)
                  }) 
+                 
               }}>
                  <Cross size='14'></Cross>
               </div>
-              <div className='hover:bg-[#E9E9E9] hover:dark:bg-[#212327] h-5 w-5 rounded-sm flex justify-center items-center cursor-default' onClick={()=>{ }}>
+              <div  onClick={()=>{
+                 openForm({name , open :false})
+               }}  className='hover:bg-[#E9E9E9] hover:dark:bg-[#212327] h-5 w-5 rounded-sm flex justify-center items-center cursor-default'>
                  <Adjust size='14'></Adjust>
               </div>
           </div>
@@ -51,7 +55,7 @@ export default function Trigger({id,data:{name,metadata}}: TriggerNodeProp) {
  
 
 
-export  function Action({id,data:{name,metadata}}: TriggerNodeProp) {
+export  function Action({id,data:{name,metadata,openForm}}: TriggerNodeProp) {
   const {setNodes ,setEdges} = useReactFlow();
   return (
     <div  className=''>
@@ -80,8 +84,9 @@ export  function Action({id,data:{name,metadata}}: TriggerNodeProp) {
               }}>
                  <Cross size='14'></Cross>
               </div>
-              <div className='hover:bg-[#E9E9E9] hover:dark:bg-[#212327] h-5 w-5 rounded-sm flex justify-center items-center cursor-default' onClick={()=>{ 
-               }}>
+              <div onClick={()=>{
+                  openForm({name , open :false})
+               }} className='hover:bg-[#E9E9E9] hover:dark:bg-[#212327] h-5 w-5 rounded-sm flex justify-center items-center cursor-default'>
                  <Adjust size='14'></Adjust>
               </div>
           </div>

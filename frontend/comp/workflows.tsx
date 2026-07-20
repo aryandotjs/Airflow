@@ -107,9 +107,7 @@ function useWorkflow(refresh:boolean) {
                     <div className="flex justify-between mt-6 items-center ">
                         <div className=" text-[28px] tracking-tight  font-semibold text-[#191919] dark:text-[#F0F0F0] "> Automations </div>
                     <div className="flex flex-row-reverse gap-3">
-                        <div onClick={()=>{}} className="w-43 flex  transition-all duration-150 active:scale-95   font-semibold rounded-xl justify-center text-sm  px-2.5 h-7.5 gap-1.5 cursor-default items-center bg-brand-dark-bg text-brand-bg dark:bg-brand-bg  dark:text-brand-dark-bg">
-                            <Add size="18"></Add>
-                            <div onClick={async()=>{
+                        <div onClick={async()=>{
                                 try{
                                     const workflow = await axios.post(`${BACKEND_URL}/api/v1/workflow`)
                                     showToast({msg :workflow.data.msg,isError:false})
@@ -117,7 +115,9 @@ function useWorkflow(refresh:boolean) {
                                 }catch(err:any){
                                     showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
                                 }
-                            }}>Create Automation</div>
+                            }} className="w-43 flex  transition-all duration-150 active:scale-95   font-semibold rounded-xl justify-center text-sm  px-2.5 h-7.5 gap-1.5 cursor-default items-center bg-brand-dark-bg text-brand-bg dark:bg-brand-bg  dark:text-brand-dark-bg">
+                            <Add size="18"></Add>
+                            <div>Create Automation</div>
                         </div>
                     </div>
                     </div>
