@@ -17,6 +17,7 @@ import { MainButton } from "./buttons/mainbutton";
 import { Secondarybutton } from "./buttons/secondarybutton";
 import { ThemeProvider } from "./theme-provider";
 import { useRouter } from "next/navigation";
+import { metadata } from "@/app/layout";
 
 // export let InitialNodes : Node<{name :string , metadata :string , onDelete : (id:any)=>void}>[] = [{
 //     id : '1',
@@ -43,6 +44,8 @@ export const InitialNodes : [] = []
 export const InitialEdges : Edge [] = []
 
 export function WorkflowContent({workflowid}:{workflowid:any}){
+    const [formDetail, setformDetail] = useState<{}>({});
+    ///// we were doming the setdetail again and decided to add exepetion case in the addform ting 
     const [nodes,setNodes,onNodesChange] = useNodesState(InitialNodes)
     const [edges,setEdges,onEdgesChange] = useEdgesState(InitialEdges)
     const [ sidebaropen , setsidebaropen ] = useState(false)
@@ -53,20 +56,14 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
         
     // },[]) 
     const onConnect = useCallback((connection: Connection) => {
-    setEdges((prevEdges) => addEdge(connection, prevEdges));
-  }, [setEdges]);
+                 setEdges((prevEdges) => addEdge(connection, prevEdges));
+        }, [setEdges]);
     
     const [ wholeworkflow , setwholeworkflow ] = useState<workflow|null>()
 
     // from here only for diffpur
     // const {creds} = UseCred()
-    const [form,setform] = useState(false)
-    const [form1,setform1] = useState(false)
-    const [form2,setform2] = useState(false)
-    const [disform,setdisform] = useState(false)
-    const [notion,setnotion] = useState(false)
-    const [sheet,setsheet] = useState(false)
-    const [gform,setgform] = useState(false)
+   
     // const [credName,setcredName] = useState("") 
     // const [type,settype] = useState<any>() 
     // const [open,setopen] = useState<any>(false) 
@@ -85,6 +82,8 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
                 type: n.type,
                 data: {
                 name: n.name,
+                metadata : n.data,
+                openForm : setOpenNodeName
                 },
             }));
             const structuredEdges = a.data.connections.map((c: any) => ({
@@ -101,6 +100,9 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
 const Router = useRouter();
     return <div 
          className="h-160 w-full  relative">
+            {JSON.stringify(nodes)}
+            -----
+            {openNodeName}
              <div className="h-15 border-b w-full items-center justify-between  border-b-brand-border dark:border-b-dark-border   px-6  normal font-semibold flex    "> 
                 <div className="flex gap-2 text-sm font-normal">
                     <div onClick={()=>Router.push("/workflows")} className="cursor-pointer">{"workflows"}</div>
@@ -111,15 +113,8 @@ const Router = useRouter();
                   <ThemeProvider></ThemeProvider>
                 </div>
              </div>
-            {/* <button onClick={()=>{setform(!form)}} className="border p-3 m-3">tucker</button>
-            <button onClick={()=>{setform1(!form1)}} className="border p-3 m-3">tucker1</button>
-            <button onClick={()=>{setform2(!form2)}} className="border p-3 m-3">tucker2</button>
-            <button onClick={()=>{setdisform(!disform)}} className="border p-3 m-3">dis</button>
-            <button onClick={()=>{setnotion(!notion)}} className="border p-3 m-3">notion</button>
-            <button onClick={()=>{setsheet(!sheet)}} className="border p-3 m-3">sheeet</button>
-            <button onClick={()=>{setgform(!gform)}} className="border p-3 m-3">form</button> */}
-            <RightsideBar setsidebaropen={setsidebaropen} sidebaropen={sidebaropen}></RightsideBar>
-            {/* {JSON.stringify(nodes)} */}
+            
+            <RightsideBar setsidebaropen={setsidebaropen} sidebaropen={sidebaropen} setOpenNodeName={setOpenNodeName}></RightsideBar>
 
             <button onClick={()=>setsidebaropen(true)} className="absolute right-5 top-20 z-10  transition duration-100 ">
                 <div className="h-8 rounded-sm  flex items-center bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] w-8 justify-center">
@@ -149,13 +144,13 @@ const Router = useRouter();
                     <Background/>
                     <Controls/>
             </ReactFlow>
-            {/* <AiForm setform={setform} form={form} AiName="Anthropic" AiType={"CLAUDE"}></AiForm>
-            <AiForm setform={setform1} form={form1} AiName="Gemini" AiType={"GEMINI"}></AiForm>
-            <AiForm setform={setform2} form={form2} AiName="OpenAi" AiType={"CHATGPT"}></AiForm>
-            <DiscordForm setform={setdisform} form={disform} ></DiscordForm>
-            <NotionTriggerForm setform={setnotion} form={notion} ></NotionTriggerForm>
-            <GoogleSheetTriggerForm setform={setsheet} form={sheet} ></GoogleSheetTriggerForm>
-            <GoogleFormTriggerForm setform={setgform} form={gform} ></GoogleFormTriggerForm> */}
+            {/* <AiForm setform={setOpenNodeName} form={form} AiName="Anthropic" AiType={"CLAUDE"}></AiForm> */}
+            {/* <AiForm setform={setOpenNodeName} form={form1} AiName="Gemini" AiType={"GEMINI"}></AiForm>
+            <AiForm setform={setOpenNodeName} form={form2} AiName="OpenAi" AiType={"CHATGPT"}></AiForm>
+            <DiscordForm setform={setOpenNodeName} form={disform} ></DiscordForm>
+            <NotionTriggerForm setform={setOpenNodeName} form={notion} ></NotionTriggerForm>
+            <GoogleSheetTriggerForm setform={setOpenNodeName} form={sheet} ></GoogleSheetTriggerForm>
+            <GoogleFormTriggerForm setform={setOpenNodeName} form={gform} ></GoogleFormTriggerForm> */}
     </div>
 }
 
