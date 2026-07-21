@@ -4,7 +4,7 @@ import "@xyflow/react/dist/style.css";
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import RightsideBar from "./rightsidebar";
 import Trigger, { Action } from "./trigger";
-import { Add, Save } from "./svg/allsvg";
+import { Add, Cross, Save } from "./svg/allsvg";
 import axios from "axios";
 import AiForm from "./AiForm";
 import { Addform } from "./addform";
@@ -18,6 +18,7 @@ import { Secondarybutton } from "./buttons/secondarybutton";
 import { ThemeProvider } from "./theme-provider";
 import { useRouter } from "next/navigation";
 import { metadata } from "@/app/layout";
+import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative";
 
 // export let InitialNodes : Node<{name :string , metadata :string , onDelete : (id:any)=>void}>[] = [{
 //     id : '1',
@@ -44,7 +45,7 @@ export const InitialNodes : [] = []
 export const InitialEdges : Edge [] = []
 
 export function WorkflowContent({workflowid}:{workflowid:any}){
-    const [formDetail, setformDetail] = useState<{}>({});
+    const [formDetail, setformDetail] = useState<{name :string , open : boolean}>({name :"" , open : false});
     ///// we were doming the setdetail again and decided to add exepetion case in the addform ting 
     const [nodes,setNodes,onNodesChange] = useNodesState(InitialNodes)
     const [edges,setEdges,onEdgesChange] = useEdgesState(InitialEdges)
@@ -83,7 +84,7 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
                 data: {
                 name: n.name,
                 metadata : n.data,
-                openForm : setOpenNodeName
+                openForm : setformDetail
                 },
             }));
             const structuredEdges = a.data.connections.map((c: any) => ({
@@ -101,8 +102,8 @@ const Router = useRouter();
     return <div 
          className="h-160 w-full  relative">
             {JSON.stringify(nodes)}
-            -----
-            {openNodeName}
+            {/* ----- */}
+            {/* {JSON.stringify(formDetail)} */}
              <div className="h-15 border-b w-full items-center justify-between  border-b-brand-border dark:border-b-dark-border   px-6  normal font-semibold flex    "> 
                 <div className="flex gap-2 text-sm font-normal">
                     <div onClick={()=>Router.push("/workflows")} className="cursor-pointer">{"workflows"}</div>
@@ -114,7 +115,7 @@ const Router = useRouter();
                 </div>
              </div>
             
-            <RightsideBar setsidebaropen={setsidebaropen} sidebaropen={sidebaropen} setOpenNodeName={setOpenNodeName}></RightsideBar>
+            <RightsideBar setsidebaropen={setsidebaropen} sidebaropen={sidebaropen} setformDetail={setformDetail}></RightsideBar>
 
             <button onClick={()=>setsidebaropen(true)} className="absolute right-5 top-20 z-10  transition duration-100 ">
                 <div className="h-8 rounded-sm  flex items-center bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] w-8 justify-center">
@@ -144,26 +145,33 @@ const Router = useRouter();
                     <Background/>
                     <Controls/>
             </ReactFlow>
-            {/* <AiForm setform={setOpenNodeName} form={form} AiName="Anthropic" AiType={"CLAUDE"}></AiForm> */}
-            {/* <AiForm setform={setOpenNodeName} form={form1} AiName="Gemini" AiType={"GEMINI"}></AiForm>
-            <AiForm setform={setOpenNodeName} form={form2} AiName="OpenAi" AiType={"CHATGPT"}></AiForm>
-            <DiscordForm setform={setOpenNodeName} form={disform} ></DiscordForm>
-            <NotionTriggerForm setform={setOpenNodeName} form={notion} ></NotionTriggerForm>
-            <GoogleSheetTriggerForm setform={setOpenNodeName} form={sheet} ></GoogleSheetTriggerForm>
-            <GoogleFormTriggerForm setform={setOpenNodeName} form={gform} ></GoogleFormTriggerForm> */}
+            <AiForm setformDetail={setformDetail} formDetail={formDetail} AiName="Anthropic" AiType={"CLAUDE"}></AiForm>
+            <AiForm setformDetail={setformDetail} formDetail={formDetail} AiName="Gemini" AiType={"GEMINI"}></AiForm>
+            <AiForm setformDetail={setformDetail} formDetail={formDetail}  AiName="OpenAi" AiType={"CHATGPT"}></AiForm>
+
+            <DiscordForm setformDetail={setformDetail} formDetail={formDetail} ></DiscordForm>
+            <NotionTriggerForm setformDetail={setformDetail} formDetail={formDetail} ></NotionTriggerForm>
+            <GoogleSheetTriggerForm setformDetail={setformDetail} formDetail={formDetail} ></GoogleSheetTriggerForm>
+            <GoogleFormTriggerForm setformDetail={setformDetail} formDetail={formDetail} ></GoogleFormTriggerForm>
     </div>
 }
 
 
-function DiscordForm({setform,form}:{setform:Dispatch<SetStateAction<boolean>>,form:boolean}){
+function DiscordForm({setformDetail,formDetail}:{setformDetail:Dispatch<SetStateAction<any>>,formDetail:any}){
      const {creds} = UseCred()
         const [credName,setcredName] = useState("") 
         const [type,settype] = useState<any>() 
         const [open,setopen] = useState<any>(false) 
         const [systemprompt,setsystemprompt] = useState<any>("") 
         const [userprompt,setuserprompt] = useState<any>("") 
-        return <Addform buttonname="Save" name={`Discord Configuration`} callback={()=>{}} formopen={form} setformopen={setform} >
-                    <div className="">
+        return <div className={` transition duration-300 ease-initial ${ formDetail.name == "discord" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
+                <div className={` transition duration-300 ${ formDetail.name  == "discord" ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
+                    <div className={`p-6 `} >
+                        <div className="flex w-full justify-between items-center ">
+                             <div className="text-[17px] font-semibold dark:text-brand-bg ">{formDetail.name}</div>
+                             <div onClick={()=>{setformDetail({name:"",open:false})}} className="h-6 w-6 rounded-md flex items-center justify-center  hover:bg-[#E9E9E9] hover:dark:bg-[#151619]"><Cross size="16"></Cross></div>
+                        </div>
+                        <div className="">
                          <div className="my-6 flex flex-col gap-6 w-115 overflow-y-scroll max-h-100 p-2 ">
                             <div>
                                 <Input placeholder={`my-Discord-variable`} name="Variable Name" state={credName} statesetter={setcredName}></Input>
@@ -185,71 +193,115 @@ function DiscordForm({setform,form}:{setform:Dispatch<SetStateAction<boolean>>,f
                             </div>
                          </div> 
                     </div>
-                </Addform>
+                        <div  className="flex gap-2 w-full">
+                            <div onClick={()=>{}} className="h-8 w-30 transition-all duration-150 active:scale-95">
+                                <SecondarybuttonNegative>
+                                    <div className=" px-1 text-brand-bg text-sm pb-0.5 dark:text-brand-dark-bg dark:font-semibold">
+                                        Save
+                                    </div>
+                                </SecondarybuttonNegative>
+                            </div>
+                            <div onClick={()=>{setformDetail({name : "" ,  open:false})}} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
+                                <Secondarybutton>
+                                    <div className=" px-1  text-sm pb-0.5">
+                                        Cancle
+                                    </div>
+                                </Secondarybutton>
+                            </div>
+                        </div>
+                      </div>
+                </div>
+             </div>
+
+
+
+                    
+
+
     }
 // this notion one is creepy
 function NotionTriggerForm({
-  setform,
-  form,
+  setformDetail,
+  formDetail,
 }: {
-  setform: Dispatch<SetStateAction<boolean>>;
-  form: boolean;
+  setformDetail: Dispatch<SetStateAction<any>>;
+  formDetail: any;
 }) {
   const [database, setDatabase] = useState("");
 
-  return (
-    <Addform
-      buttonname="Save"
-      name="Notion Trigger Configuration"
-      callback={() => {}}
-      formopen={form}
-      setformopen={setform}
-    >
-      <div className="my-6 flex flex-col gap-6 w-115 overflow-y-scroll max-h-100 p-2">
+  return (<div className={` transition duration-300 ease-initial ${formDetail.name == "Notion" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
+        <div className={` transition duration-300 ${formDetail.name == "Notion"?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
+            <div className={`p-6 `} >
+                <div className="flex w-full justify-between items-center ">
+                     <div className="text-[17px] font-semibold dark:text-brand-bg ">{formDetail.name}</div>
+                     <div onClick={()=>{setformDetail({name : "" ,  open:false})}} className="h-6 w-6 rounded-md flex items-center justify-center  hover:bg-[#E9E9E9] hover:dark:bg-[#151619]"><Cross size="16"></Cross></div>
+                </div>
+                      <div className="my-6 flex flex-col gap-6 w-115 overflow-y-scroll max-h-100 p-2">
 
-        <div className="text-sm">
-          Connect your Notion database to trigger this workflow when a new
-          page is created or updated.
+                        <div className="text-sm">
+                        Connect your Notion database to trigger this workflow when a new
+                        page is created or updated.
+                        </div>
+
+                        <div className="text-xs flex flex-col gap-2">
+                        <p>Setup instructions:</p>
+
+                        <p>1. Open your Notion database</p>
+                        <p>2. Click Share → Invite your integration</p>
+                        <p>3. Copy the Database ID</p>
+                        <p>4. Paste it below</p>
+                        <p>5. Save the workflow</p>
+                        </div>
+
+
+                        <Input
+                        placeholder="Notion Database ID"
+                        name="Database ID"
+                        state={database}
+                        statesetter={setDatabase}
+                        />
+
+
+                        <div className="text-xs">
+                        <p className="mb-2">Available Variables</p>
+
+                        <p>{"{{notion.page.id}}"} - Page ID</p>
+                        <p>{"{{notion.page.title}}"} - Page title</p>
+                        <p>{"{{notion.page.properties}}"} - Database properties</p>
+                        <p>{"{{json notion.page}}"} - Complete page data as JSON</p>
+                        </div>
+
+                      </div>
+                <div  className="flex gap-2 w-full">
+                    <div onClick={()=>{}} className="h-8 w-30 transition-all duration-150 active:scale-95">
+                        <SecondarybuttonNegative>
+                            <div className=" px-1 text-brand-bg text-sm pb-0.5 dark:text-brand-dark-bg dark:font-semibold">
+                                Save
+                            </div>
+                        </SecondarybuttonNegative>
+                    </div>
+                    <div onClick={()=>{setformDetail({name : "" ,  open:false})}} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
+                        <Secondarybutton>
+                            <div className=" px-1  text-sm pb-0.5">
+                                Cancle
+                            </div>
+                        </Secondarybutton>
+                    </div>
+                </div>
+              </div>
         </div>
-
-        <div className="text-xs flex flex-col gap-2">
-          <p>Setup instructions:</p>
-
-          <p>1. Open your Notion database</p>
-          <p>2. Click Share → Invite your integration</p>
-          <p>3. Copy the Database ID</p>
-          <p>4. Paste it below</p>
-          <p>5. Save the workflow</p>
-        </div>
+     </div>
+   
 
 
-        <Input
-          placeholder="Notion Database ID"
-          name="Database ID"
-          state={database}
-          statesetter={setDatabase}
-        />
-
-
-        <div className="text-xs">
-          <p className="mb-2">Available Variables</p>
-
-          <p>{"{{notion.page.id}}"} - Page ID</p>
-          <p>{"{{notion.page.title}}"} - Page title</p>
-          <p>{"{{notion.page.properties}}"} - Database properties</p>
-          <p>{"{{json notion.page}}"} - Complete page data as JSON</p>
-        </div>
-
-      </div>
-    </Addform>
   );
 }
  function GoogleSheetTriggerForm({
-    setform,
-    form
+    setformDetail,
+    formDetail
 }: {
-    setform: Dispatch<SetStateAction<boolean>>;
-    form: boolean;
+    setformDetail: Dispatch<SetStateAction<any>>;
+    formDetail: any;
 }) {
 
     const [credName, setcredName] = useState("");
@@ -260,16 +312,14 @@ function NotionTriggerForm({
     const [open, setopen] = useState(false);
 
 
-    return (
-        <Addform
-            buttonname="Save"
-            name="Google Sheet Trigger Configuration"
-            callback={()=>{}}
-            formopen={form}
-            setformopen={setform}
-        >
-
-            <div className="my-6 flex flex-col gap-4 w-115 overflow-y-scroll h-100 p-2">
+    return (  <div className={` transition duration-300 ease-initial ${formDetail.name =="Google-sheet" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
+        <div className={` transition duration-300 ${formDetail.name =="Google-sheet"?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
+            <div className={`p-6 `} >
+                <div className="flex w-full justify-between items-center ">
+                     <div className="text-[17px] font-semibold dark:text-brand-bg ">{formDetail.name}</div>
+                     <div onClick={()=>{setformDetail({name : "" ,  open:false})}} className="h-6 w-6 rounded-md flex items-center justify-center  hover:bg-[#E9E9E9] hover:dark:bg-[#151619]"><Cross size="16"></Cross></div>
+                </div>
+                 <div className="my-6 flex flex-col gap-4 w-115 overflow-y-scroll h-100 p-2">
 
 
                 <div>
@@ -420,32 +470,53 @@ function NotionTriggerForm({
 
 
             </div>
+                <div  className="flex gap-2 w-full">
+                    <div onClick={()=>{}} className="h-8 w-30 transition-all duration-150 active:scale-95">
+                        <SecondarybuttonNegative>
+                            <div className=" px-1 text-brand-bg text-sm pb-0.5 dark:text-brand-dark-bg dark:font-semibold">
+                                Save
+                            </div>
+                        </SecondarybuttonNegative>
+                    </div>
+                    <div onClick={()=>{setformDetail({name : "" ,  open:false})}} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
+                        <Secondarybutton>
+                            <div className=" px-1  text-sm pb-0.5">
+                                Cancle
+                            </div>
+                        </Secondarybutton>
+                    </div>
+                </div>
+              </div>
+        </div>
+     </div> 
 
-        </Addform>
+       
+
+           
+
     )
 }
+
  function GoogleFormTriggerForm({
-    setform,
-    form
+    setformDetail,
+    formDetail
 }: {
-    setform: Dispatch<SetStateAction<boolean>>;
-    form: boolean;
+    setformDetail: Dispatch<SetStateAction<any>>;
+    formDetail: any;
 }) {
 
     const [credName, setcredName] = useState("");
     const [formId, setformId] = useState("");
 
 
-    return (
-        <Addform
-            buttonname="Save"
-            name="Google Form Trigger Configuration"
-            callback={()=>{}}
-            formopen={form}
-            setformopen={setform}
-        >
-
-            <div className="my-6 flex flex-col gap-4 w-115 overflow-y-scroll h-100 p-2">
+    return (<div className={` transition duration-300 ease-in-out ${formDetail.name == "google-forms" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
+        <div className={` transition duration-300 ${formDetail.name == "google-forms" ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
+            <div className={`p-6 `} >
+                <div className="flex w-full justify-between items-center ">
+                     <div className="text-[17px] font-semibold dark:text-brand-bg ">{formDetail.name}</div>
+                     <div onClick={()=>{setformDetail({name : "" ,  open:false})}} className="h-6 w-6 rounded-md flex items-center justify-center  hover:bg-[#E9E9E9] hover:dark:bg-[#151619]"><Cross size="16"></Cross></div>
+                </div>
+                  <div className="my-6 flex flex-col gap-4 w-115 overflow-y-scroll h-100 p-2">
 
 
                 <div>
@@ -535,8 +606,26 @@ function NotionTriggerForm({
 
 
             </div>
+                <div  className="flex gap-2 w-full">
+                    <div onClick={()=>{}} className="h-8 w-30 transition-all duration-150 active:scale-95">
+                        <SecondarybuttonNegative>
+                            <div className=" px-1 text-brand-bg text-sm pb-0.5 dark:text-brand-dark-bg dark:font-semibold">
+                                Save
+                            </div>
+                        </SecondarybuttonNegative>
+                    </div>
+                    <div onClick={()=>{setformDetail({name : "" ,  open:false})}} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
+                        <Secondarybutton>
+                            <div className=" px-1  text-sm pb-0.5">
+                                Cancle
+                            </div>
+                        </Secondarybutton>
+                    </div>
+                </div>
+              </div>
+        </div>
+     </div>
 
-        </Addform>
     )
 }
 export const UseCred =()=>{

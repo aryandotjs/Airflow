@@ -42,7 +42,7 @@ export default function Trigger({id,data:{name,metadata,openForm}}: TriggerNodeP
                  <Cross size='14'></Cross>
               </div>
               <div  onClick={()=>{
-                 openForm({name , open :false})
+                 openForm({name : name, open :true})
                }}  className='hover:bg-[#E9E9E9] hover:dark:bg-[#212327] h-5 w-5 rounded-sm flex justify-center items-center cursor-default'>
                  <Adjust size='14'></Adjust>
               </div>
@@ -85,7 +85,7 @@ export  function Action({id,data:{name,metadata,openForm}}: TriggerNodeProp) {
                  <Cross size='14'></Cross>
               </div>
               <div onClick={()=>{
-                  openForm({name , open :false})
+                  openForm({name , open :true})
                }} className='hover:bg-[#E9E9E9] hover:dark:bg-[#212327] h-5 w-5 rounded-sm flex justify-center items-center cursor-default'>
                  <Adjust size='14'></Adjust>
               </div>
