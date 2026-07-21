@@ -4,7 +4,7 @@ import { Cross, Execution, Sphere, Webhook, WorkflowIcon } from './svg/allsvg'
 import { MainButton } from './buttons/mainbutton'
 import { nanoid } from 'nanoid'
 
-export default function RightsideBar({sidebaropen ,setsidebaropen,setOpenNodeName }:{sidebaropen:boolean , setsidebaropen : Dispatch<SetStateAction<boolean>>,setOpenNodeName: Dispatch<SetStateAction<string|null>>}) {
+export default function RightsideBar({sidebaropen ,setsidebaropen,setformDetail }:{sidebaropen:boolean , setsidebaropen : Dispatch<SetStateAction<boolean>>,setformDetail: Dispatch<SetStateAction<any>>}) {
   const modalref = useRef<HTMLDivElement>(null)
   const  { getNodes , setNodes } = useReactFlow()
 
@@ -53,7 +53,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setOpenNodeNam
                         data : {
                            name : "Google-sheet" ,
                            metadata : "",
-                           openForm: setOpenNodeName
+                           openForm: setformDetail
                         }
                      }]
                   })
@@ -79,7 +79,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setOpenNodeNam
                         data : {
                            name : "Notion" ,
                            metadata : "",
-                           openForm: setOpenNodeName
+                           openForm: setformDetail
                         }
                      }]
                   })
@@ -106,7 +106,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setOpenNodeNam
                            data : {
                               name : "webhook" ,
                               metadata : "",
-                              openForm: setOpenNodeName
+                              openForm: setformDetail
                            }
                         }]
                      })
@@ -132,7 +132,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setOpenNodeNam
                         data : {
                            name : "google-forms" ,
                            metadata : "",
-                           openForm: setOpenNodeName
+                           openForm: setformDetail
                         }
                      }]
                   })
@@ -165,7 +165,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setOpenNodeNam
                         data : {
                            name : "discord" ,
                            metadata : "",
-                           openForm: setOpenNodeName
+                           openForm: setformDetail
                         }
                      }]
                   })
@@ -189,7 +189,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setOpenNodeNam
                         data : {
                            name : "gemini" ,
                            metadata : "",
-                           openForm: setOpenNodeName
+                           openForm: setformDetail
                         }
                      }]
                   })
@@ -213,7 +213,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setOpenNodeNam
                         data : {
                            name : "chatgpt" ,
                            metadata : "",
-                           openForm: setOpenNodeName
+                           openForm: setformDetail
                         }
                      }]
                   })
@@ -237,7 +237,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setOpenNodeNam
                         data : {
                            name : "claude" ,
                            metadata : "",
-                           openForm: setOpenNodeName
+                           openForm: setformDetail
                         }
                      }]
                   })
