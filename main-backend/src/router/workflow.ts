@@ -140,7 +140,7 @@ WorkflowRouter.post("/duplicate", async (req, res) => {
 
         if (!ogWorkflow) return res.json({ msg: `Workflow not found` })
 
-        const duplicateZap = prisma.$transaction(async (tx) => {
+        const duplicateZap = await prisma.$transaction(async (tx) => {
 
             const newWorkflow = await tx.workflow.create({
                 data: {
@@ -309,7 +309,7 @@ WorkflowRouter.put("/:workflowid", async (req, res) => {
                     type: node.type,
                     workflowId: workflowid,
                     data: node.data.metadata,
-
+                    credentialId: node.data.metadata?.Credential?.id
                 }))
             })
 
@@ -323,14 +323,14 @@ WorkflowRouter.put("/:workflowid", async (req, res) => {
         })
 
         res.json({
-            success: true,
+            msg: "workflow saved successfully"
         });
 
     } catch (error) {
         console.log(error)
         res.status(500).json({
             success: false,
-            message: "Failed to save workflow",
+            msg: "Failed to save workflow",
         });
     }
 })

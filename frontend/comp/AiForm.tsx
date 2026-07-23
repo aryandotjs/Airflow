@@ -15,11 +15,18 @@ const aimap : any = {
     "Gemini" : "gemini",
     "OpenAi" : "chatgpt"
 }
-const initialValue = {variableName:"",AiCredentials:{name:""},SystemPrompt:"",UserPrompt:""}
+const initialValue = {variableName:"",Credential:{name:""},SystemPrompt:"",UserPrompt:""}
 
 export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,AiType}:{nodes:any,setNodes:any,formDetail:any,setformDetail:Dispatch<SetStateAction<any>>,AiName:string,AiType:string}){
     const {creds} = UseCred()
-    const [formdata,setformdata] = useState<{variableName:string,AiCredentials:{name:string},SystemPrompt?:string,UserPrompt:string}>(initialValue)
+    const newcreds = creds.map((a:any)=> {
+         return {
+            id : a.id,
+            name : a.name,
+            type : a.type
+         }
+    })
+    const [formdata,setformdata] = useState<{variableName:string,Credential:{name:string},SystemPrompt?:string,UserPrompt:string}>(initialValue)
      useEffect(()=>{
             if (nodes.length > 0) {
                 const selectednodemetadata = nodes.filter((a:any)=>{return  a.id === formDetail.nodeid})[0]?.data.metadata
@@ -52,7 +59,7 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                             <div className="">{`${AiName} Credentials`}</div>
                             <div className="w-full relative z-10 " >
                                         <OpenerButton simplefilter={
-                                             formdata.AiCredentials ?
+                                             formdata.Credential.name ?
                                                 <div className="flex gap-1 items-center">
                                                     <div className="h-5 w-5">
                                                         {AiType === "CLAUDE" ? 
@@ -62,21 +69,21 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                                                         AiType === "CHATGPT" ?
                                                         <img src={"/actiontriggerimages/chatgpt.png"}></img>:""}
                                                     </div> 
-                                                    <div>{formdata.AiCredentials.name}</div>
+                                                    <div>{formdata.Credential.name}</div>
                                                 </div> : "Select a credential"
 
                                                 } open={open} setopen={setopen}></OpenerButton>
                                         <div className={`absolute w-full top-7 transition duration-150 ${open ? "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
-                                            <OpenOptions simplefilter={formdata.AiCredentials.name??""} open={open} setopen={setopen} setsimplefilter={(a)=>{setformdata((prev:any)=>{return {...prev , AiCredentials :a}})}}>
+                                            <OpenOptions simplefilter={formdata.Credential?.name??""} open={open} setopen={setopen} setsimplefilter={(a)=>{setformdata((prev:any)=>{return {...prev , AiCredentials :a}})}}>
                                                     <Opneframe>
-                                                            {creds.map((z:any,index)=>{
+                                                            {newcreds.map((z:any,index)=>{
                                                                 if (z.type !== AiType) {
                                                                     return
                                                                 }
                                                                 return <div 
                                                                     key={index}
                                                                     onClick={()=>{
-                                                                        setformdata((prev:any)=>{return {...prev , AiCredentials :z}})
+                                                                        setformdata((prev:any)=>{return {...prev , Credential :z}})
                                                                         setopen(false)
                                                                     }}
                                                                     className="m-1.5 ">

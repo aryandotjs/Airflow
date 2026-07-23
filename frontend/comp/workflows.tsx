@@ -67,14 +67,13 @@ function useWorkflow(refresh:boolean) {
     const [workflows, setworkflows] = useState<Zap[]>([]);
 
     useEffect(() => {
-        axios.get(`${BACKEND_URL}/api/v1/workflow/all`, {
+        axios.get(`${BACKEND_URL}/api/v1/workflow/all?t=${Date.now()}`, {
             // headers: {
-            //     "authorization": `Bearer ${localStorage.getItem("token")}`
-            // }
-        })
+                //     "authorization": `Bearer ${localStorage.getItem("token")}`
+                // }
+            })
             .then(res => {
-                // setZaps(res.data.workflow.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
-                setworkflows(res.data.workflows);
+                setworkflows(res.data.workflows.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
                 setLoading(false)
             })
     }, [refresh]);
@@ -85,7 +84,6 @@ function useWorkflow(refresh:boolean) {
     }
 }
 
-// export function Workflows({setcard ,settoasts,card}:{card:string,settoasts:Dispatch<SetStateAction<any>>,setcard:Dispatch<SetStateAction<string>>}){
     export function  Workflows(){
         const [refreshTrigger, setRefreshTrigger] = useState(false);
         const { loading, workflows } = useWorkflow(refreshTrigger);
@@ -101,7 +99,6 @@ function useWorkflow(refresh:boolean) {
             return MatchStatus && MatchSearch 
             }) 
         },[filter1,workflows,search])
-
           const router = useRouter();
     return <div className="flex flex-col gap-4 px-24  w-full">
                     <div className="flex justify-between mt-6 items-center ">
@@ -218,7 +215,7 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                     className=" select-none hover:bg-[#E9E9E9] pt-1 hover:dark:bg-[#151619] h-8 w-8  rounded-xl  flex justify-center">
                     ...
                 </div>
-                                    <div className={`absolute  w-45 top-8 z-10 right-0 transition duration-100 ${ option.open && index == option.id ?  "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
+                                    <div className={`absolute  w-45 top-8 z-40 right-0 transition duration-100 ${ option.open && index == option.id ?  "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
                                         <Opneframe>
                                                 <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                     <div onClick={async()=> {
@@ -246,7 +243,7 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                                                     <div onClick={async()=> {
                                                          try{
                                                            const response = await axios.post(`${BACKEND_URL}/api/v1/workflow/duplicate`,{
-                                                                 workflowid 
+                                                                 workflowid : z.id 
                                                             })
                                                             setoption({open:false , id : null})
                                                             showToast({msg :response.data.msg,isError:false})
