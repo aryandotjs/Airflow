@@ -23,6 +23,8 @@ import DiscordForm from "./discordform";
 import { GoogleSheetTriggerForm } from "./googlesheets";
 import { GoogleFormTriggerForm } from "./googleform";
 import { NotionTriggerForm } from "./notionform";
+import { useToast } from "./toastprovider";
+import useToastSetterRemover from "./toastfunction";
 
 // export let InitialNodes : Node<{name :string , metadata :string , onDelete : (id:any)=>void}>[] = [{
 //     id : '1',
@@ -45,7 +47,7 @@ export const  nodeTypes  = {
 type workflow = {
     name :string
 }
-export const InitialNodes : [] = []
+export const InitialNodes : Node [] = []
 export const InitialEdges : Edge [] = []
 
 export function WorkflowContent({workflowid}:{workflowid:any}){
@@ -60,7 +62,7 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
         }, [setEdges]);
     
     const [ wholeworkflow , setwholeworkflow ] = useState<workflow|null>()
-
+    const  showToast = useToastSetterRemover()
     useEffect(() => {
         axios
             .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/workflow/${workflowid}`)
@@ -103,19 +105,23 @@ const Router = useRouter();
             
             <RightsideBar setsidebaropen={setsidebaropen} sidebaropen={sidebaropen} setformDetail={setformDetail}></RightsideBar>
 
-            <button onClick={()=>setsidebaropen(true)} className="absolute right-5 top-20 z-10  transition duration-100 ">
+            <button onClick={()=>setsidebaropen(true)} className="absolute right-20 top-20 z-10  transition duration-100 ">
                 <div className="h-8 rounded-sm  flex items-center bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] w-8 justify-center">
                      <Add size="22"></Add>
                 </div>
             </button>
             <button onClick={async()=>{
-           
-                 const response = await axios.put(`${BACKEND_URL}/api/v1/workflow/${workflowid}`,{
-                        nodes , edges
-                 })
-                
-                 Router.push("/workflows")
-            }} className="absolute right-5 top-30 z-10 gap-0.5 ">
+                try {
+                    const response = await axios.put(`${BACKEND_URL}/api/v1/workflow/${workflowid}`,{
+                           nodes , edges
+                    })
+                    showToast({msg :response.data.msg,isError:false})
+
+                } catch (err:any) {
+                    showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                }
+
+            }} className="absolute right-5 top-20 z-10 gap-0.5 ">
                 <div className="h-8 rounded-sm px-2 active:scale-95 duration-100  flex items-center bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] text-xs font-semibold justify-center">
                     <div>Save</div>
                      <Save size="14"></Save>
@@ -127,7 +133,10 @@ const Router = useRouter();
                     onNodesChange={onNodesChange} 
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
-                    nodeTypes={nodeTypes}>
+                    nodeTypes={nodeTypes}
+                    defaultViewport={{ x: 0, y: 0, zoom: 1.1 }}
+                    >
+                    
                     <Background/>
                     <Controls/>
             </ReactFlow>

@@ -6,7 +6,7 @@ import { OpenComp } from "./opencomp";
 
 export function Me(){
      return <div className="h-15 flex items-center w-full ">
-        <MainButton name={"aryanloahrchawand"} size="big"> 
+        <MainButton name={"aryanloharchawand"} size="big"> 
              <div className="h-6 w-6 rounded-md flex items-center justify-center text-[11px] font-bold text-white bg-gradient-to-br from-[#1D9BF0] to-[#085A9E]">
                  {"A"}
              </div>

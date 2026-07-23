@@ -48,7 +48,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setformDetail 
                   setNodes((prev)=>{
                      return [...prev,{
                         id : nanoid() ,
-                        position : { x : 280 , y: 280},
+                        position : { x : 280 , y: 100},
                         type : "trigger",
                         data : {
                            name : "Google-sheet" ,
@@ -74,7 +74,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setformDetail 
                   setNodes((prev)=>{
                      return [...prev,{
                         id : nanoid() ,
-                        position : { x : 280 , y: 280},
+                        position : { x : 280 , y: 220},
                         type : "trigger",
                         data : {
                            name : "Notion" ,
@@ -127,7 +127,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setformDetail 
                   setNodes((prev)=>{
                      return [...prev,{
                         id : nanoid() ,
-                        position : { x : 280 , y: 280},
+                        position : { x : 280 , y: 350},
                         type : "trigger",
                         data : {
                            name : "google-forms" ,
@@ -160,7 +160,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setformDetail 
                   setNodes((prev)=>{
                      return [...prev,{
                         id : nanoid() ,
-                        position : { x : 680 , y: 280},
+                        position : { x : 680 , y: 180},
                         type : "action",
                         data : {
                            name : "discord" ,
@@ -184,7 +184,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setformDetail 
                   setNodes((prev)=>{
                      return [...prev,{
                         id : nanoid() ,
-                        position : { x : 680 , y: 280},
+                        position : { x : 580 , y: 180},
                         type : "action",
                         data : {
                            name : "gemini" ,
@@ -232,7 +232,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setformDetail 
                   setNodes((prev)=>{
                      return [...prev,{
                         id : nanoid() ,
-                        position : { x : 680 , y: 280},
+                        position : { x : 580 , y: 280},
                         type : "action",
                         data : {
                            name : "claude" ,
