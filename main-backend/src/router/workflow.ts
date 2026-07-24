@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authmiddleware } from "../middleware";
 import { prisma } from "../db";
 import { ZapCreateSchema } from "../types";
+import { executeWorkflow } from "../workflow-engine/executeWorkflow";
 // import { ZapStatus } from "../generated/prisma/enums";
 
 export const WorkflowRouter = Router()
@@ -351,4 +352,12 @@ WorkflowRouter.get("/executions/all", async (req, res) => {
         ,
     })
     return res.json(allExecutions)
+})
+
+
+WorkflowRouter.post("/test/:workflowId", async (req, res) => {
+    await executeWorkflow(req.params.workflowId);
+    res.json({
+        message: "Workflow executed"
+    });
 })
