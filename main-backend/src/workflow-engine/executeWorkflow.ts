@@ -25,8 +25,9 @@ export async function executeWorkflow(workflowId: string) {
     let contex: WorkflowContext = {}
 
     for (const node of sortednodes) {
-
         contex = await executeNode(node, contex)
     }
+
+    console.log(contex)
 
 }
