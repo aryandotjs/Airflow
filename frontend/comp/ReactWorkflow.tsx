@@ -25,6 +25,7 @@ import { GoogleFormTriggerForm } from "./googleform";
 import { NotionTriggerForm } from "./notionform";
 import { useToast } from "./toastprovider";
 import useToastSetterRemover from "./toastfunction";
+import { HttpForm } from "./httpfrom";
 
 // export let InitialNodes : Node<{name :string , metadata :string , onDelete : (id:any)=>void}>[] = [{
 //     id : '1',
@@ -92,9 +93,11 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
 const Router = useRouter();
     return <div 
          className="h-160 w-full  relative">
+            {/* {JSON.stringify(nodes)}
+            {JSON.stringify(formDetail)} */}
             <button onClick={async()=>{
                 await axios.post(`${BACKEND_URL}/api/v1/workflow/test/${workflowid}`)
-            }} className="b-1 p-2 rounded-lg">
+            }} className="b-1 p-2 rounded-lg border ">
                 test button
             </button>
              <div className="h-15 border-b w-full items-center justify-between  border-b-brand-border dark:border-b-dark-border   px-6  normal font-semibold flex    "> 
@@ -149,6 +152,7 @@ const Router = useRouter();
             <GoogleSheetTriggerForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></GoogleSheetTriggerForm>
             <GoogleFormTriggerForm nodes={nodes} setNodes={setNodes}  setformDetail={setformDetail} formDetail={formDetail} ></GoogleFormTriggerForm>
             <NotionTriggerForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></NotionTriggerForm>
+            <HttpForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></HttpForm>
 
 
             <AiForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} AiName="Anthropic" AiType={"CLAUDE"}></AiForm>

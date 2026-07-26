@@ -4,6 +4,71 @@ import { Cross, Execution, Sphere, Webhook, WorkflowIcon } from './svg/allsvg'
 import { MainButton } from './buttons/mainbutton'
 import { nanoid } from 'nanoid'
 
+   
+               
+const nodesuidata = [
+   {
+      position : { x : 280 , y: 350},
+      type : "trigger",
+      name : "google-forms",
+      image : "/actiontriggerimages/google-forms.png",
+      msg : " Runs the workflow when Google form is submitted"
+   },
+    {
+      position : { x : 280 , y: 100},
+      type : "trigger",
+      name : "Notion",
+      image : "/actiontriggerimages/notion.png",
+      darkimage : "/actiontriggerimages/darknotion.png",
+      msg : "Runs the workflow when notion row added"
+   },
+    {
+      position : { x : 280 , y: 200},
+      type : "trigger",
+      name : "Google-sheet",
+      image : "/actiontriggerimages/google-sheet.png",
+      msg : "Runs the workflow when Google Sheets row added"
+   },
+   {
+      position : { x : 480 , y: 180},
+      type : "action",
+      name : "HTTP-request",
+      image : "/actiontriggerimages/HTTP-request.png",
+      darkimage : "/actiontriggerimages/darkHTTP-request.png",
+      msg : "make an api request"
+   },
+   {
+      position : { x : 680 , y: 180},
+      type : "action",
+      name : "discord",
+      image : "/actiontriggerimages/discord.png",
+      msg : "Send a message to discord "
+   },
+   {
+    position: { x: 580, y: 180 },
+    type: "action",
+    name: "gemini",
+    image: "/actiontriggerimages/gemini.png",
+    msg: "Uses Google Gemini to generate text"
+  },
+  {
+    position: { x: 680, y: 280 },
+    type: "action",
+    name: "chatgpt",
+    image: "/actiontriggerimages/chatgpt.png",
+    msg: "Uses Chatgpt to generate text"
+  },
+  {
+    position: { x: 580, y: 280 },
+    type: "action",
+    name: "claude",
+    image: "/actiontriggerimages/claude.png",
+    msg: "Uses Claude to generate text"
+  },
+   
+]
+ 
+
 export default function RightsideBar({sidebaropen ,setsidebaropen,setformDetail }:{sidebaropen:boolean , setsidebaropen : Dispatch<SetStateAction<boolean>>,setformDetail: Dispatch<SetStateAction<any>>}) {
   const modalref = useRef<HTMLDivElement>(null)
   const  { getNodes , setNodes } = useReactFlow()
@@ -43,217 +108,42 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setformDetail 
          
 
             <div className='py-4'>
-               <div 
-                  onClick={()=>{
-                  setNodes((prev)=>{
-                     return [...prev,{
-                        id : nanoid() ,
-                        position : { x : 280 , y: 100},
-                        type : "trigger",
-                        data : {
-                           name : "Google-sheet" ,
-                           metadata : "",
-                           openForm: setformDetail
-                        }
-                     }]
-                  })
-               }} 
-               className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99 hover:bg-black/3'>
-                  <div className='flex w-15 justify-center'>
-                     <img className='h-5 ' src="/actiontriggerimages/google-sheet.png"></img>
-                  </div>
 
-                  <div> 
-                     <div className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'> Google sheet </div>
-                     <div className='text-xs text-[#949494]'> Runs the workflow when Google Sheets row added</div>
-                  </div>
+             {nodesuidata.map((a:any,index)=>{
+               return <div key={index}>
+                        <div 
+                              onClick={()=>{
+                              setNodes((prev)=>{
+                                 return [...prev,{
+                                    id : nanoid() ,
+                                    position : a.position,
+                                    type : a.type,
+                                    data : {
+                                       name : a.name ,
+                                       metadata : "",
+                                       openForm: setformDetail
+                                    }
+                                 }]
+                              })
+                           }} 
+                            className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99 hover:bg-black/3'>
+                           <div className='flex w-15 justify-center'>
+                              <img className='h-5 hidden dark:block' src={a.darkimage?a.darkimage:a.image}></img>
+                              <img className='h-5 dark:hidden' src={a.image}></img>
+                           </div>
+
+                           <div> 
+                              <div className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'> {a.name} </div>
+                              <div className='text-xs text-[#949494]'> {a.msg}</div>
+                           </div>
+                     </div>
+           
+                     {index === 2 ?  <div className='border-b my-4 text-[#E9E9E9] dark:text-white/10'></div> : ""}
                </div>
+             })}
 
-               <div 
-                  onClick={()=>{
-                  setNodes((prev)=>{
-                     return [...prev,{
-                        id : nanoid() ,
-                        position : { x : 280 , y: 220},
-                        type : "trigger",
-                        data : {
-                           name : "Notion" ,
-                           metadata : "",
-                           openForm: setformDetail
-                        }
-                     }]
-                  })
-               }} 
-              className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99 hover:bg-black/3'>
-                  <div className='flex w-15 justify-center'>
-                     <img className='h-5  hidden dark:block' src="/actiontriggerimages/darknotion.png"></img>
-                     <img className='h-5  dark:hidden' src="/actiontriggerimages/notion.png"></img>
-                  </div>
-                  <div> 
-                     <div className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'>Notion  </div>
-                     <div className='text-xs text-[#949494] '>Runs the workflow when a page or item is added to a database </div>
-                  </div>
-               </div>
+             </div>
 
-
-               {/* <div 
-                  onClick={()=>{
-                     setNodes((prev)=>{
-                        return [...prev,{
-                           id : nanoid() ,
-                           position : { x : 280 , y: 280},
-                           type : "trigger",
-                           data : {
-                              name : "webhook" ,
-                              metadata : "",
-                              openForm: setformDetail
-                           }
-                        }]
-                     })
-                  }}   className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99 hover:bg-black/3'>
-                  <div className='flex w-15 justify-center'>
-                     <img className='h-6  hidden dark:block' src="/actiontriggerimages/darkwebhook.png"></img>
-                     <img className='h-6  dark:hidden' src="/actiontriggerimages/webhook.png"></img>
-                  </div>
-                  <div> 
-                     <div  className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'> Webhook </div>
-                     <div className='text-xs text-[#949494]'> Runs the workflow instantly when data is sent to a unique URL </div>
-                  </div>
-               </div> */}
-
-               <div className='py-4'>
-               <div 
-                  onClick={()=>{
-                  setNodes((prev)=>{
-                     return [...prev,{
-                        id : nanoid() ,
-                        position : { x : 280 , y: 350},
-                        type : "trigger",
-                        data : {
-                           name : "google-forms" ,
-                           metadata : "",
-                           openForm: setformDetail
-                        }
-                     }]
-                  })
-               }} 
-               className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99 hover:bg-black/3'>
-                  <div className='flex w-15 justify-center'>
-                     <img className='h-5 ' src="/actiontriggerimages/google-forms.png"></img>
-                  </div>
-
-                  <div> 
-                     <div className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'> Google Form </div>
-                     <div className='text-xs text-[#949494]'> Runs the workflow when Google form is submitted</div>
-                  </div>
-               </div>
-
-            </div>
-            
-            <div className='border-b text-[#E9E9E9] dark:text-white/10'></div>
-
-            <div className='pt-4'>
-               
-
-               <div 
-                  onClick={()=>{
-                  setNodes((prev)=>{
-                     return [...prev,{
-                        id : nanoid() ,
-                        position : { x : 680 , y: 180},
-                        type : "action",
-                        data : {
-                           name : "discord" ,
-                           metadata : "",
-                           openForm: setformDetail
-                        }
-                     }]
-                  })
-               }} className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99  hover:bg-black/3'>
-                  <div className='flex w-15 justify-center'>
-                     <img className='h-6' src="/actiontriggerimages/discord.png"></img>
-                  </div>
-                  <div> 
-                     <div  className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'> Discord </div>
-                     <div className='text-xs text-[#949494]'> Send a message to discord </div>
-                  </div>
-               </div>
-               
-               <div 
-                  onClick={()=>{
-                  setNodes((prev)=>{
-                     return [...prev,{
-                        id : nanoid() ,
-                        position : { x : 580 , y: 180},
-                        type : "action",
-                        data : {
-                           name : "gemini" ,
-                           metadata : "",
-                           openForm: setformDetail
-                        }
-                     }]
-                  })
-               }} className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99  hover:bg-black/3'>
-                   <div className='flex w-15 justify-center'>
-                     <img className='h-6' src="/actiontriggerimages/gemini.png"></img>
-                  </div>
-                  <div> 
-                     <div  className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'> Gemini </div>
-                     <div className='text-xs text-[#949494]'>Uses Google Gemini to generate text </div>
-                  </div>
-               </div>
-
-               <div 
-                  onClick={()=>{
-                  setNodes((prev)=>{
-                     return [...prev,{
-                        id : nanoid() ,
-                        position : { x : 680 , y: 280},
-                        type : "action",
-                        data : {
-                           name : "chatgpt" ,
-                           metadata : "",
-                           openForm: setformDetail
-                        }
-                     }]
-                  })
-               }}   className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99  hover:bg-black/3'>
-                  <div className='flex w-15 justify-center'>
-                     <img className='h-6' src="/actiontriggerimages/chatgpt.png"></img>
-                  </div>
-                  <div> 
-                     <div  className='text-sm font-semibold dark:text-[#F0F0F0] dark:font-normal'>  Chatgpt </div>
-                     <div className='text-xs text-[#949494]'> Uses  Chatgpt to generate text </div>
-                  </div>
-               </div>
-
-               <div 
-                  onClick={()=>{
-                  setNodes((prev)=>{
-                     return [...prev,{
-                        id : nanoid() ,
-                        position : { x : 580 , y: 280},
-                        type : "action",
-                        data : {
-                           name : "claude" ,
-                           metadata : "",
-                           openForm: setformDetail
-                        }
-                     }]
-                  })
-               }}  className='py-6 flex gap-1 items-center hover:dark:bg-white/5 transition-colors duration-100 active:scale-99  hover:bg-black/3'>
-                  <div className='flex w-15 justify-center'>
-                     <img className='h-6' src="/actiontriggerimages/claude.png"></img>
-                  </div>
-                  <div> 
-                     <div  className='text-sm font-semibold dark:font-normal dark:text-[#F0F0F0]'>  Claude</div>
-                     <div className='text-xs text-[#949494]'> Uses  Claude to generate text </div>
-                  </div>
-               </div>
-               
-            </div>
-            
-    </div>
     </div>
     </div>
   )
