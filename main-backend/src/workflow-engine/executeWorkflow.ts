@@ -1,4 +1,6 @@
 import { prisma } from "../db"
+import type { WorkflowContext } from "./contex"
+import { executeNode } from "./executeNode"
 import { topologicalSort } from "./topologicalsort"
 
 
@@ -13,8 +15,18 @@ export async function executeWorkflow(workflowId: string) {
             connections: true
         }
     })
+
     if (!workflow) {
         throw Error("no workflow here")
     }
-    topologicalSort(workflow.nodes, workflow.connections)
+
+    const sortednodes = topologicalSort(workflow.nodes, workflow.connections)
+
+    let contex: WorkflowContext = {}
+
+    for (const node of sortednodes) {
+
+        contex = await executeNode(node, contex)
+    }
+
 }
