@@ -31,7 +31,7 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                         <div className="">
                          <div className="my-6 flex flex-col gap-6 w-115 overflow-y-scroll max-h-100 p-2 ">
                             <div>
-                                <Input placeholder={`my-Discord-variable`} name="Variable Name" state={formdata.variableName} statesetter={(a)=>{
+                                <Input placeholder={`my-Discord-variable`} name="Variable Name (coming soon)" state={formdata.variableName} statesetter={(a)=>{
                                      setformdata((prev:any)=>{
                                          return {...prev , variableName : a }
                                      })

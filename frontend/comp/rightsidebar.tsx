@@ -10,6 +10,13 @@ const nodesuidata = [
    {
       position : { x : 280 , y: 350},
       type : "trigger",
+      name : "Trigger-manually",
+      image : "/actiontriggerimages/darkTrigger-manually.png",
+      msg : "Runs the flow on clicking a button. Good for getting started quickly"
+   },
+   {
+      position : { x : 280 , y: 350},
+      type : "trigger",
       name : "google-forms",
       image : "/actiontriggerimages/google-forms.png",
       msg : " Runs the workflow when Google form is submitted"
@@ -122,6 +129,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setformDetail 
                                        name : a.name ,
                                        metadata : "",
                                        openForm: setformDetail
+                                       
                                     }
                                  }]
                               })

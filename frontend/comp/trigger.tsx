@@ -6,6 +6,8 @@ import { Namebox } from './buttons/namebox'
 import { Adjust, Cross } from './svg/allsvg'
 import { Addform } from './addform'
 import { Input } from './buttons/input'
+import { usePathname, useRouter } from 'next/navigation'
+import axios from 'axios'
 
 type TriggerNodeProp = NodeProps<BuiltInNode> & {
       data : {
@@ -14,10 +16,19 @@ type TriggerNodeProp = NodeProps<BuiltInNode> & {
         openForm : Dispatch<SetStateAction<any>>
       }
 }
+const BACKEND_URL = "http://localhost:3001";
+
 export default function Trigger({id,data:{name,metadata,openForm}}: TriggerNodeProp) {
+   const route = usePathname()
+   const workflowid = route.split("/")[route.split("/").length-1]
   const {setNodes , setEdges} = useReactFlow();
+
   return (
-    <div  className=''>
+   <div>
+
+    <div className='' onClick={name === "Trigger-manually" ? async()=>{
+       await axios.post(`${BACKEND_URL}/api/v1/workflow/test/${workflowid}`)
+      } : ()=>{}}>
        <div className='p-3 border rounded-l-2xl rounded-r-sm  border-[#DCDFE2] dark:border-[#2C3034] bg-brand-bg hover:bg-[#E9E9E9] hover:dark:bg-[#212327] transition-colors dark:bg-[#151619]'>
            <img  src={`/actiontriggerimages/${name}.png`} className='h-8 dark:hidden'></img>
            <img  src={`/actiontriggerimages/dark${name}.png`} className='h-8 hidden dark:block'></img>
@@ -29,14 +40,15 @@ export default function Trigger({id,data:{name,metadata,openForm}}: TriggerNodeP
            {name}
           </div>
         </div>
+    </div>
        <div className='absolute top-[-25] left-2'>
-          <div className='flex gap-1 justify-center'>
+          <div className='flex gap-1 justify-center '>
               <div className='hover:bg-[#E9E9E9] hover:dark:bg-[#212327] h-5 w-5 rounded-sm flex justify-center items-center cursor-default' onClick={()=>{
                  setNodes((prev:any )=>{
                     return prev.filter((a:any)=> a.id !== id )
-                 })
+                  })
                   setEdges((prev:any)=>{
-                   return prev.filter((a:any)=> a.source !== id && a.target !== id)
+                     return prev.filter((a:any)=> a.source !== id && a.target !== id)
                  }) 
                  
               }}>
@@ -46,11 +58,10 @@ export default function Trigger({id,data:{name,metadata,openForm}}: TriggerNodeP
                  openForm({name : name, open :true,nodeid:id})
                }}  className='hover:bg-[#E9E9E9] hover:dark:bg-[#212327] h-5 w-5 rounded-sm flex justify-center items-center cursor-default'>
                  <Adjust size='14'></Adjust>
-              </div>
+              </div> 
           </div>
        </div>
-       
-    </div>
+   </div>
   )
 }
  

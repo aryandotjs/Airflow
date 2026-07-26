@@ -1,14 +1,21 @@
+import { response } from "express"
+import { httpExecuter } from "./executers/httpExecuter"
 import type { Executor } from "./executor-types"
+import { da } from "zod/locales"
+import { DiscordExecuter } from "./executers/discordExecuter"
 
 const executors: Record<string, Executor> = {
+    "HTTP-REQUEST": httpExecuter,
+    "TRIGGER-MANUALLY": async ({ data }) => {
+        return {
+            response: "trigged manually"
+        }
+    },
+    DISCORD: DiscordExecuter,
+
     GEMINI: async ({ data }) => {
         return {
             response: "fake gemini response"
-        }
-    },
-    DISCORD: async ({ data }) => {
-        return {
-            mess: "disc  response"
         }
     },
     NOTION: async ({ data }) => {

@@ -1,13 +1,13 @@
 import axios from "axios"
 
 
-
 interface DiscordPayload {
     webhookUrl: string,
     messageTemplate: string,
     botusername: string,
     data: Record<string, any>
 }
+
 function templating(message: string, data: Record<string, any>): string {
     return message.replace(/\{\{(.*?)\}\}/g, (match, key) => {
         const clearkey = key.trim().replace('/^body\./', '')
