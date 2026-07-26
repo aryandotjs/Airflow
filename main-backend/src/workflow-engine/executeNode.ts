@@ -1,20 +1,22 @@
 import type { WorkflowContext } from "./contex";
 import { getExecuter } from "./executorRegistry";
 
-export async function executeNode(node: any, contex: WorkflowContext) {
-
-    const executer = getExecuter(node.data.name)
+export async function executeNode(node: any, context: WorkflowContext) {
+    const executer = getExecuter((node.name).toUpperCase())
 
     if (!executer) {
         throw new Error(
-            `No executor found for ${node.data.name}`
+            `No executor found for ${(node.name).toUpperCase()}`
         );
     }
 
-    await executer()
+    const output = await executer({
+        data: node.data,
+        context
+    })
 
     return {
-        ...contex,
-        [node.name]: "complete"
+        ...context,
+        [node.name]: output
     };
 }

@@ -1,0 +1,1 @@
+export type Executor = (params: { data: any, context: any }) => Promise<any>
