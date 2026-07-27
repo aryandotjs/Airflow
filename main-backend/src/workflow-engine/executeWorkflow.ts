@@ -29,6 +29,5 @@ export async function executeWorkflow(workflowId: string) {
         contex = await executeNode(node, contex)
     }
 
-    console.log(contex)
-
+    console.log("finalContext :", contex)
 }

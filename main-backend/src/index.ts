@@ -4,6 +4,7 @@ import cors from "cors"
 import { CredentialRouter } from "./router/credentials"
 import { WorkflowRouter } from "./router/workflow"
 import { NodeRouter } from "./router/node"
+import { testRouter } from "./router/testRouter"
 const app = express()
 
 app.use(express.json())
@@ -15,6 +16,7 @@ app.use("/api/v1/user", userRouter)
 app.use("/api/v1/workflow", WorkflowRouter)
 app.use("/api/v1/node", NodeRouter)
 app.use("/api/v1/credentials", CredentialRouter)
+app.use("/api/v1/test", testRouter)
 
 app.listen(3001, () => {
     console.log("server runniing on port 3001")

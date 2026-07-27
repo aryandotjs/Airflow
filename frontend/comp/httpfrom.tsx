@@ -49,7 +49,7 @@ export function HttpForm({
                 </div>
                        <div className="my-6 flex flex-col gap-6 w-115 overflow-y-scroll max-h-100 p-2 ">
                             <div>
-                                <Input placeholder={`Variable-name`} name="Variable Name" state={formdata.variableName} statesetter={(a)=>{
+                                <Input placeholder={`Variable-name`} name="Variable Name (optional)" state={formdata.variableName} statesetter={(a)=>{
                                      setformdata((prev:any)=>{
                                          return {...prev , variableName : a }
                                      })
@@ -95,7 +95,7 @@ export function HttpForm({
                             <div>
                                 <BigInput 
                                       placeholder={"{\n    user Id: {{httpResponse.data.id}},\n    name: {{httpResponse.data.name}},\n    items: {{httpResponse.data.items}}\n}"} 
-                                     name="RequestBody" state={formdata.RequestBody.toString() ?? ""} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , RequestBody :a}})}}></BigInput> 
+                                     name="RequestBody" state={formdata.RequestBody} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , RequestBody :a}})}}></BigInput> 
                                 <div className=" text-xs">{"Enter JSON body or use {{variables}} for simple values or {{json variables}} to stringify objects"}</div>
                             </div>
                             : ""}
