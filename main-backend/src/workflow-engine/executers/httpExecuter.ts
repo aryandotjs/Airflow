@@ -11,10 +11,10 @@ export async function httpExecuter(
     }) {
     console.log("HTTP executor running");
     let result;
-    // if (data.Method == "GET") {
-    //     const response = await axios.get(data.Endpoint)
-    //     result = await response.data.json()
-    // }
+    if (data.Method == "GET") {
+        const response = await axios.get(data.Endpoint)
+        result = await response.data.json()
+    }
 
     if (data.Method == "POST") {
         const response = await axios.post(data.Endpoint, JSON.parse(data.RequestBody))

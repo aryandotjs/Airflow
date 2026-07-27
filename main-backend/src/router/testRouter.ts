@@ -15,7 +15,7 @@ testRouter.post("/test1", async (req, res) => {
     try {
         return res.status(200).json({
             msg: "user created",
-            user: name,
+            name: name,
             channel: channel
         })
     } catch (err: any) {
