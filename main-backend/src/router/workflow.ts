@@ -3,6 +3,7 @@ import { authmiddleware } from "../middleware";
 import { prisma } from "../db";
 import { ZapCreateSchema } from "../types";
 import { executeWorkflow } from "../workflow-engine/executeWorkflow";
+import { validateWorkflow } from "../workflow-engine/validateWorkflow";
 // import { ZapStatus } from "../generated/prisma/enums";
 
 export const WorkflowRouter = Router()
@@ -84,43 +85,45 @@ WorkflowRouter.post("/", async (req, res) => {
 //     return res.json({ zaps })
 // })
 
-// zapRouter.post("/togglestatus", authmiddleware, async (req, res) => {
-//     // const userId = (req as any).userId;
-//     const userid = 3
-//     const { crrstatus, workflowid } = req.body
-//     let status = crrstatus;
-//     try {
+WorkflowRouter.post("/togglestatus", authmiddleware, async (req, res) => {
+    // const userId = (req as any).userId;
+    const userid = 3
+    const { crrstatus, workflowid } = req.body
+    let status = crrstatus;
 
-//         if (crrstatus === ZapStatus.PAUSED ||
-//             crrstatus === ZapStatus.DRAFT) {
-//             status = ZapStatus.ACTIVE
-//         }
+    if (crrstatus === "DRAFT" ||
+        crrstatus === "PAUSED") {
 
-//         if (crrstatus == ZapStatus.ACTIVE) {
+        const validation = await validateWorkflow(workflowid)
 
-//             status = ZapStatus.PAUSED
-//         }
-//         const zap = await prisma.zap.updateMany({
-//             where: {
-//                 id: workflowid,
-//                 userId: userid
-//             },
-//             data: {
-//                 status: status
-//             }
-//         })
-//         return res.json({
-//             zap,
-//             msg: `Workflow ${status.toString().toLowerCase()}`
-//         })
+        if (!validation.success) {
+            return res.status(400).json({
+                msg: "Workflow cannot be activated",
+                errors: validation.errors
+            })
+        }
 
-//     } catch (error) {
-//         return res.json({
-//             msg: `Failed Workflow ${crrstatus.toString().toLowerCase()}`
-//         })
-//     }
+        status = "ACTIVE"
+    }
 
-// })
+    if (crrstatus === "ACTIVE") {
+        status = "PAUSED";
+    }
+
+    await prisma.workflow.update({
+        where: {
+            id: workflowid
+        },
+        data: {
+            status
+        }
+    })
+
+    return res.json({
+        msg: `Workflow ${status}`
+    })
+
+})
 
 
 

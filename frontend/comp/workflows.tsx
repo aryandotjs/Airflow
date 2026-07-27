@@ -219,9 +219,27 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                                         <Opneframe>
                                                 <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                     <div onClick={async()=> {
-                                                        const response = await StatusToggler(z.status,z.id)
-                                                        setoption({open:false , id : null})
-                                                        setRefreshTrigger((prev)=>!prev)
+                                                        try{
+
+                                                            const response = await axios.post(`${BACKEND_URL}/api/v1/workflow/togglestatus`,
+                                                                {
+                                                                    crrstatus:z.status,
+                                                                    workflowid
+                                                                }) 
+                                                                showToast({msg :response.data.msg,isError:false})
+
+                                                                setoption({open:false , id : null})
+                                                                setRefreshTrigger((prev)=>!prev)
+                                                            }catch(err:any){
+                                                                  err.response.data.errors.forEach((error:string)=>{
+                                                                    showToast({
+                                                                            msg:error,
+                                                                            isError:true
+                                                                        })
+                                                                    })
+                                                                setoption({open:false , id : null})
+
+                                                            }
                                                     }} className="m-1">
                                                         <MainButton name={z.status !== ZapStatus.ACTIVE ?"Active Workflow" : "Pause Workflow"}>
                                                             {z.status !== ZapStatus.ACTIVE ?<Play size="17"></Play>  :<Pause size="19"></Pause>}
@@ -230,6 +248,7 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                                                 </div>
                                                 <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                     <div onClick={()=> {
+
                                                            setWorkflowName(z.name)
                                                            setupdateform(true)
                                                            setoption({open:false , id : null})
@@ -324,12 +343,3 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
     </div>
 
 }
-
-
-async function StatusToggler(crrstatus : ZapStatus,workflowid:String){
-    // const zapstatus = await axios.put(`${BACKEND_URL}/api/v1/workflow/rename`,{
-    //     crrstatus,
-    //     workflowid
-    // }) 
-    // return zapstatus.data.msg
-}  
