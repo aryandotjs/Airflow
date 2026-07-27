@@ -4,10 +4,10 @@ import { authmiddleware } from "../middleware";
 import { FlattenVariables } from "../workflow-engine/utils/flattenVariables";
 
 
-export const testRouter = Router()
+export const ExecutionRouter = Router()
 
 // add the middleware 
-testRouter.post("/test1", async (req, res) => {
+ExecutionRouter.post("/test1", async (req, res) => {
     // const id = (req as any).userId
     // const id = "test-user"
     const { name, channel } = req.body
@@ -26,22 +26,3 @@ testRouter.post("/test1", async (req, res) => {
 
 })
 
-testRouter.get("/variables", async (req, res) => {
-    const context = {
-        AddingUserVariable: {
-            body: {
-                user: "aryan",
-                channel: "sunday-running-club"
-            }
-        }
-    }
-    const variables = FlattenVariables(context)
-
-    res.json({
-        variables
-    })
-
-    res.json({
-        variables
-    })
-})

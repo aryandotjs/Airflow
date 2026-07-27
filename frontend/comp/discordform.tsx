@@ -4,11 +4,24 @@ import { BigInput } from "./biggerinput"
 import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative"
 import { Secondarybutton } from "./buttons/secondarybutton"
 import { Cross } from "./svg/allsvg"
+import axios from "axios"
+import VariablePicker from "./VariablePicker"
+const BACKEND_URL = "http://localhost:3001";
 
 export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{nodes:any,setNodes:any,setformDetail:Dispatch<SetStateAction<any>>,formDetail:any}){
+        const [variables,setVariables] = useState<string[]>([])
         const initialValue = {variableName:"",webhookUrl:"",content:"",username:""}
         const [formdata,setformdata] = useState<{variableName:string,webhookUrl:string,content:string,username:string}>(initialValue)
+        
         useEffect(()=>{
+            axios.get(`${BACKEND_URL}/api/v1/test/variables`)
+            .then(res=>{
+                setVariables(res.data.variables)
+            })
+        },[])
+
+        useEffect(()=>{
+
             if (nodes.length > 0) {
                 const selectednodemetadata = nodes.filter((a:any)=>{ return a.id === formDetail.nodeid})[0]?.data.metadata
                 if(selectednodemetadata){
@@ -18,6 +31,15 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                 }
             }
         },[formDetail.nodeid,nodes])
+
+        function insertVariable(variable:string){
+            setformdata((prev:any)=>{
+                   return {
+                     ...prev , content : prev.content + `{{${variable}}}`
+                   }
+            })
+        }
+
         return <div className={` transition duration-300 ease-initial ${ formDetail.name == "discord" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
                 <div className={` transition duration-300 ${ formDetail.name  == "discord" ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
                     <div className={`p-6 `} >
@@ -55,6 +77,10 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                                      })
                                 }}></BigInput> 
                                <div className=" text-xs">{"The message to send. Use {{variables}} for simple values or {{json variable}} to stringify objects"}</div>
+                               <VariablePicker
+                                    variable={variables}
+                                    onInsert={insertVariable}
+                                />
                             </div>
                             <div>
                                 <Input placeholder={`automation-bot`} name="Username (Optional)" state={formdata.username} statesetter={(a)=>{

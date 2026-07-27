@@ -96,7 +96,6 @@ const Router = useRouter();
          className="h-160 w-full  relative">
             {/* {JSON.stringify(nodes)} */}
             {/* {JSON.stringify(formDetail)} */}
-           
              <div className="h-15 border-b w-full items-center justify-between  border-b-brand-border dark:border-b-dark-border   px-6  normal font-semibold flex    "> 
                 <div className="flex gap-2 text-sm font-normal">
                     <div onClick={()=>Router.push("/workflows")} className="cursor-pointer">{"workflows"}</div>

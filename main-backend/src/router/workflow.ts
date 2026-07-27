@@ -43,7 +43,6 @@ WorkflowRouter.post("/", async (req, res) => {
     const id = "test-user"
     const name = name1[Math.floor(Math.random() * 10)] + "-" + name1[Math.floor(Math.random() * 10)]
     try {
-
         const workflow = await prisma.workflow.create({
             data: {
                 name: name,
@@ -346,6 +345,13 @@ WorkflowRouter.get("/executions/all", async (req, res) => {
                 userId: userid
             }
         },
+        include: {
+            workflow: {
+                select: {
+                    name: true
+                }
+            }
+        },
         orderBy: {
             completedAt: "desc",
         }
@@ -356,7 +362,50 @@ WorkflowRouter.get("/executions/all", async (req, res) => {
 
 
 WorkflowRouter.post("/test/:workflowId", async (req, res) => {
-    await executeWorkflow(req.params.workflowId);
+
+    const workflowId = req.params.workflowId
+    const execution = await prisma.execution.create({
+        data: {
+            workflowId: workflowId
+        }
+    })
+
+    try {
+        const result = await executeWorkflow(workflowId);
+
+        await prisma.execution.update({
+            where: {
+                id: execution.id
+            },
+            data: {
+                status: "SUCCESS",
+                output: result,
+                completedAt: new Date()
+            }
+        })
+
+        res.json({
+            message: "Workflow executed",
+            executionId: execution.id
+        })
+    } catch (error: any) {
+
+        await prisma.execution.update({
+            where: {
+                id: execution.id
+            },
+            data: {
+                status: "FAILED",
+                error: error.message,
+                completedAt: new Date()
+            }
+        })
+
+        res.status(500).json({
+            message: "Workflow failed",
+            error: error.message
+        })
+    }
     res.json({
         message: "Workflow executed"
     });
