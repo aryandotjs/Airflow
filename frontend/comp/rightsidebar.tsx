@@ -11,31 +11,18 @@ const nodesuidata = [
       position : { x : 280 , y: 350},
       type : "trigger",
       name : "Trigger-manually",
-      image : "/actiontriggerimages/darkTrigger-manually.png",
+      image : "/actiontriggerimages/Trigger-manually.png",
+      darkimage : "/actiontriggerimages/darkTrigger-manually.png",
       msg : "Runs the flow on clicking a button. Good for getting started quickly"
    },
    {
       position : { x : 280 , y: 350},
       type : "trigger",
-      name : "google-forms",
-      image : "/actiontriggerimages/google-forms.png",
-      msg : " Runs the workflow when Google form is submitted"
-   },
-    {
-      position : { x : 280 , y: 100},
-      type : "trigger",
-      name : "Notion",
-      image : "/actiontriggerimages/notion.png",
-      darkimage : "/actiontriggerimages/darknotion.png",
-      msg : "Runs the workflow when notion row added"
-   },
-    {
-      position : { x : 280 , y: 200},
-      type : "trigger",
-      name : "Google-sheet",
-      image : "/actiontriggerimages/google-sheet.png",
-      msg : "Runs the workflow when Google Sheets row added"
-   },
+      name : "Webhook",
+      image : "/actiontriggerimages/webhook.png",
+      darkimage : "/actiontriggerimages/darkwebhook.png",
+      msg : "Runs the workflow when an HTTP request is received"
+   }  ,
    {
       position : { x : 480 , y: 180},
       type : "action",
@@ -58,20 +45,42 @@ const nodesuidata = [
     image: "/actiontriggerimages/gemini.png",
     msg: "Uses Google Gemini to generate text"
   },
-  {
-    position: { x: 680, y: 280 },
-    type: "action",
-    name: "chatgpt",
-    image: "/actiontriggerimages/chatgpt.png",
-    msg: "Uses Chatgpt to generate text"
-  },
-  {
-    position: { x: 580, y: 280 },
-    type: "action",
-    name: "claude",
-    image: "/actiontriggerimages/claude.png",
-    msg: "Uses Claude to generate text"
-  },
+   // {
+   //    position : { x : 280 , y: 350},
+   //    type : "trigger",
+   //    name : "google-forms",
+   //    image : "/actiontriggerimages/google-forms.png",
+   //    msg : " Runs the workflow when Google form is submitted"
+   // },
+   //  {
+   //    position : { x : 280 , y: 100},
+   //    type : "trigger",
+   //    name : "Notion",
+   //    image : "/actiontriggerimages/notion.png",
+   //    darkimage : "/actiontriggerimages/darknotion.png",
+   //    msg : "Runs the workflow when notion row added"
+   // },
+   //  {
+   //    position : { x : 280 , y: 200},
+   //    type : "trigger",
+   //    name : "Google-sheet",
+   //    image : "/actiontriggerimages/google-sheet.png",
+   //    msg : "Runs the workflow when Google Sheets row added"
+   // },
+//   {
+//     position: { x: 680, y: 280 },
+//     type: "action",
+//     name: "chatgpt",
+//     image: "/actiontriggerimages/chatgpt.png",
+//     msg: "Uses Chatgpt to generate text"
+//   },
+//   {
+//     position: { x: 580, y: 280 },
+//     type: "action",
+//     name: "claude",
+//     image: "/actiontriggerimages/claude.png",
+//     msg: "Uses Claude to generate text"
+//   },
    
 ]
  
@@ -127,7 +136,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setformDetail 
                                     type : a.type,
                                     data : {
                                        name : a.name ,
-                                       metadata : "",
+                                       metadata : {},
                                        openForm: setformDetail
                                        
                                     }
@@ -146,7 +155,7 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setformDetail 
                            </div>
                      </div>
            
-                     {index === 2 ?  <div className='border-b my-4 text-[#E9E9E9] dark:text-white/10'></div> : ""}
+                     {index === 1 || index === 3 ?  <div className='border-b my-4 text-[#E9E9E9] dark:text-white/10'></div> : ""}
                </div>
              })}
 

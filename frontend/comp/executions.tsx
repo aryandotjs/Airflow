@@ -54,6 +54,7 @@ import "react18-json-view/src/dark.css";
 import { CodeShow } from "./CodeShow";
 import Spin from "./buttons/spinningwheel";
 import { useRouter } from "next/navigation";
+import { ExecutionTimeline } from "./ExecutionTimeline";
 
 export  function Executions(){
     const [refreshTrigger, setRefreshTrigger] = useState(false);
@@ -259,6 +260,7 @@ export function DetailCard({id} : any){
                         </div>
                     </div>
                 </div>
+                <ExecutionTimeline  steps={execution.output.steps} ></ExecutionTimeline>
                 <div className="mt-8">
                 <CodeShow header="Workflow Output" code={execution.status === "SUCCESS" ? execution.output  : execution.error }></CodeShow>
                 </div>

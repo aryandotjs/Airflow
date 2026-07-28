@@ -4,6 +4,7 @@ import { prisma } from "../db";
 import { ZapCreateSchema } from "../types";
 import { executeWorkflow } from "../workflow-engine/executeWorkflow";
 import { validateWorkflow } from "../workflow-engine/validateWorkflow";
+import { nanoid } from "nanoid";
 // import { ZapStatus } from "../generated/prisma/enums";
 
 export const WorkflowRouter = Router()
@@ -50,8 +51,8 @@ WorkflowRouter.post("/", async (req, res) => {
                 userId: id
             }
         })
-        res.json({
-            msg: `Workflow ${workflow.name} created`,
+        return res.json({
+            msg: `Workflow ${workflow.name} created bc`,
             workflow
         })
 
@@ -305,15 +306,21 @@ WorkflowRouter.put("/:workflowid", async (req, res) => {
                 }
             })
             await tsx.node.createMany({
-                data: nodes.map((node: any) => ({
-                    id: node.id,
-                    name: node.data.name,
-                    position: node.position,
-                    type: node.type,
-                    workflowId: workflowid,
-                    data: node.data.metadata,
-                    credentialId: node.data.metadata?.Credential?.id
-                }))
+                data: nodes.map((node: any) => {
+                    const metadata = node.data.metadata
+                    if (node.data.name === "Webhook") {
+                        metadata.WebhookId = nanoid()
+                    }
+                    return {
+                        id: node.id,
+                        name: node.data.name,
+                        position: node.position,
+                        type: node.type,
+                        workflowId: workflowid,
+                        data: node.data.metadata,
+                        credentialId: node.data.metadata?.Credential?.id
+                    }
+                })
             })
 
             await tsx.connection.createMany({
@@ -367,49 +374,20 @@ WorkflowRouter.get("/executions/all", async (req, res) => {
 WorkflowRouter.post("/test/:workflowId", async (req, res) => {
 
     const workflowId = req.params.workflowId
-    const execution = await prisma.execution.create({
-        data: {
-            workflowId: workflowId
-        }
-    })
 
     try {
         const result = await executeWorkflow(workflowId);
 
-        await prisma.execution.update({
-            where: {
-                id: execution.id
-            },
-            data: {
-                status: "SUCCESS",
-                output: result,
-                completedAt: new Date()
-            }
-        })
-
         res.json({
-            message: "Workflow executed",
-            executionId: execution.id
+            msg: "Workflow executed",
+            executionId: result.executionId
         })
     } catch (error: any) {
 
-        await prisma.execution.update({
-            where: {
-                id: execution.id
-            },
-            data: {
-                status: "FAILED",
-                error: error.message,
-                completedAt: new Date()
-            }
-        })
-
         res.status(500).json({
-            message: "Workflow failed",
+            msg: "Workflow failed",
             error: error.message
         })
     }
-    res.json({
-        message: "Workflow executed"
-    });
+
 })

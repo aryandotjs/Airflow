@@ -7,61 +7,98 @@ import { topologicalSort } from "./topologicalSort"
 
 export async function executeWorkflow(workflowId: string) {
 
-
-
-    const workflow = await prisma.workflow.findUnique({
-        where: {
-            id: workflowId
-        },
-        include: {
-            nodes: true,
-            connections: true
+    const execution = await prisma.execution.create({
+        data: {
+            workflowId,
+            status: "RUNNING"
         }
     })
 
-    if (!workflow) {
-        throw Error("no workflow here")
-    }
+    try {
 
-    const sortednodes = topologicalSort(workflow.nodes, workflow.connections)
+        const workflow = await prisma.workflow.findUnique({
+            where: {
+                id: workflowId
+            },
+            include: {
+                nodes: true,
+                connections: true
+            }
+        })
 
-    let contex: WorkflowContext = {}
-    const steps: any[] = []
-
-    for (const node of sortednodes) {
-        const step: any = {
-            nodeId: node.id,
-            nodeName: node.name,
-            status: "RUNNING",
-            startedAt: new Date()
+        if (!workflow) {
+            throw Error("no workflow here")
         }
-        steps.push(step)
 
-        try {
-            contex = await executeNode(node, contex)
-            step.status = "SUCCESS"
-            step.completedAt = new Date()
-            step.duration =
-                step.completedAt.getTime()
-                -
-                step.startedAt.getTime()
+        const sortednodes = topologicalSort(workflow.nodes, workflow.connections)
 
-        } catch (err: any) {
-            step.status = "FAILED"
-            step.completedAt = new Date()
-            step.error = err.message
-            step.duration =
-                step.completedAt.getTime()
-                -
-                step.startedAt.getTime()
-            throw err
+        let contex: WorkflowContext = {}
+        const steps: any[] = []
+
+        for (const node of sortednodes) {
+            const step: any = {
+                nodeId: node.id,
+                nodeName: node.name,
+                status: "RUNNING",
+                startedAt: new Date()
+            }
+            steps.push(step)
+
+            try {
+                contex = await executeNode(node, contex)
+                step.status = "SUCCESS"
+                step.completedAt = new Date()
+                step.duration =
+                    step.completedAt.getTime()
+                    -
+                    step.startedAt.getTime()
+
+            } catch (err: any) {
+                step.status = "FAILED"
+                step.completedAt = new Date()
+                step.error = err.message
+                step.duration =
+                    step.completedAt.getTime()
+                    -
+                    step.startedAt.getTime()
+                throw err
+            }
         }
+
+        await prisma.execution.update({
+            where: {
+                id: execution.id
+            },
+            data: {
+                status: "SUCCESS",
+                completedAt: new Date(),
+                output: {
+                    context: contex,
+                    steps
+                }
+            }
+        })
+
+        return {
+            context: contex,
+            steps,
+            executionId: execution.id
+        }
+    } catch (err: any) {
+
+        await prisma.execution.update({
+            where: {
+                id: execution.id
+            },
+            data: {
+                status: "FAILED",
+                completedAt: new Date(),
+                error: err.message
+            }
+        })
+
+        throw err
     }
 
-    return {
-        context: contex,
-        steps
-    }
 
-    // console.log("finalContext :", contex)
 }

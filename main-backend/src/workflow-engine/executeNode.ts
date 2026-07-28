@@ -9,12 +9,10 @@ export async function executeNode(node: any, context: WorkflowContext) {
             `No executor found for ${(node.name).toUpperCase()}`
         );
     }
-    console.log(node.data)
     const output = await executer({
         data: node.data,
         context
     })
-
     return {
         ...context,
         [node.data.variableName || node.name]: output

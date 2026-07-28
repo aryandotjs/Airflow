@@ -6,7 +6,6 @@ import { FlattenVariables } from "../workflow-engine/utils/flattenVariables";
 
 export const testRouter = Router()
 
-// add the middleware 
 testRouter.post("/test1", async (req, res) => {
     // const id = (req as any).userId
     // const id = "test-user"
@@ -41,7 +40,5 @@ testRouter.get("/variables", async (req, res) => {
         variables
     })
 
-    res.json({
-        variables
-    })
+
 })

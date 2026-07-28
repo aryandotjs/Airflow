@@ -6,6 +6,12 @@ import { DiscordExecuter } from "./executers/discordExecuter"
 
 const executors: Record<string, Executor> = {
     "HTTP-REQUEST": httpExecuter,
+    WEBHOOK: async ({ data }) => {
+        return {
+            success: true,
+            response: "webhook"
+        }
+    },
     "TRIGGER-MANUALLY": async ({ data }) => {
         return {
             response: "trigged manually"

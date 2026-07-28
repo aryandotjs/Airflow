@@ -4,7 +4,7 @@ import "@xyflow/react/dist/style.css";
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import RightsideBar from "./rightsidebar";
 import Trigger, { Action } from "./trigger";
-import { Add, Cross, Prev, Save } from "./svg/allsvg";
+import { Add, Cross, Prev, Save, Webhook } from "./svg/allsvg";
 import axios from "axios";
 import AiForm from "./AiForm";
 import { Addform } from "./addform";
@@ -27,6 +27,7 @@ import { useToast } from "./toastprovider";
 import useToastSetterRemover from "./toastfunction";
 import { HttpForm } from "./httpfrom";
 import { ManualTriggerForm } from "./manualtriggerfrom";
+import { WebhookForm } from "./webhookform";
 
 // export let InitialNodes : Node<{name :string , metadata :string , onDelete : (id:any)=>void}>[] = [{
 //     id : '1',
@@ -54,6 +55,8 @@ export const InitialEdges : Edge [] = []
 
 export function WorkflowContent({workflowid}:{workflowid:any}){
     const [formDetail, setformDetail] = useState<{name :string , open : boolean}>({name :"" , open : false});
+
+    const [refreshagain,setrefreshagain] = useState(false)
 
     const [nodes,setNodes,onNodesChange] = useNodesState(InitialNodes)
     const [edges,setEdges,onEdgesChange] = useEdgesState(InitialEdges)
@@ -89,7 +92,7 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
             setNodes(structuredNodes);
             setEdges(structuredEdges)
             });
-    }, [workflowid]);
+    }, [workflowid,refreshagain]);
 
 const Router = useRouter();
     return <div 
@@ -120,7 +123,7 @@ const Router = useRouter();
                            nodes , edges
                     })
                     showToast({msg :response.data.msg,isError:false})
-
+                    setrefreshagain((a)=>!a)
                 } catch (err:any) {
                     showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
                 }
@@ -150,7 +153,7 @@ const Router = useRouter();
             <NotionTriggerForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></NotionTriggerForm>
             <HttpForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></HttpForm>
             <ManualTriggerForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></ManualTriggerForm>
-
+            <WebhookForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></WebhookForm>
 
             <AiForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} AiName="Anthropic" AiType={"CLAUDE"}></AiForm>
             <AiForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} AiName="Gemini" AiType={"GEMINI"}></AiForm>
