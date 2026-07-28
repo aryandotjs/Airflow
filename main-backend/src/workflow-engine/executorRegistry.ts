@@ -3,9 +3,15 @@ import { httpExecuter } from "./executers/httpExecuter"
 import type { Executor } from "./executor-types"
 import { da } from "zod/locales"
 import { DiscordExecuter } from "./executers/discordExecuter"
+import { GeminiExecutor } from "./executers/geminiExecutor"
 
 const executors: Record<string, Executor> = {
     "HTTP-REQUEST": httpExecuter,
+
+    DISCORD: DiscordExecuter,
+
+    GEMINI: GeminiExecutor,
+
     WEBHOOK: async ({ data }) => {
         return {
             success: true,
@@ -15,13 +21,6 @@ const executors: Record<string, Executor> = {
     "TRIGGER-MANUALLY": async ({ data }) => {
         return {
             response: "trigged manually"
-        }
-    },
-    DISCORD: DiscordExecuter,
-
-    GEMINI: async ({ data }) => {
-        return {
-            response: "fake gemini response"
         }
     },
     NOTION: async ({ data }) => {

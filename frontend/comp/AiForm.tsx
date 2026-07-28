@@ -108,11 +108,11 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                                     </div>
                         </div>
                         <div>
-                           <BigInput placeholder="Act as a discort admin ...." name="System Prompt (Optional)" state={formdata.SystemPrompt?? ""} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , SystemPrompt :a}})}}></BigInput> 
+                           <BigInput placeholder="Act as a discort admin ...." name="User Prompt (Optional)" state={formdata.UserPrompt?? ""} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , UserPrompt :a}})}}></BigInput> 
                            <div className=" text-xs">{"Sets the behavior of the assistant. Use {{variables}} for simple values or {{json variable}} to stringify objects"}</div>
                         </div>
                         <div>
-                           <BigInput placeholder="Summerize this text : {{jsonhttpreponse.data}}" name="System Prompt (Optional)" state={formdata.UserPrompt} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , UserPrompt :a}})}}></BigInput> 
+                           <BigInput placeholder="Summerize this text : {{jsonhttpreponse.data}}" name="System Prompt (Optional)" state={formdata.SystemPrompt} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , SystemPrompt :a}})}}></BigInput> 
                            <div className=" text-xs">{"The prompt to send to the AI.Use{{variables}} for simple values or {{json variables}} to stringify objects"}</div>
                         </div>
                      </div> 

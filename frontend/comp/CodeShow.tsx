@@ -3,9 +3,9 @@ import { Copy } from "./svg/allsvg";
 
 
 
-export function CodeShow({header , code}:{header:string , code :JSON}){
+export function CodeShow({header , code,error}:{header:string , code :JSON,error:boolean}){
   return <div>
-     <div className="mt-2 flex flex-col gap-2">
+     <div className="mt-2 flex flex-col gap-2 ">
             <div className="text-lg font-semibold tracking-wide dark:text-[#F0F0F0] text-[#191919]">
                 {header}
             </div>
@@ -17,15 +17,25 @@ export function CodeShow({header , code}:{header:string , code :JSON}){
                 >
                                                 <Copy size="19"></Copy>
                 </button>
-                <div className="text-left overflow-x-auto [&::-webkit-scrollbar]:hidden">
+                <div className="text-left  [&::-webkit-scrollbar]:hidden">
                     <JsonView 
                     src={code} 
                     dark
                     allExpanded={true}
                     enableClipboard={false}     
                     displaySize={false}
-                    className="overflow-x-auto whitespace-pre [&::-webkit-scrollbar]:hidden"
-                    style={{
+                    className="whitespace-pre-wrap break-all [&::-webkit-scrollbar]:hidden"
+                    style={ error ?{
+                        color: '#A0A0A0', 
+
+                        // @ts-ignore
+                        '--json-property': '#D2D3D4',  
+                        '--json-string': '#84CFC0',    
+                        '--json-number': '#6C6C6C',    
+                        '--json-index': '#6C6C6C',     
+                        '--json-boolean': '#6C6C6C',   
+                        '--json-null': '#6C6C6C',      
+                    }:{
                         color: '#A0A0A0', 
 
                         // @ts-ignore

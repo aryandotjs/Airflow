@@ -1,7 +1,20 @@
+import { prisma } from "../db";
 import type { WorkflowContext } from "./contex";
 import { getExecuter } from "./executorRegistry";
 
 export async function executeNode(node: any, context: WorkflowContext) {
+
+    // let credential = null
+
+    // if (node.creadentialId) {
+
+    //     credential = await prisma.credential.findFirst({
+    //         where: {
+    //             id: node.creadentialId
+    //         }
+    //     })
+    // }
+
     const executer = getExecuter((node.name).toUpperCase())
 
     if (!executer) {
@@ -9,12 +22,16 @@ export async function executeNode(node: any, context: WorkflowContext) {
             `No executor found for ${(node.name).toUpperCase()}`
         );
     }
+
     const output = await executer({
         data: node.data,
-        context
+        context,
+        credential: node.credential
     })
+
     return {
         ...context,
         [node.data.variableName || node.name]: output
     };
+
 }

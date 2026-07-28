@@ -68,7 +68,7 @@ export  function Executions(){
             //     "authorization" : `Bearer ${localStorage.getItem("token")}`
             // }
         }).then((a)=>{
-            setzapruns(a.data)
+            setzapruns(a.data.sort((a:any,b:any)=> new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()))
         })
     },[])
 
@@ -83,6 +83,7 @@ export  function Executions(){
                 const MatchSearch = a.workflow.name.toLowerCase().includes(search.toLowerCase())
                 return  MatchFilter1   && MatchFilter2 && MatchSearch 
                }) 
+
          },[zapruns,search,filter1,filter2])
 
     return  <div className="flex flex-col gap-4 px-24  h-screen ">
@@ -142,7 +143,7 @@ function History({filteredZapruns} :any){
     }
      return <div className="px-2 pr-4 ">
         {filteredZapruns.map((z:any,index:any)=>{
-            return <div key={index} className=" flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold ">
+            return <div key={index} className={`${z.status === "RUNNING" ? "pointer-events-none":""} flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold `}>
                 <div className="flex w-full h-8 my-3 gap-5 justify-between">
                     <div className="  flex items-center gap-1 w-[20%]">
                         <Svgframe status={z.status.toLowerCase()}>
@@ -193,12 +194,10 @@ export function DetailCard({id} : any){
         }).then((a)=>{
 
             let filtered = a.data.find((e:any)=>e.id === id)
-            console.log("d",a,filtered)
             setexecution(filtered)
         })
     },[])
     
-    console.log(execution)
     const router = useRouter()
    
     if (!execution) {
@@ -260,9 +259,10 @@ export function DetailCard({id} : any){
                         </div>
                     </div>
                 </div>
-                <ExecutionTimeline  steps={execution.output.steps} ></ExecutionTimeline>
+                <ExecutionTimeline  steps={execution.output.steps?execution.output.steps:[]} ></ExecutionTimeline>
                 <div className="mt-8">
-                <CodeShow header="Workflow Output" code={execution.status === "SUCCESS" ? execution.output  : execution.error }></CodeShow>
+                <CodeShow header="Workflow Output" code={ execution.error? execution.error:{}} error={true} ></CodeShow>
+                <CodeShow header="Workflow Output" code={execution.output?execution.output:{}} error={false} ></CodeShow>
                 </div>
             </div>
         </div>
@@ -275,7 +275,6 @@ function DurationCalculator(start:string,end:string):string{
        const a = Date.parse(start)
        const b = Date.parse(end)
        const c =  (Number(b)- Number(a)).toString()
-       console.log(a,b,c)
 
        if (Number(c) >= 1000) {
            return (Number(c)/1000).toString()+ "sec"

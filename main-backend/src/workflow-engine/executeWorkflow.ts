@@ -16,7 +16,8 @@ export async function executeWorkflow(
             status: "RUNNING"
         }
     })
-
+    let contex: WorkflowContext = initialContext
+    const steps: any[] = []
     try {
 
         const workflow = await prisma.workflow.findUnique({
@@ -24,19 +25,21 @@ export async function executeWorkflow(
                 id: workflowId
             },
             include: {
-                nodes: true,
+                nodes: {
+                    include: {
+                        credential: true
+                    }
+                },
                 connections: true
             }
         })
-
         if (!workflow) {
             throw Error("no workflow here")
         }
 
         const sortednodes = topologicalSort(workflow.nodes, workflow.connections)
 
-        let contex: WorkflowContext = initialContext
-        const steps: any[] = []
+
 
         for (const node of sortednodes) {
             const step: any = {
@@ -88,17 +91,22 @@ export async function executeWorkflow(
             executionId: execution.id
         }
     } catch (err: any) {
-
-        await prisma.execution.update({
+        console.log("hey bhai we have error", err.message)
+        const reser = await prisma.execution.update({
             where: {
                 id: execution.id
             },
             data: {
                 status: "FAILED",
                 completedAt: new Date(),
-                error: err.message
+                error: err,
+                output: {
+                    context: contex,
+                    steps
+                }
             }
         })
+        console.log(reser)
 
         throw err
     }

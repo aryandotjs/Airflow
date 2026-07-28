@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai"
-
+require('dotenv').config()
 
 interface geminiReqOptions {
     apiKey: string,
@@ -34,15 +34,19 @@ export async function geminiReqHandler({
 
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3f38760 (Add credential support and improve workflow execution tracking)
 
+const TEST_API_KEY = ""
 async function runTest() {
     console.log("Sending request to Gemini...");
     try {
+        console.log("api key ", TEST_API_KEY)
         const result = await geminiReqHandler({
             apiKey: TEST_API_KEY,
             prompt: "give the best geeta quote you know in hinidi",
-
             systemInstruction: "take the things in the prompt and makea a tweet around 5 line "
         });
 
