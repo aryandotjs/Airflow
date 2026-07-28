@@ -39,7 +39,7 @@ export async function geminiReqHandler({
 =======
 >>>>>>> 3f38760 (Add credential support and improve workflow execution tracking)
 
-const TEST_API_KEY = ""
+const TEST_API_KEY = "AQ.Ab8RN6K0K86PMwU7ZJ-TZA3ILQjoW87IybOZTLoCZWPw8_rR9g"
 async function runTest() {
     console.log("Sending request to Gemini...");
     try {
@@ -50,13 +50,13 @@ async function runTest() {
             systemInstruction: "take the things in the prompt and makea a tweet around 5 line "
         });
 
-        console.log("Success! Response from Gemini:");
-        console.log("------------------------------");
-        console.log(result);
-        console.log("------------------------------");
-    } catch (error) {
-        console.error("Test failed!");
-    }
-}
+//             console.log("Success! Response from Gemini:");
+//             console.log("------------------------------");
+//             console.log(result);
+//             console.log("------------------------------");
+//         } catch (error) {
+//             console.error("Test failed!");
+//         }
+//     }
 
-runTest();
+// runTest();
