@@ -38,8 +38,25 @@ export async function validateWorkflow(workflowId: string) {
     if (workflow.nodes.length > 1) {
         for (const node of workflow.nodes) {
 
-            const hasconnection = workflow.connections.some((a) => a.fromNodeId === node.id || a.toNodeId === node.id)
+            const data = node.data as any
 
+            if (node.name === "HTTP-request") {
+                if (!data.Endpoint) {
+                    errors.push(
+                        "HTTP request endpoint missing"
+                    )
+                }
+            }
+
+            if (node.name === "discord") {
+                if (!data.webhookUrl) {
+                    errors.push(
+                        "Discord webhook URL missing"
+                    )
+                }
+            }
+
+            const hasconnection = workflow.connections.some((a) => a.fromNodeId === node.id || a.toNodeId === node.id)
             if (!hasconnection) {
                 errors.push(
                     `${node.name} is not connected`

@@ -4,7 +4,7 @@ import { authmiddleware } from "../middleware";
 import { FlattenVariables } from "../workflow-engine/utils/flattenVariables";
 import { executeWorkflow } from "../workflow-engine/executeWorkflow";
 
-
+export type WorkflowContext = Record<string, any>
 export const webhookRouter = Router()
 
 
@@ -25,8 +25,11 @@ webhookRouter.post("/:webhookId", async (req, res) => {
             message: "Webhook not found"
         })
     }
-
-    await executeWorkflow(webhooknode?.workflowId)
+    await executeWorkflow(webhooknode?.workflowId, {
+        Trigger: {
+            body: req.body
+        }
+    })
 
     res.json({
         done: "true"

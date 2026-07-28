@@ -5,7 +5,10 @@ import { topologicalSort } from "./topologicalSort"
 
 
 
-export async function executeWorkflow(workflowId: string) {
+export async function executeWorkflow(
+    workflowId: string,
+    initialContext: WorkflowContext = {}
+) {
 
     const execution = await prisma.execution.create({
         data: {
@@ -32,7 +35,7 @@ export async function executeWorkflow(workflowId: string) {
 
         const sortednodes = topologicalSort(workflow.nodes, workflow.connections)
 
-        let contex: WorkflowContext = {}
+        let contex: WorkflowContext = initialContext
         const steps: any[] = []
 
         for (const node of sortednodes) {

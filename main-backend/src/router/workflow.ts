@@ -92,8 +92,7 @@ WorkflowRouter.post("/togglestatus", authmiddleware, async (req, res) => {
     const { crrstatus, workflowid } = req.body
     let status = crrstatus;
 
-    if (crrstatus === "DRAFT" ||
-        crrstatus === "PAUSED") {
+    if (crrstatus === "DRAFT") {
 
         const validation = await validateWorkflow(workflowid)
 
@@ -104,6 +103,10 @@ WorkflowRouter.post("/togglestatus", authmiddleware, async (req, res) => {
             })
         }
 
+        status = "ACTIVE"
+    }
+
+    if (crrstatus === "PAUSED") {
         status = "ACTIVE"
     }
 
