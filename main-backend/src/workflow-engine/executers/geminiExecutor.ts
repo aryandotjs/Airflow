@@ -25,7 +25,6 @@ export async function GeminiExecutor({
             text: response,
         }
     } catch (err) {
-
         throw err;
     }
 }

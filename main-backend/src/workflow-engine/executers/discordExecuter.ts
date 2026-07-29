@@ -11,18 +11,25 @@ export async function DiscordExecuter({
 
     console.log("Discord executor running");
 
-    const message = ResolveTemplate(
-        data.content,
-        context
-    )
+    try {
+        const message = ResolveTemplate(
+            data.content,
+            context
+        )
 
-    const response = await axios.post(data.webhookUrl, {
-        content: message,
-        username: data.username
-    })
+        const response = await axios.post(data.webhookUrl, {
+            content: message,
+            username: data.username
+        })
 
-    return {
-        status: response.status,
-        sent: true
+        return {
+            status: response.status,
+            sent: true
+        }
+    } catch (err: any) {
+        if (err.code === "ENOTFOUND" || err.response?.status === 404 || err.response?.status === 401) {
+            throw new Error("Discord webhook is invalid or no longer exists")
+        }
+        throw new Error("Failed to send message to Discord")
     }
 }

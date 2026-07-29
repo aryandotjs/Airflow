@@ -91,7 +91,7 @@ export async function executeWorkflow(
             executionId: execution.id
         }
     } catch (err: any) {
-        console.log("hey bhai we have error", err.message)
+
         const reser = await prisma.execution.update({
             where: {
                 id: execution.id
@@ -99,15 +99,13 @@ export async function executeWorkflow(
             data: {
                 status: "FAILED",
                 completedAt: new Date(),
-                error: err,
+                error: err.message,
                 output: {
                     context: contex,
                     steps
                 }
             }
         })
-        console.log(reser)
-
         throw err
     }
 

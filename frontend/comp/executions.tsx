@@ -261,7 +261,8 @@ export function DetailCard({id} : any){
                 </div>
                 <ExecutionTimeline  steps={execution.output.steps?execution.output.steps:[]} ></ExecutionTimeline>
                 <div className="mt-8">
-                <CodeShow header="Workflow Output" code={ execution.error? execution.error:{}} error={true} ></CodeShow>
+                {execution.error ? 
+                <CodeShow header="Workflow Error" code={ execution.error? execution.error:{}} error={true} ></CodeShow>:""}
                 <CodeShow header="Workflow Output" code={execution.output?execution.output:{}} error={false} ></CodeShow>
                 </div>
             </div>

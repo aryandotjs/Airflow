@@ -25,27 +25,30 @@ export function CodeShow({header , code,error}:{header:string , code :JSON,error
                     enableClipboard={false}     
                     displaySize={false}
                     className="whitespace-pre-wrap break-all [&::-webkit-scrollbar]:hidden"
-                    style={ error ?{
-                        color: '#A0A0A0', 
+                    style={
+                        error
+                            ? {
+                                color: '#E06C75', // Changed to a standard error red
+                                // @ts-ignore
+                                '--json-property': '#E06C75',
+                                '--json-string': '#E06C75',
+                                '--json-number': '#E06C75',
+                                '--json-index': '#E06C75',
+                                '--json-boolean': '#E06C75',
+                                '--json-null': '#E06C75',
+                            }
+                            : {
+                                color: '#A0A0A0',
+                                // @ts-ignore
+                                '--json-property': '#D2D3D4',
+                                '--json-string': '#84CFC0',
+                                '--json-number': '#6C6C6C',
+                                '--json-index': '#6C6C6C',
+                                '--json-boolean': '#6C6C6C',
+                                '--json-null': '#6C6C6C',
+                            }
+                        }
 
-                        // @ts-ignore
-                        '--json-property': '#D2D3D4',  
-                        '--json-string': '#84CFC0',    
-                        '--json-number': '#6C6C6C',    
-                        '--json-index': '#6C6C6C',     
-                        '--json-boolean': '#6C6C6C',   
-                        '--json-null': '#6C6C6C',      
-                    }:{
-                        color: '#A0A0A0', 
-
-                        // @ts-ignore
-                        '--json-property': '#D2D3D4',  
-                        '--json-string': '#84CFC0',    
-                        '--json-number': '#6C6C6C',    
-                        '--json-index': '#6C6C6C',     
-                        '--json-boolean': '#6C6C6C',   
-                        '--json-null': '#6C6C6C',      
-                    }}
                     />
             </div>
     </div>

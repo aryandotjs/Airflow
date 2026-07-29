@@ -115,7 +115,7 @@ export function Credentials(){
                            <Input placeholder="Credentials Name" name="Name" state={credName} statesetter={setcredName}></Input>
                            <div className="w-40 flex flex-col gap-2 text-sm font-medium">
                                <div className="">Type</div>
-                            <OpenerBoxWithOptions options={["CHATGPT" , "GEMINI","CLAUDE"]} simplefilter={type} setsimplefilter={settype} ></OpenerBoxWithOptions> 
+                            <OpenerBoxWithOptions options={["CHATGPT" , "GEMINI","CLAUDE","DISCORD"]} simplefilter={type} setsimplefilter={settype} ></OpenerBoxWithOptions> 
                            </div>
                            <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" state={Apikey} statesetter={setApikeys}></Input>
                     </div>

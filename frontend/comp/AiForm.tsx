@@ -39,11 +39,16 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
         },[formDetail.nodeid,nodes.length])
     const [open,setopen] = useState<any>(false) 
 
-    return <div className={` transition duration-300 ease-initial ${formDetail.name == aimap[AiName] ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
-            <div className={` transition duration-300 ${formDetail.open ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
+    return <div className={` transition duration-100 ease-initial ${formDetail.name == aimap[AiName] ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
+            <div className={` transition duration-100 ${formDetail.open ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
                 <div className={`p-6 `} >
-                    <div className="flex w-full justify-between items-center ">
-                         <div className="text-[17px] font-semibold dark:text-brand-bg ">{`${AiName} Configuration`}</div>
+                    <div className="flex w-full justify-between items-center">
+                         
+                           <div className="flex gap-1  items-center ">
+                             <div className="text-[17px] font-semibold dark:text-brand-bg ">{`${AiName} Configuration`}</div>
+                              <img className='h-5 ' src={`/actiontriggerimages/${AiName}.png`}></img>
+                            </div>
+
                          <div onClick={()=>{
                                 setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
                                 setformdata(initialValue)

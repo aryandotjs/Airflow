@@ -1,8 +1,8 @@
 export function ExecutionTimeline({steps}:{steps:any[]}){
 
     return <div>
-        {steps.map((step:any)=>(
-            <div key={step} className="">
+        {steps.map((step:any,index)=>(
+            <div key={index} className="">
                 <div>
                     {step.status === "SUCCESS"
                         ? "🟢"

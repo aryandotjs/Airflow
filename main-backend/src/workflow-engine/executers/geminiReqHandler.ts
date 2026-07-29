@@ -25,9 +25,9 @@ export async function geminiReqHandler({
         return response.text || null
 
     } catch (error: any) {
-        const ermsg = error.message
+        const ermsg = error?.message || ""
         if (ermsg.includes("API key not valid")) {
-            throw new Error("API key not valid")
+            throw new Error("Gemini API key not valid")
         }
         throw new Error("Gemini request failed")
     }
