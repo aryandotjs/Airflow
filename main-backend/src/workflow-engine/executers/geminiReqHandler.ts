@@ -15,7 +15,7 @@ export async function geminiReqHandler({
     try {
         const ai = new GoogleGenAI({ apiKey: apiKey })
         let args: any = {
-            model: "gemini-2.5-flash",
+            model: "gemini-3.1-flash-lite",
             contents: [prompt]
         }
         if (systemInstruction) {
@@ -25,9 +25,13 @@ export async function geminiReqHandler({
         return response.text || null
 
     } catch (error: any) {
+        console.log(error)
         const ermsg = error?.message || ""
         if (ermsg.includes("API key not valid")) {
             throw new Error("Gemini API key not valid")
+        }
+        if (ermsg.includes("You exceeded your current quota")) {
+            throw new Error("Gemini API key limit exceeded")
         }
         throw new Error("Gemini request failed")
     }

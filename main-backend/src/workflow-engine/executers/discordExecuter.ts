@@ -16,10 +16,9 @@ export async function DiscordExecuter({
             data.content,
             context
         )
-
         const response = await axios.post(data.webhookUrl, {
             content: message,
-            username: data.username
+            username: data.username || "automation bot"
         })
 
         return {

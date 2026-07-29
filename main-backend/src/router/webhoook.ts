@@ -26,7 +26,7 @@ webhookRouter.post("/:webhookId", async (req, res) => {
         })
     }
     await executeWorkflow(webhooknode?.workflowId, {
-        Trigger: {
+        Webhook: {
             body: req.body
         }
     })

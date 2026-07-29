@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { Input } from "./buttons/input"
-import { BigInput } from "./biggerinput"
-import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative"
-import { Secondarybutton } from "./buttons/secondarybutton"
-import { Cross } from "./svg/allsvg"
-import { OpenerButton } from "./buttons/openerButton"
-import { MainButton } from "./buttons/mainbutton"
-import { OpenOptions } from "./openoptions"
-import { Opneframe } from "./openframe"
+import { Input } from "../buttons/input"
+import { BigInput } from "../biggerinput"
+import { SecondarybuttonNegative } from "../buttons/secondarybuttonnegative"
+import { Secondarybutton } from "../buttons/secondarybutton"
+import { Cross } from "../svg/allsvg"
+import { OpenerButton } from "../buttons/openerButton"
+import { MainButton } from "../buttons/mainbutton"
+import { OpenOptions } from "../openoptions"
+import { Opneframe } from "../openframe"
 export function HttpForm({
     nodes,
     setNodes,
@@ -21,10 +21,10 @@ export function HttpForm({
 }) {
 
      
-    const initialValue = {variableName:"",Method:"GET",Endpoint:"",RequestBody:{}}
     const [open,setopen] = useState<any>(false) 
+    const initialValue = {variableName:"",Method:"GET",Endpoint:"",RequestBody:""}
 
-    const [formdata,setformdata] = useState<{variableName:string,Method:string,Endpoint:string,RequestBody:Record<string,any>}>(initialValue)
+    const [formdata,setformdata] = useState<{variableName:string,Method:string,Endpoint:string,RequestBody:string}>(initialValue)
         useEffect(()=>{
             if (nodes.length > 0) {
                 const selectednodemetadata = nodes.filter((a:any)=>{ return a.id === formDetail.nodeid})[0]?.data.metadata
@@ -38,6 +38,7 @@ export function HttpForm({
 
 
   return (<div className={` transition duration-300 ease-initial ${formDetail.name == "HTTP-request" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
+    {JSON.stringify(formdata)}
         <div className={` transition duration-300 ${formDetail.name == "HTTP-request"?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
             <div className={`p-6 `} >
                 <div className="flex w-full justify-between items-center ">

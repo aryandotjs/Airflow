@@ -19,9 +19,12 @@ const executors: Record<string, Executor> = {
         }
     },
     "TRIGGER-MANUALLY": async ({ data }) => {
-        return {
-            response: "trigged manually"
+        const parsed = JSON.parse(data.data)
+        data = {
+            data: parsed,
+            sent: true
         }
+        return data
     },
     NOTION: async ({ data }) => {
         return {

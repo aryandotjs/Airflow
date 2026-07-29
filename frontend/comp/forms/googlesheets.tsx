@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { Input } from "./buttons/input"
-import { BigInput } from "./biggerinput"
-import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative"
-import { Secondarybutton } from "./buttons/secondarybutton"
-import { Cross } from "./svg/allsvg"
-import { OpenerButton } from "./buttons/openerButton"
-import { Opneframe } from "./openframe"
-import { OpenOptions } from "./openoptions"
-import { MainButton } from "./buttons/mainbutton"
+import { Input } from "../buttons/input"
+import { BigInput } from "../biggerinput"
+import { SecondarybuttonNegative } from "../buttons/secondarybuttonnegative"
+import { Secondarybutton } from "../buttons/secondarybutton"
+import { Cross } from "../svg/allsvg"
+import { OpenerButton } from "../buttons/openerButton"
+import { Opneframe } from "../openframe"
+import { OpenOptions } from "../openoptions"
+import { MainButton } from "../buttons/mainbutton"
 
 export function GoogleSheetTriggerForm({
     nodes,

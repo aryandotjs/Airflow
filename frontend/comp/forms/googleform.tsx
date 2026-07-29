@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { Input } from "./buttons/input"
-import { BigInput } from "./biggerinput"
-import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative"
-import { Secondarybutton } from "./buttons/secondarybutton"
-import { Cross } from "./svg/allsvg"
+import { Input } from "../buttons/input"
+import { BigInput } from "../biggerinput"
+import { SecondarybuttonNegative } from "../buttons/secondarybuttonnegative"
+import { Secondarybutton } from "../buttons/secondarybutton"
+import { Cross } from "../svg/allsvg"
 
 export function GoogleFormTriggerForm({
      nodes,

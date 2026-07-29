@@ -6,7 +6,7 @@ import RightsideBar from "./rightsidebar";
 import Trigger, { Action } from "./trigger";
 import { Add, Cross, Prev, Save, Webhook } from "./svg/allsvg";
 import axios from "axios";
-import AiForm from "./AiForm";
+import AiForm from "./forms/AiForm";
 import { Addform } from "./addform";
 import { Input } from "./buttons/input";
 import { BigInput } from "./biggerinput";
@@ -19,15 +19,15 @@ import { ThemeProvider } from "./theme-provider";
 import { useRouter } from "next/navigation";
 import { metadata } from "@/app/layout";
 import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative";
-import DiscordForm from "./discordform";
-import { GoogleSheetTriggerForm } from "./googlesheets";
-import { GoogleFormTriggerForm } from "./googleform";
-import { NotionTriggerForm } from "./notionform";
+import DiscordForm from "./forms/discordform";
+import { GoogleSheetTriggerForm } from "./forms/googlesheets";
+import { GoogleFormTriggerForm } from "./forms/googleform";
+import { NotionTriggerForm } from "./forms/notionform";
 import { useToast } from "./toastprovider";
 import useToastSetterRemover from "./toastfunction";
-import { HttpForm } from "./httpfrom";
-import { ManualTriggerForm } from "./manualtriggerfrom";
-import { WebhookForm } from "./webhookform";
+import { HttpForm } from "./forms/httpfrom";
+import { ManualTriggerForm } from "./forms/manualtriggerfrom";
+import { WebhookForm } from "./forms/webhookform";
 
 // export let InitialNodes : Node<{name :string , metadata :string , onDelete : (id:any)=>void}>[] = [{
 //     id : '1',

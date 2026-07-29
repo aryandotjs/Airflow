@@ -4,17 +4,6 @@ import { getExecuter } from "./executorRegistry";
 
 export async function executeNode(node: any, context: WorkflowContext) {
 
-    // let credential = null
-
-    // if (node.creadentialId) {
-
-    //     credential = await prisma.credential.findFirst({
-    //         where: {
-    //             id: node.creadentialId
-    //         }
-    //     })
-    // }
-
     const executer = getExecuter((node.name).toUpperCase())
 
     if (!executer) {

@@ -1,16 +1,16 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { Input } from "./buttons/input"
-import { BigInput } from "./biggerinput"
-import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative"
-import { Secondarybutton } from "./buttons/secondarybutton"
-import { Cross, DownArrow, UpArrow } from "./svg/allsvg"
+import { Input } from "../buttons/input"
+import { BigInput } from "../biggerinput"
+import { SecondarybuttonNegative } from "../buttons/secondarybuttonnegative"
+import { Secondarybutton } from "../buttons/secondarybutton"
+import { Cross, DownArrow, UpArrow } from "../svg/allsvg"
 import axios from "axios"
-import VariablePicker from "./VariablePicker"
-import { UseCred } from "./ReactWorkflow"
-import { OpenerButton } from "./buttons/openerButton"
-import { OpenOptions } from "./openoptions"
-import { Opneframe } from "./openframe"
-import { MainButton } from "./buttons/mainbutton"
+import VariablePicker from "../VariablePicker"
+import { UseCred } from "../ReactWorkflow"
+import { OpenerButton } from "../buttons/openerButton"
+import { OpenOptions } from "../openoptions"
+import { Opneframe } from "../openframe"
+import { MainButton } from "../buttons/mainbutton"
 const BACKEND_URL = "http://localhost:3001";
 
 export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{nodes:any,setNodes:any,setformDetail:Dispatch<SetStateAction<any>>,formDetail:any}){
@@ -79,7 +79,7 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                                     Webhook
                                 </div>
 
-                                <Input placeholder={`http://discort.com/api/webhooks/...`} name="" state={formdata.webhookUrl} statesetter={(a)=>{
+                                <Input placeholder={`Please select or enter a Discord webhook URL.`} name="" state={formdata.webhookUrl} statesetter={(a)=>{
                                     setformdata((prev:any)=>{
                                         return {...prev , webhookUrl : a }
                                     })

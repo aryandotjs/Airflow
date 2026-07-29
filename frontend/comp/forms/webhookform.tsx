@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { Input } from "./buttons/input"
-import { BigInput } from "./biggerinput"
-import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative"
-import { Secondarybutton } from "./buttons/secondarybutton"
-import { Copy, Cross } from "./svg/allsvg"
-import { OpenerButton } from "./buttons/openerButton"
-import { MainButton } from "./buttons/mainbutton"
-import { OpenOptions } from "./openoptions"
-import { Opneframe } from "./openframe"
+import { Input } from "../buttons/input"
+import { BigInput } from "../biggerinput"
+import { SecondarybuttonNegative } from "../buttons/secondarybuttonnegative"
+import { Secondarybutton } from "../buttons/secondarybutton"
+import { Copy, Cross } from "../svg/allsvg"
+import { OpenerButton } from "../buttons/openerButton"
+import { MainButton } from "../buttons/mainbutton"
+import { OpenOptions } from "../openoptions"
+import { Opneframe } from "../openframe"
 export function WebhookForm({
     nodes,
     setNodes,
