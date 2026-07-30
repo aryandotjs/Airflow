@@ -3,7 +3,7 @@ import { Input } from "../buttons/input"
 import { BigInput } from "../biggerinput"
 import { SecondarybuttonNegative } from "../buttons/secondarybuttonnegative"
 import { Secondarybutton } from "../buttons/secondarybutton"
-import { Cross, DownArrow, UpArrow } from "../svg/allsvg"
+import { Copy, Cross, DownArrow, Prev, UpArrow } from "../svg/allsvg"
 import axios from "axios"
 import VariablePicker from "../VariablePicker"
 import { UseCred } from "../ReactWorkflow"
@@ -49,6 +49,18 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                    }
             })
         }
+        const [errors, setErrors] = useState<any>({});
+        function validateForm(){
+            const newError:any = {}
+            if (!formdata.webhookUrl?.trim()) {
+                newError.webhookUrl = "webhookUrl is required"
+            }
+            if (!formdata.content?.trim()) {
+                newError.content = "content is required";
+            }
+            setErrors(newError)
+            return Object.keys(newError).length === 0;
+        }
 
         return <div className={` transition duration-100 ease-initial ${ formDetail.name == "discord" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
                 <div className={` transition duration-100 ${ formDetail.name  == "discord" ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
@@ -83,8 +95,12 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                                     setformdata((prev:any)=>{
                                         return {...prev , webhookUrl : a }
                                     })
+                                    setErrors((Prev:any)=>({...Prev,webhookUrl:""}))
                                 }}></Input>
-                            
+                                {errors.webhookUrl&&
+                                <div className="mt-1 text-xs text-red-500">
+                                     {errors.webhookUrl}
+                                </div>}
                                 <div className="w-10 absolute top-6 right-0 z-10  " >
                                     <div className=" h-8 w-full select-none" onClick={()=>{setopen(!open)}}>
                                                     <Secondarybutton onclick={()=>{}} name="" className="hover:bg-[#F4F4F4] dark:hover:bg-[#212327] ">
@@ -106,6 +122,7 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                                                                 key={index}
                                                                 onClick={()=>{
                                                                     setformdata((prev:any)=>{return {...prev , webhookUrl :z.value.apikey}})
+                                                                    setErrors((Prev:any)=>({...Prev,webhookUrl:""}))
                                                                     setopen(false)
                                                                 }}
                                                                 className="m-1.5 ">
@@ -123,7 +140,7 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                                         </OpenOptions>
                                    </div>
                                 </div>
-                                    
+                                
                                 <div className="mt-1 text-xs">{`Get this from Discord Channel Settings - Integrations - New Webhook`}</div>
                             </div>
                             
@@ -132,25 +149,46 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                                      setformdata((prev:any)=>{
                                          return {...prev , content : a }
                                      })
+                                     setErrors((Prev:any)=>({...Prev,content:""}))
                                 }}></BigInput> 
                                <div className=" text-xs">{"The message to send. Use {{variables}} for simple values or {{json variable}} to stringify objects"}</div>
                                {/* <VariablePicker
                                     variable={variables}
                                     onInsert={insertVariable}
                                 /> */}
+                                {errors.content&&
+                                <div className="mt-1 text-xs text-red-500">
+                                     {errors.content}
+                                </div>}
                             </div>
                             <div>
                                 <Input placeholder={`automation-bot`} name="Username (Optional)" state={formdata.username} statesetter={(a)=>{
                                      setformdata((prev:any)=>{
                                          return {...prev , username : a }
                                      })
+                                     
                                 }}></Input>
                                 <div className="mt-1 text-xs">{`The username to use for the webhook`}</div>
+                            </div>
+                             <div className="flex gap-1 items-center">
+                                <div  className="text-xs flex gap-1">
+                                    <div> {"use context in next nodes as "}</div>
+                                    <div className="dark:text-brand-bg text-brand-dark-bg"> {`{{${formdata.variableName?formdata.variableName:"discord"}.data.yourObjectKey}} `}</div>
+                                </div>
+                                <button 
+                                    onClick={()=>{navigator.clipboard.writeText(`{{${formdata.variableName?formdata.variableName:"discord"}.data.yourObjectKey}}`)}}
+                                        className="transition-all active:scale-80 duration-150  text-[#71767B]   hover:dark:bg-[#2C3034] hover:bg-[#E9E9E9] rounded-md p-0.5 z-10"
+                                    >
+                                    <Copy size="19"></Copy>
+                                </button>
                             </div>
                          </div> 
                     </div>
                         <div  className="flex gap-2 w-full">
                             <div onClick={()=>{
+                                if (!validateForm()) {
+                                    return 
+                                }
                                 setNodes((prev:any)=>{
                                      return prev.map((n:any)=>{
                                            if (n.id === formDetail.nodeid) {

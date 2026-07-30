@@ -31,7 +31,6 @@ const initialValue = {data:""}
         },[formDetail.nodeid,nodes.length])
 
   return (<div className={` transition duration-300 ease-initial ${formDetail.name == "Trigger-manually" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
-    {/* {JSON.stringify(formdata)} */}
         <div className={` transition duration-300 ${formDetail.name == "Trigger-manually"?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
             <div className={`p-6 `} >
                 <div className="flex w-full justify-between items-center ">
@@ -55,12 +54,13 @@ const initialValue = {data:""}
                             {"Enter JSON data to provide input to the workflow."}
                         </div>
                         <div className="flex gap-1 items-center">
-                            <div  className="text-xs ">
-                               {"use context as {{Trigger-manually.data.yourObjectKey}} in next nodes"}
+                            <div  className="text-xs flex gap-1">
+                                <div> {"use context in next nodes as "}</div>
+                                <div className="dark:text-brand-bg text-brand-dark-bg"> {"{{Trigger-manually.data.yourObjectKey}} "}</div>
                             </div>
                              <button 
                                 onClick={()=>{navigator.clipboard.writeText(`{{Trigger-manually.data.yourObjectKey}}`)}}
-                                    className="transition-all active:scale-80 duration-150  text-[#71767B] hover:text-[#E1E8ED]   hover:bg-[#2C3034] rounded-md p-0.5 z-10"
+                                    className="transition-all active:scale-80 duration-150  text-[#71767B]   hover:dark:bg-[#2C3034] hover:bg-[#E9E9E9] rounded-md p-0.5 z-10"
                                 >
                                 <Copy size="19"></Copy>
                                 </button>

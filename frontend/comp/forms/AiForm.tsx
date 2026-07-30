@@ -7,7 +7,7 @@ import { OpenOptions } from "../openoptions"
 import { Opneframe } from "../openframe"
 import { MainButton } from "../buttons/mainbutton"
 import { BigInput } from "../biggerinput"
-import { Cross } from "../svg/allsvg"
+import { Copy, Cross } from "../svg/allsvg"
 import { SecondarybuttonNegative } from "../buttons/secondarybuttonnegative"
 import { Secondarybutton } from "../buttons/secondarybutton"
 const aimap : any = {
@@ -15,7 +15,7 @@ const aimap : any = {
     "Gemini" : "gemini",
     "OpenAi" : "chatgpt"
 }
-const initialValue = {variableName:"",Credential:{name:""},SystemPrompt:"",UserPrompt:""}
+const initialValue = {variableName:"",Credential:{name:"",id:""},SystemPrompt:"",UserPrompt:""}
 
 export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,AiType}:{nodes:any,setNodes:any,formDetail:any,setformDetail:Dispatch<SetStateAction<any>>,AiName:string,AiType:string}){
     const {creds} = UseCred()
@@ -26,7 +26,7 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
             type : a.type
          }
     })
-    const [formdata,setformdata] = useState<{variableName:string,Credential:{name:string},SystemPrompt?:string,UserPrompt:string}>(initialValue)
+    const [formdata,setformdata] = useState<{variableName:string,Credential:{name:string,id:string},SystemPrompt?:string,UserPrompt:string}>(initialValue)
      useEffect(()=>{
             if (nodes.length > 0) {
                 const selectednodemetadata = nodes.filter((a:any)=>{return  a.id === formDetail.nodeid})[0]?.data.metadata
@@ -39,7 +39,22 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
         },[formDetail.nodeid,nodes.length])
     const [open,setopen] = useState<any>(false) 
 
+    const [errors, setErrors] = useState<any>({});
+        function validateForm(){
+            const newError:any = {}
+            if (!formdata.UserPrompt?.trim()) {
+                newError.UserPrompt = "UserPrompt is required"
+            }
+            if (!formdata.Credential.id) {
+                newError.Credential = "Credential is required";
+            }
+            setErrors(newError)
+            return Object.keys(newError).length === 0;
+        }
+
+
     return <div className={` transition duration-100 ease-initial ${formDetail.name == aimap[AiName] ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
+
             <div className={` transition duration-100 ${formDetail.open ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
                 <div className={`p-6 `} >
                     <div className="flex w-full justify-between items-center">
@@ -89,7 +104,8 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                                                                     key={index}
                                                                     onClick={()=>{
                                                                         setformdata((prev:any)=>{return {...prev , Credential :z}})
-                                                                        setopen(false)
+                                                                        setErrors((Prev:any)=>({...Prev,Credential:""}))
+                                                                         setopen(false)
                                                                     }}
                                                                     className="m-1.5 ">
                                                                     <MainButton>
@@ -110,20 +126,47 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                                                     </Opneframe>
                                             </OpenOptions>
                                         </div>
+                                        {errors.Credential&&
+                                        <div className="mt-1 text-xs text-red-500">
+                                            {errors.Credential}
+                                        </div>}
                                     </div>
                         </div>
                         <div>
-                           <BigInput placeholder="Act as a discort admin ...." name="User Prompt (Optional)" state={formdata.UserPrompt?? ""} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , UserPrompt :a}})}}></BigInput> 
+                           <BigInput placeholder="Act as a discort admin ...." name="User Prompt (Optional)" state={formdata.UserPrompt?? ""} statesetter={(a)=>{ 
+                            setformdata((prev:any)=>{return {...prev , UserPrompt :a}})
+                            setErrors((Prev:any)=>({...Prev,UserPrompt:""}))
+
+                             }}></BigInput> 
+                            {errors.UserPrompt&&
+                                <div className="mt-1 text-xs text-red-500">
+                                     {errors.UserPrompt}
+                                </div>}
                            <div className=" text-xs">{"Sets the behavior of the assistant. Use {{variables}} for simple values or {{json variable}} to stringify objects"}</div>
                         </div>
                         <div>
                            <BigInput placeholder="Summerize this text : {{jsonhttpreponse.data}}" name="System Prompt (Optional)" state={formdata.SystemPrompt} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , SystemPrompt :a}})}}></BigInput> 
                            <div className=" text-xs">{"The prompt to send to the AI.Use{{variables}} for simple values or {{json variables}} to stringify objects"}</div>
                         </div>
+                         <div className="flex gap-1 items-center">
+                                <div  className="text-xs flex gap-1">
+                                    <div> {"use context in next nodes as "}</div>
+                                    <div className="dark:text-brand-bg text-brand-dark-bg"> {`{{${formdata.variableName?formdata.variableName:AiName}.data.yourObjectKey}} `}</div>
+                                </div>
+                                <button 
+                                    onClick={()=>{navigator.clipboard.writeText(`{{${formdata.variableName?formdata.variableName:AiName}.data.yourObjectKey}}`)}}
+                                        className="transition-all active:scale-80 duration-150  text-[#71767B]   hover:dark:bg-[#2C3034] hover:bg-[#E9E9E9] rounded-md p-0.5 z-10"
+                                    >
+                                    <Copy size="19"></Copy>
+                                </button>
+                            </div>
                      </div> 
                 </div>
                     <div  className="flex gap-2 w-full">
                         <div onClick={()=>{
+                            if (!validateForm()) {
+                                return;
+                            }
                              setNodes((prev:any)=>{
                                      return prev.map((n:any)=>{
                                            if (n.id === formDetail.nodeid) {

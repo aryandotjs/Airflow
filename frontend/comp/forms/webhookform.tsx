@@ -40,7 +40,11 @@ export function WebhookForm({
         <div className={` transition duration-300 ${formDetail.name == "Webhook"?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
             <div className={`p-6 `} >
                 <div className="flex w-full justify-between items-center ">
-                     <div className="text-[17px] font-semibold dark:text-brand-bg ">{formDetail.name} Trigger</div>
+                     <div className="flex gap-2 items-center ">
+                              <div className="text-[17px] font-semibold dark:text-brand-bg ">{formDetail.name} </div>
+                               <img className='h-5 dark:hidden' src={"/actiontriggerimages/webhook.png"}></img>
+                              <img className='h-5 hidden dark:block' src={"/actiontriggerimages/darkwebhook.png"}></img>
+                     </div>
                      <div onClick={()=>{
                         setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
                         setformdata(initialValue)
@@ -87,19 +91,32 @@ export function WebhookForm({
                                    {"Webhook URL"}
                                 </div>
                                     <div className="flex h-8 justify-between border border-[#C6C6C6]  dark:border-[#2C3034]  cursor-pointer bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] rounded-xl text-center  px-2.5 tracking-normal text-sm font-medium">
-                                        <div className=" items-center pt-1">
+                                        <div className=" items-center pt-1 overflow-x-hidden">
                                             {formdata.WebhookId?`http://localhost:3001/api/v1/webhook/${formdata.WebhookId}` : "Save workflow to generate URL" }
                                         </div>
                                         <button onClick={()=>{
                                             if (formdata.WebhookId) {
                                                 navigator.clipboard.writeText(`http://localhost:3001/api/v1/webhook/${formdata.WebhookId}`)
                                             }
-                                        }}className="transition-all active:scale-80 duration-50  text-[#71767B] hover:text-[#E1E8ED]  rounded-md p-0.5 "
+                                        }}className="transition-all active:scale-80 duration-50   text-[#71767B]      rounded-md p-0.5 "
                                                             >
                                             <Copy size="19"></Copy>
                                         </button>
                                     </div>
                                 <div className=" text-xs">{`Send POST requests to this URL to trigger the workflow`}</div>
+                            </div>
+
+                            <div className="flex gap-1 items-center">
+                                <div  className="text-xs flex gap-1">
+                                    <div> {"use context in next nodes as "}</div>
+                                    <div className="dark:text-brand-bg text-brand-dark-bg"> {"{{Webhook-Trigger.data.yourObjectKey}} "}</div>
+                                </div>
+                                <button 
+                                    onClick={()=>{navigator.clipboard.writeText(`{{Webhook-Trigger.data.yourObjectKey}}`)}}
+                                        className="transition-all active:scale-80 duration-150  text-[#71767B]   hover:dark:bg-[#2C3034] hover:bg-[#E9E9E9] rounded-md p-0.5 z-10"
+                                    >
+                                    <Copy size="19"></Copy>
+                                </button>
                             </div>
                             {/* {formdata.Method === "POST" || formdata.Method === "PUT" ?
                             <div>
