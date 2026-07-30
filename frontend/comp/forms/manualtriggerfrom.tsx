@@ -3,7 +3,7 @@ import { Input } from "../buttons/input"
 import { BigInput } from "../biggerinput"
 import { SecondarybuttonNegative } from "../buttons/secondarybuttonnegative"
 import { Secondarybutton } from "../buttons/secondarybutton"
-import { Cross } from "../svg/allsvg"
+import { Copy, Cross } from "../svg/allsvg"
 export function ManualTriggerForm({
     nodes,
     setNodes,
@@ -54,8 +54,16 @@ const initialValue = {data:""}
                         <div className="text-xs">
                             {"Enter JSON data to provide input to the workflow."}
                         </div>
-                        <div className="text-xs mt-2">
-                            {"use context as {{Trigger-manually.data.yourObjectKey}} in next nodes"}
+                        <div className="flex gap-1 items-center">
+                            <div  className="text-xs ">
+                               {"use context as {{Trigger-manually.data.yourObjectKey}} in next nodes"}
+                            </div>
+                             <button 
+                                onClick={()=>{navigator.clipboard.writeText(`{{Trigger-manually.data.yourObjectKey}}`)}}
+                                    className="transition-all active:scale-80 duration-150  text-[#71767B] hover:text-[#E1E8ED]   hover:bg-[#2C3034] rounded-md p-0.5 z-10"
+                                >
+                                <Copy size="19"></Copy>
+                                </button>
                         </div>
                     </div>
                 </div>

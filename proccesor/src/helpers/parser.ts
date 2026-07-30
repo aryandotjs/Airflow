@@ -1,23 +1,22 @@
 
 export function Parser(text: string, webhookbody: any, startDelimeter = "{{", endDelimeter = "}}") {
-
     let start = 0;
     let end = 0;
     let finalString = "";
-
     while (text.length > start) {
 
-        if (startDelimeter === text[start]) {
+        if (startDelimeter === text.slice(start, start + 2)) {
             let endpoint = start
-            while (text[endpoint] !== endDelimeter) {
+            while (text.slice(endpoint, endpoint + 2) !== endDelimeter) {
                 endpoint++
             }
-
-            const part = text.slice(start + 1, endpoint)
+            const part = text.slice(start + 2, endpoint)
             const words: any = part.split(".")
+
             let Valueobj = {
                 ...webhookbody
             }
+            console.log(words, Valueobj)
             for (let i = 0; i < words.length; i++) {
                 if (Valueobj && Valueobj[words[i]] !== undefined) {
                     Valueobj = Valueobj[words[i]]
@@ -27,25 +26,15 @@ export function Parser(text: string, webhookbody: any, startDelimeter = "{{", en
                 }
             }
             finalString += Valueobj !== undefined ? Valueobj : text.slice(start, endpoint + 1)
-            start = endpoint
+            start = endpoint + 2
 
             start++
         } else {
+            console.log(finalString)
             finalString += text[start]
             start++
             end++
         }
-
     }
     return finalString;
 }
-
-
-const a = Parser('hi my name is {{body.name}}',
-    {
-        body: {
-            name: "aryan"
-        }
-    }
-)
-console.log(a)

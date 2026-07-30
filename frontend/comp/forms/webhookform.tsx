@@ -88,11 +88,11 @@ export function WebhookForm({
                                 </div>
                                     <div className="flex h-8 justify-between border border-[#C6C6C6]  dark:border-[#2C3034]  cursor-pointer bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] rounded-xl text-center  px-2.5 tracking-normal text-sm font-medium">
                                         <div className=" items-center pt-1">
-                                            {formdata.WebhookId?`https://airflow.com/webhook/${formdata.WebhookId}` : "Save workflow to generate URL" }
+                                            {formdata.WebhookId?`http://localhost:3001/api/v1/webhook/${formdata.WebhookId}` : "Save workflow to generate URL" }
                                         </div>
                                         <button onClick={()=>{
                                             if (formdata.WebhookId) {
-                                                navigator.clipboard.writeText(`https://airflow.com/webhook/${formdata.WebhookId}`)
+                                                navigator.clipboard.writeText(`http://localhost:3001/api/v1/webhook/${formdata.WebhookId}`)
                                             }
                                         }}className="transition-all active:scale-80 duration-50  text-[#71767B] hover:text-[#E1E8ED]  rounded-md p-0.5 "
                                                             >

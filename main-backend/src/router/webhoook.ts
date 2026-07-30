@@ -10,6 +10,7 @@ export const webhookRouter = Router()
 
 
 webhookRouter.post("/:webhookId", async (req, res) => {
+    console.log("hey iwas herr")
     const { webhookId } = req.params
     const webhooknode = await prisma.node.findFirst({
         where: {
@@ -26,7 +27,7 @@ webhookRouter.post("/:webhookId", async (req, res) => {
         })
     }
     await executeWorkflow(webhooknode?.workflowId, {
-        Webhook: {
+        Webhookpayload: {
             body: req.body
         }
     })

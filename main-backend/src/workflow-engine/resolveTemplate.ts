@@ -1,17 +1,17 @@
-export function ResolveTemplate(text: string, webhookbody: any, startDelimeter = "{", endDelimeter = "}") {
+export function ResolveTemplate(text: string, webhookbody: any, startDelimeter = "{{", endDelimeter = "}}") {
     let start = 0;
     let end = 0;
     let finalString = "";
     while (text.length > start) {
 
-        if (startDelimeter === text[start]) {
+        if (startDelimeter === text.slice(start, start + 2)) {
             let endpoint = start
-            while (text[endpoint] !== endDelimeter) {
+            while (text.slice(endpoint, endpoint + 2) !== endDelimeter) {
                 endpoint++
             }
-
             const part = text.slice(start + 2, endpoint)
             const words: any = part.split(".")
+
             let Valueobj = {
                 ...webhookbody
             }
@@ -32,8 +32,6 @@ export function ResolveTemplate(text: string, webhookbody: any, startDelimeter =
             start++
             end++
         }
-
     }
     return finalString;
 }
-

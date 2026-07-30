@@ -9,13 +9,32 @@ export const testRouter = Router()
 testRouter.post("/test1", async (req, res) => {
     // const id = (req as any).userId
     // const id = "test-user"
-    const { name, channel } = req.body
-    console.log(name, channel, "from the api")
+    const { text } = req.body
+    const userid = req.get("userid")
+
     try {
         return res.status(200).json({
-            msg: "user created",
-            name: name,
-            channel: channel
+            userid,
+            automationresponse: text
+        })
+    } catch (err: any) {
+        res.status(400).json({
+            msg: "creadential creation failed"
+        })
+    }
+
+})
+testRouter.get("/test2", async (req, res) => {
+    // const id = (req as any).userId
+    // const id = "test-user"
+    const userid = req.get("userid")
+    console.log("iwas her er")
+    try {
+        return res.status(200).json({
+            userid: userid,
+            msg: "user created in get ",
+            name: "aryan",
+            name2: "anu",
         })
     } catch (err: any) {
         res.status(400).json({

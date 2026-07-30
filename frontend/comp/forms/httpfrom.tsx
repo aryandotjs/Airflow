@@ -22,9 +22,9 @@ export function HttpForm({
 
      
     const [open,setopen] = useState<any>(false) 
-    const initialValue = {variableName:"",Method:"GET",Endpoint:"",RequestBody:""}
+    const initialValue = {variableName:"",Method:"GET",Endpoint:"",RequestBody:"",headers:""}
 
-    const [formdata,setformdata] = useState<{variableName:string,Method:string,Endpoint:string,RequestBody:string}>(initialValue)
+    const [formdata,setformdata] = useState<{variableName:string,Method:string,Endpoint:string,RequestBody:string,headers:string}>(initialValue)
         useEffect(()=>{
             if (nodes.length > 0) {
                 const selectednodemetadata = nodes.filter((a:any)=>{ return a.id === formDetail.nodeid})[0]?.data.metadata
@@ -38,7 +38,6 @@ export function HttpForm({
 
 
   return (<div className={` transition duration-300 ease-initial ${formDetail.name == "HTTP-request" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
-    {JSON.stringify(formdata)}
         <div className={` transition duration-300 ${formDetail.name == "HTTP-request"?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
             <div className={`p-6 `} >
                 <div className="flex w-full justify-between items-center ">
@@ -50,7 +49,7 @@ export function HttpForm({
                 </div>
                        <div className="my-6 flex flex-col gap-6 w-115 overflow-y-scroll max-h-100 p-2 ">
                             <div>
-                                <Input placeholder={`Variable-name`} name="Variable Name (optional)" state={formdata.variableName} statesetter={(a)=>{
+                                <Input placeholder={`httpResponse`} name="Variable Name (optional)" state={formdata.variableName} statesetter={(a)=>{
                                      setformdata((prev:any)=>{
                                          return {...prev , variableName : a }
                                      })
@@ -62,7 +61,7 @@ export function HttpForm({
                                                         <div className="w-full relative z-10 " >
                                                                     <OpenerButton simplefilter={formdata.Method} open={open} setopen={setopen}></OpenerButton>
                                                                     <div className={`absolute w-full top-7 transition duration-150 ${open ? "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
-                                                                        <OpenOptions simplefilter={""} options={["GET","POST","PUT","DELETE"]}  open={open} setopen={setopen} setsimplefilter={(a)=>{setformdata((prev:any)=>{return {...prev , Method :a}})}}>
+                                                                        <OpenOptions simplefilter={""} options={["GET","POST"]}  open={open} setopen={setopen} setsimplefilter={(a)=>{setformdata((prev:any)=>{return {...prev , Method :a}})}}>
                                                                                 <Opneframe>
                                                                                         {["GET","POST","PUT","DELETE"].map((z:any,index)=>{
                                                                                             return <div 
@@ -90,12 +89,18 @@ export function HttpForm({
                                          return {...prev , Endpoint : a }
                                      })
                                 }}></Input>
-                                <div className="mt-1 text-xs">{`Static URL or use {{variables}}for simple values or {{json variables}} to stringfy objects`}</div>
+                                <div className="mt-1 text-xs">{`enter the request URL. Use {{variables}} to insert values from previous nodes.`}</div>
+                            </div>
+                            <div>
+                                <BigInput 
+                                      placeholder={`{\n    "Authorization": "Bearer {{login.body.token}}",\n    "X-User": "{{Trigger-manually.data.name}}",\n }`} 
+                                     name="Request headers" state={formdata.headers} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , headers :a}})}}></BigInput> 
+                                <div className=" text-xs">{"Enter JSON body or use {{variables}} for simple values or {{json variables}} to stringify objects"}</div>
                             </div>
                             {formdata.Method === "POST" || formdata.Method === "PUT" ?
                             <div>
                                 <BigInput 
-                                      placeholder={"{\n    user Id: {{httpResponse.data.id}},\n    name: {{httpResponse.data.name}},\n    items: {{httpResponse.data.items}}\n}"} 
+                                      placeholder={`{\n    "user Id": "{{httpResponse.data.id}}"",\n    "name": "{{httpResponse.data.name}}",\n    "items": "{{httpResponse.data.items}}"\n}`} 
                                      name="RequestBody" state={formdata.RequestBody} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , RequestBody :a}})}}></BigInput> 
                                 <div className=" text-xs">{"Enter JSON body or use {{variables}} for simple values or {{json variables}} to stringify objects"}</div>
                             </div>

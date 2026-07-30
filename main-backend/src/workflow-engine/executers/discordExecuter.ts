@@ -26,6 +26,7 @@ export async function DiscordExecuter({
             sent: true
         }
     } catch (err: any) {
+        console.log(err)
         if (err.code === "ENOTFOUND" || err.response?.status === 404 || err.response?.status === 401) {
             throw new Error("Discord webhook is invalid or no longer exists")
         }
