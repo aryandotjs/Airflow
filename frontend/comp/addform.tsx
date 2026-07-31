@@ -5,7 +5,7 @@ import { Secondarybutton } from "./buttons/secondarybutton";
 import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative";
 
 
-export function Addform({children , callback , name ,setformopen, formopen , buttonname }:{buttonname:string,children:ReactNode ,name :string , setformopen : Dispatch<SetStateAction<boolean>>,formopen :boolean , callback : any}){
+export function Addform({children , callback , name ,setformopen, formopen , buttonname ,manualbutton = false}:{buttonname:string,children:ReactNode ,name :string , setformopen : Dispatch<SetStateAction<boolean>>,formopen :boolean , callback : any ,manualbutton? :boolean}){
    
      return <div className={` transition duration-300 ease-initial ${formopen ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
         <div className={` transition duration-300 ${formopen ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
@@ -15,6 +15,7 @@ export function Addform({children , callback , name ,setformopen, formopen , but
                      <div onClick={()=>{setformopen(!open)}} className="h-6 w-6 rounded-md flex items-center justify-center  hover:bg-[#E9E9E9] hover:dark:bg-[#151619]"><Cross size="16"></Cross></div>
                 </div>
                 {children}
+                {!manualbutton?
                 <div  className="flex gap-2 w-full">
                     <div onClick={callback} className="h-8 w-30 transition-all duration-150 active:scale-95">
                         <SecondarybuttonNegative>
@@ -31,6 +32,7 @@ export function Addform({children , callback , name ,setformopen, formopen , but
                         </Secondarybutton>
                     </div>
                 </div>
+                :""}
               </div>
         </div>
      </div>

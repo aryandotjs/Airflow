@@ -19,6 +19,11 @@ const executors: Record<string, Executor> = {
         }
     },
     "TRIGGER-MANUALLY": async ({ data }) => {
+        if (!data.data) {
+            return {
+                send: true
+            }
+        }
         const parsed = JSON.parse(data.data)
         data = {
             data: parsed,

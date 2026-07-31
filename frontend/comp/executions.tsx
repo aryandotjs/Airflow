@@ -115,9 +115,9 @@ export  function Executions(){
                     <Secondarybutton onclick={()=>{}} >
                         <div className="flex justify-between w-full text-xs p-3">
                             <div className="w-[20%] "></div>
-                            <div className="w-[20%]  text-start">Name</div>
-                            <div className="w-[15%] text-start">Status</div>
-                            <div className="w-[25%]">Id</div>
+                            <div className="w-[20%]  text-start ml-5">Name</div>
+                            <div className="w-[15%] text-center">Status</div>
+                            <div className="w-[25%] text-center">Duration</div>
                             <div className="w-[15%] flex flex-row-reverse ">Started</div>
                         </div>
                     </Secondarybutton>
@@ -140,6 +140,17 @@ function History({filteredZapruns} :any){
     const router = useRouter()
     if (!filteredZapruns) {
         return <div>loading</div>
+    }
+    if (filteredZapruns.length < 1) {
+        return <div className="h-90 flex flex-col items-center justify-center">
+        <div className="text-sm font-medium dark:text-[#F0F0F0] text-[#191919]">
+            No executions yet
+        </div>
+
+        <div className="mt-1 text-xs dark:text-[#9C9FA0] text-[#666666]">
+            Run a workflow to see your execution history here.
+        </div>
+    </div>
     }
      return <div className="px-2 pr-4 ">
         {filteredZapruns.map((z:any,index:any)=>{
@@ -165,11 +176,14 @@ function History({filteredZapruns} :any){
                         }} className="w-[20%] dark:text-[#F0F0F0] text-[#191919] text-xs flex items-center gap-3 underline decoration-dashed decoration-[#EEEEEE] dark:decoration-[#191B1E] hover:decoration-blue-400 dark:hover:decoration-[#EEEEEE]  underline-offset-6 transition-all duration-400  font-normal dark:font-medium ">
                       {z.workflow.name}
                     </div>
-                    <div className="w-[15%]  flex items-center ">
+                    
+                    <div className="w-[15%]  flex items-center justify-center ">
                         <StatusButton status={z.status.toLowerCase()}></StatusButton>
                     </div>
-                    <div className="w-[25%]  flex items-center ">
-                        <div className="flex bg-[#E9E9E9] h-5 dark:bg-[#151619] text-xs px-2 rounded-lg py-0.5 w-full overflow-hidden ">{z.id}</div>
+                    <div className="w-[25%]  flex items-center justify-center">
+
+                            <div>{DurationCalculator(z.startedAt,z.completedAt)}</div>
+                        {/* <div className="flex bg-[#E9E9E9] h-5 dark:bg-[#151619] text-xs px-2 rounded-lg py-0.5 w-full overflow-hidden ">{z.id}</div> */}
                     </div>
                     <div className="w-[15%]  flex items-center justify-end text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-[#191919]">
                          <DateConverter isoString={z.startedAt}></DateConverter>
@@ -209,8 +223,7 @@ export function DetailCard({id} : any){
                 <div className="flex text-l font-medium items-center justify-between ">
                     <div className=" gap-6 flex">
                         <Svgframe status={execution.status.toLowerCase()} big={true}> 
-                            <SvgforActionsTriggers size="40" name={"Email"}>
-                            </SvgforActionsTriggers>
+                            <Execution size={"40"} ></Execution>
                         </Svgframe>
                         <div className=" flex flex-col justify-center">
                             <div>Execution</div>

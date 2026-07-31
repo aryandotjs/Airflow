@@ -63,7 +63,6 @@ export function HttpForm({
         return Object.keys(newError).length === 0;
     }
   return (<div className={` transition duration-300 ease-initial ${formDetail.name == "HTTP-request" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
-    {/* {JSON.stringify(errors)} */}
         <div className={` transition duration-300 ${formDetail.name == "HTTP-request"?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
             <div className={`p-6 `} >
                 <div className="flex w-full justify-between items-center ">

@@ -24,7 +24,7 @@ CredentialRouter.post("/create", async (req, res) => {
         })
 
         return res.status(200).json({
-            msg: "credential created",
+            msg: `credential ${name} created`,
             credid: cred.id
         })
     } catch (err: any) {
@@ -57,12 +57,12 @@ CredentialRouter.post("/update", async (req, res) => {
         })
 
         return res.status(200).json({
-            msg: "creadential Updated",
+            msg: "This Credential has been update.",
             credid: cred.id
         })
     } catch (err: any) {
         res.status(400).json({
-            err: err.message ?? "something went wrong"
+            err: err.message ?? "Failed Editing Credential"
         })
     }
 
@@ -103,11 +103,11 @@ CredentialRouter.delete("/delete", async (req, res) => {
             }
         })
         return res.status(200).json({
-            msg: "Creadential delete succesfully"
+            msg: "This Credential has been deleted"
         })
     } catch (err: any) {
         res.status(400).json({
-            msg: err.message ?? "something went wrong"
+            msg: err.message ?? "Failed deleting Credential"
         })
     }
 

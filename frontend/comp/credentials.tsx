@@ -1,7 +1,7 @@
 "use client"
 import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useRef, useState } from "react"
 import { Secondarybutton } from "./buttons/secondarybutton"
-import { Add, Bin, Check, DownArrow, Edit, Locksvg, Openup, Search, UpArrow } from "./svg/allsvg"
+import { Add, Bin, Check, DownArrow, Edit, Locksvg, Openup, Prev, Search, UpArrow } from "./svg/allsvg"
 import { MainButton, MainRedButton } from "./buttons/mainbutton"
 import { Opneframe } from "./openframe"
 import { Addform } from "./addform"
@@ -14,16 +14,18 @@ import Spin from "./buttons/spinningwheel"
 import toastsetterremover from "./toastfunction"
 import { useToast } from "./toastprovider"
 import useToastSetterRemover from "./toastfunction"
+import { DeleteConfirm } from "./deleteconfirmation"
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export function Credentials(){
      const [refreshTrigger, setRefreshTrigger] = useState(false);
      const [allcreds ,setallcreds] = useState()
+     const [Errors ,setErrors] = useState<any>({})
      
-     const [credName ,setcredName] = useState("")
-     const [Apikey ,setApikeys] = useState("")
-     const [type ,settype] = useState("CHATGPT")
+
+     const defaultValue = {credName:"",Apikey:"",type:""}
+     const [formData ,setformData] = useState(defaultValue)
 
 
      const [formopen ,setformopen] = useState(false)
@@ -47,6 +49,22 @@ export function Credentials(){
               return MatchSearch && MatchFilter
            })
      },[allcreds,search,filter1])
+
+
+    //  function validateForm(){
+    //     const Errs:any = {}
+    //     if (!formData.Apikey.trim()) {
+    //         Errs.Apikey = "API key required"
+    //     }
+    //     if (!formData.credName.trim()) {
+    //         Errs.credName = "Name required"
+    //     }
+    //     if (!formData.type) {
+    //         Errs.type = "type required"
+    //     }
+    //     setErrors(Errs)
+    //     return Object.keys(Errs).length === 0
+    //  }
        
         return <div className={`flex flex-col gap-4 px-24 h-screen`}>
             <div className="flex justify-between mt-6 items-center ">
@@ -66,21 +84,21 @@ export function Credentials(){
                     </Secondarybutton>
                 </div>
                 <div className="w-[40%]">
-                     <OpenerBoxWithOptions options={["ALL" , "GEMINI" , "CHATGPT","CLAUDE"]} simplefilter={filter1} setsimplefilter={setfilter1} ></OpenerBoxWithOptions> 
+                     <OpenerBoxWithOptions options={["ALL" , "GEMINI" , "CHATGPT","CLAUDE","DISCORD"]} simplefilter={filter1} setsimplefilter={setfilter1} ></OpenerBoxWithOptions> 
                 </div>
             </div>
             <div className=" h-8">
                 <Secondarybutton onclick={()=>{}} >
-                    <div className="flex  w-full text-xs px-1">
-                        <div className="w-[30%] flex justify-start">Name</div>
-                        <div className="w-[15%] flex justify-start">Token</div>
-                        <div className="w-[14%] flex justify-start pl-6">type</div>
-                        <div className="w-[13%] flex justify-start">Total uses</div>
-                        <div className="w-[13%] flex justify-start">Last used</div>
-                        <div className="w-[13%] flex justify-start">
+                    <div className="flex justify-between w-full text-xs px-1">
+                        <div className="w-[20%] flex ">Name</div>
+                        <div className="w-[20%] flex justify-center">Token</div>
+                        <div className="w-[20%] flex justify-center">type</div>
+                        {/* <div className="w-[13%] flex justify-start">Total uses</div> */}
+                        {/* <div className="w-[13%] flex justify-start">Last used</div> */}
+                        <div className="w-[20%] flex justify-center">
                             <div>updated</div> /<div>Created</div>
                         </div>
-                        <div className=""></div>
+                        <div className="w-[20%] flex justify-center"></div>
                     </div>
                 </Secondarybutton>
                     {!allcreds ? 
@@ -93,16 +111,20 @@ export function Credentials(){
             
                  <Addform  callback={async()=>{
                      try{
-                          if (!credName.length || !Apikey.length) {
-                            setformopen(false)
-                            return ;
-                          }
+                        //   if (!credName.length || !Apikey.length) {
+                        //     setformopen(false)
+                        //     return ;
+                        //   }
+                        if (!validateForm({formData,setErrors})) {
+                            return
+                        }
                           const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/create`,{
-                                name : credName,
-                                apikey :Apikey ,
-                                type : type
+                                name : formData.credName,
+                                apikey :formData.Apikey ,
+                                type : formData.type
                           })
                             setformopen(false)
+                            setformData(defaultValue)
                             setRefreshTrigger((prev)=>!prev)
                             showToast({msg :response.data.msg,isError:false})
                         }catch(err:any){
@@ -112,12 +134,59 @@ export function Credentials(){
 
                  }}  name={"Add credentials"} formopen={formopen} buttonname="Add" setformopen={setformopen}>
                     <div className="my-6 flex flex-col gap-4 w-115">
-                           <Input placeholder="Credentials Name" name="Name" state={credName} statesetter={setcredName}></Input>
+                            <div>
+                                <Input placeholder="Credentials Name" name="Name" state={formData.credName} statesetter={(a)=>{
+                                        setformData((prev:any)=>{
+                                            return {
+                                                ...prev,
+                                                credName : a
+                                                }
+                                            })
+                                            setErrors((Prev:any)=>{
+                                                return {...Prev,credName:""}
+                                            })
+                                            }}>
+                                </Input>
+                                {Errors.credName&&
+                                <div className="mt-1 text-xs text-red-500">
+                                    {Errors.credName}
+                                </div>}
+                            </div>
                            <div className="w-40 flex flex-col gap-2 text-sm font-medium">
                                <div className="">Type</div>
-                            <OpenerBoxWithOptions options={["CHATGPT" , "GEMINI","CLAUDE","DISCORD"]} simplefilter={type} setsimplefilter={settype} ></OpenerBoxWithOptions> 
+                            <OpenerBoxWithOptions options={["CHATGPT" , "GEMINI","CLAUDE","DISCORD"]} simplefilter={formData.type||"Select Type"} setsimplefilter={(a)=>{
+                                setformData((prev:any)=>{
+                                    return {
+                                        ...prev,
+                                        type : a
+                                    }
+                                })
+                                setErrors((Prev:any)=>{
+                                                return {...Prev,type:""}
+                                            })
+                            }} ></OpenerBoxWithOptions> 
+                            {Errors.type&&
+                                <div className="mt-1 text-xs text-red-500">
+                                    {Errors.type}
+                                </div>}
                            </div>
-                           <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" state={Apikey} statesetter={setApikeys}></Input>
+                           <div>
+                                <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" state={formData.Apikey} statesetter={(a)=>{
+                                    setformData((prev:any)=>{
+                                    return {
+                                            ...prev,
+                                            Apikey : a
+                                        }
+                                    })
+                                     setErrors((Prev:any)=>{
+                                                return {...Prev,Apikey:""}
+                                        })
+                                }}></Input>
+                                {Errors.Apikey&&
+                                <div className="mt-1 text-xs text-red-500">
+                                    {Errors.Apikey}
+                                </div>}
+                           </div>
                     </div>
                 </Addform>
      </div>
@@ -131,10 +200,18 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
         const [updateform,setupdateform] = useState(false)
         const openmodalref = useRef<HTMLDivElement>(null)
 
-        const [UpdateName ,setUpdateName] = useState("")
-        const [UpdateApikey ,setUpdateApikeys] = useState("")
-        const [Updatetype ,setUpdatetype] = useState("GEMINI")
+        // const [UpdateName ,setUpdateName] = useState("")
+        // const [UpdateApikey ,setUpdateApikeys] = useState("")
+        // const [Updatetype ,setUpdatetype] = useState("GEMINI")
+
+        const defaultValue = {credName:"",Apikey:"",type:""}
+        const [formData ,setformData] = useState(defaultValue)
+        const [Errors ,setErrors] = useState<any>({})
+
+
         const [crediddb ,setcrediddb] = useState("")
+
+        const [deleteformopen ,setdeleteformopen] = useState(false)
 
         const showToast = useToastSetterRemover()
         useEffect(()=>{
@@ -150,12 +227,24 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                 document.removeEventListener("mousedown",clickeventfunc)
             }
         },[])
+        if (filteredCreds.length === 0) {
+            return <div className="flex h-90 flex-col items-center justify-center">
+        <div className="text-sm font-medium dark:text-[#F0F0F0] text-[#191919]">
+            No credentials yet
+        </div>
 
+        <div className="mt-2 text-xs dark:text-[#9C9FA0] text-[#666666]">
+            Add your first credential to connect external services.
+        </div>
+    </div>
+        }
         return <div className="px-2 pr-4 ">
+            {/* {JSON.stringify(option)} */}
             {filteredCreds.map((z:any,index:any)=>{
+                console.log(z)
                 return <div key={index} className="relative flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold ">
-                        <div className="flex w-full h-8 my-3 gap-2 ">
-                            <div className="  flex items-center  gap-3 w-[30%] overflow-hidden">
+                        <div className="flex w-full h-8 my-3 gap-2 justify-between">
+                            <div className="  flex items-center  gap-3 w-[20%] overflow-hidden">
                                 
                                 <Svgframe status="Success">
                                     <SvgforActionsTriggers size="18" name={"Lock"}></SvgforActionsTriggers>
@@ -169,13 +258,13 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                 
                             </div>
                         
-                            <div className="w-[15%] flex justify-start pl-3  items-center overflow-hidden">
+                            <div className="w-[20%] flex justify-center pl-3  items-center overflow-hidden">
                                 <div className="bg-[#E9E9E9]  dark:bg-[#151619] py-0.5 px-2 rounded-lg">
-                                <div className="">{z.value.apikey.slice(0,10)}.....</div>
+                                <div className="">{z.value.apikey.slice(0,10)}••••••</div>
                                 </div>
                             </div>
 
-                            <div className="flex justify-center items-center gap-1.5 w-[15%] font-normal text-sm dark:font-medium dark:text-[#F0F0F0] text-[#191919]">
+                            <div className="flex justify-center items-center gap-1.5 w-[20%] font-normal text-sm dark:font-medium dark:text-[#F0F0F0] text-[#191919]">
                                 <div className="text-xs">{z.type.toLowerCase()}</div>
                                 {/* <div className="h-4 w-4  ">
                                     {z.type === "CLAUDE" ? 
@@ -187,13 +276,13 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                 }
                                 </div> */}
                             </div>
-                            <div className="flex justify-center items-center  w-[13%] text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-brand-dark-bg">0</div>
-                            <div className="flex justify-center items-center  w-[13%] text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-brand-dark-bg">No Activity</div>
-                            <div className="w-[13%]  flex items-center justify-center text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-brand-dark-bg">
+                            {/* <div className="flex justify-center items-center  w-[13%] text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-brand-dark-bg">0</div> */}
+                            {/* <div className="flex justify-center items-center  w-[13%] text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-brand-dark-bg">No Activity</div> */}
+                            <div className="w-[20%]  flex items-center justify-center text-xs font-normal dark:font-medium dark:text-[#F0F0F0] text-brand-dark-bg">
                                 <DateConverter isoString={z.updatedAt}></DateConverter>/
                                 <DateConverter isoString={z.createdAt}></DateConverter>
                             </div>
-                            <div ref={option.open &&  option.id === index ? openmodalref : null} className="w-[5%]  flex items-center justify-end">
+                            <div ref={option.open &&  option.id === index ? openmodalref : null} className="w-[20%]  flex items-center justify-end">
                                 <div 
                                     onClick={(a)=>{
                                         setoption({open:!option.open , id : index})
@@ -202,14 +291,15 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                     className=" select-none hover:bg-[#E9E9E9] pt-1 hover:dark:bg-[#151619] h-8 w-8  rounded-xl  flex justify-center  ">
                                     ...
                                 </div>
-                                    <div className={`absolute  w-45 top-11 z-10 right-0 transition duration-100 ${ option.open && index == option.id ?  "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
+                                <div className={`absolute  w-45 top-11 z-10 right-0 transition duration-100 ${ option.open && index == option.id ?  "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
 
                                     <Opneframe>
                                             <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                 <div onClick={()=> {
-                                                    setUpdateName(z.name)
-                                                    setUpdateApikeys(z.value.apikey)
-                                                    setUpdatetype(z.type)
+                                                    // setUpdateName(z.name)
+                                                    // setUpdateApikeys(z.value.apikey)
+                                                    // setUpdatetype(z.type)
+                                                    setformData({credName:z.name,Apikey:z.value.apikey,type:z.type})
                                                     setupdateform(true)
                                                     setoption({open:false , id : null})
                                                 }} className="m-1 ">
@@ -222,15 +312,8 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                             <div  className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                 <div onClick={async()=>{
                                                      try{
-                                                        const response = await axios.delete(`${BACKEND_URL}/api/v1/credentials/delete`,{
-                                                            data : {
-                                                                apiId : z.id
-                                                            }
-                                                            })
-                                                        setoption({open:false , id : null})
-                                                        setRefreshTrigger((prev)=>!prev)
-                                                        showToast({msg :response.data.msg,isError:false})
-
+                                                        setdeleteformopen(true)
+                                                        setoption((prev:any)=> ({open:false , id :prev.id }))
                                                     }catch(err:any){
                                                         setoption({open:false , id : null})
                                                         showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
@@ -242,23 +325,43 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                                 </div>
                                             </div>
                                     </Opneframe>
+                                    
                                 </div> 
                             </div>
-                            
-                                
-                                
-                            </div>
-                    
+                        </div>
+                            <DeleteConfirm callback={async()=>{
+                                        if (!crediddb) {
+                                            return ;
+                                        }
+                                        const response = await axios.delete(`${BACKEND_URL}/api/v1/credentials/delete`,{
+                                            data : {
+                                                apiId : crediddb
+                                            }
+                                        })
+                                        setoption((prev:any)=> ({open:false , id :null }))
+                                        setRefreshTrigger((prev)=>!prev)
+                                        showToast({msg :response.data.msg,isError:false})
+                                    }} buttonname={"Delete API key"} name={"Delete API Key"} setformopen={setdeleteformopen} formopen={deleteformopen}>
+                                    
+                                    <div className=" pt-5 text-sm">{ option.id == "0" || option.id ?filteredCreds[option.id].name:"invalid id "}</div>
+                                 
+                            </DeleteConfirm>
                  </div>
             })}
             
 
                     <Addform  callback={async()=>{
                         try{
+                            if (!validateForm({formData,setErrors})) {
+                                return
+                            }
+                            // if (formData) {
+                            //     return
+                            // }
                              const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/update`,{
-                                name : UpdateName,
-                                apikey :UpdateApikey ,
-                                type : Updatetype,
+                                name : formData.credName,
+                                apikey :formData.Apikey,
+                                type : formData.type,
                                 credid : crediddb
                             })
                             setupdateform(false)
@@ -270,18 +373,42 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                             showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
                         }
                             
-                    }} name={"Add credentials"} buttonname={"Update"} formopen={updateform} setformopen={setupdateform}>
+                        }} name={"Update credentials"} buttonname={"Update"} formopen={updateform} setformopen={setupdateform}>
                         
                         <div className="my-6 flex flex-col gap-4 w-115">
-                            <Input placeholder="Credentials Name" name="Name" state={UpdateName}  statesetter={setUpdateName}></Input>
-                                <div className="w-40 flex flex-col gap-2 text-sm font-medium">
-                                    <div className="">Type</div>
-                                    <OpenerBoxWithOptions options={["CHATGPT" , "GEMINI","CLAUDE"]} simplefilter={Updatetype} setsimplefilter={setUpdatetype} ></OpenerBoxWithOptions> 
-                                </div>
-                            <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" state={UpdateApikey} statesetter={setUpdateApikeys}></Input>
+                            <div>
+                                 <Input placeholder="Credentials Name" name="Name" state={formData.credName}  statesetter={(a)=>{
+                                      setformData((prev:any)=>({...prev , credName : a}))   }}>
+                                 </Input>
+                                  {Errors.credName&&
+                                        <div className="mt-1 text-xs text-red-500">
+                                        {Errors.credName}
+                                  </div>}
+                            </div>
+                           
+                            <div className="w-40 flex flex-col gap-2 text-sm font-medium">
+                                <div className="">Type</div>
+                                <OpenerBoxWithOptions options={["CHATGPT" , "GEMINI","CLAUDE","DISCORD"]} simplefilter={formData.type || "Select type"} setsimplefilter={(a)=>{
+                                    setformData((prev:any)=>({...prev , type : a}))
+                                }} ></OpenerBoxWithOptions> 
+                                {Errors.type&&
+                                        <div className="mt-1 text-xs text-red-500">
+                                        {Errors.type}
+                                  </div>}
+                            </div>
+                            <div>
+                                <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" state={formData.Apikey} statesetter={(a)=>{
+                                    setformData((prev:any)=>({...prev , Apikey : a}))
+                                }}></Input>
+                                {Errors.Apikey&&
+                                        <div className="mt-1 text-xs text-red-500">
+                                        {Errors.Apikey}
+                                  </div>}
+                            </div>
                         </div>
 
                     </Addform> 
+
         </div>
 }
 
@@ -300,3 +427,17 @@ export function Svgframe({children,status , big = false}: {children:ReactNode,st
 
 
 
+function validateForm({formData,setErrors}:any){
+        const Errs:any = {}
+        if (!formData.Apikey.trim()) {
+            Errs.Apikey = "API key required"
+        }
+        if (!formData.credName.trim()) {
+            Errs.credName = "Name required"
+        }
+        if (!formData.type) {
+            Errs.type = "type required"
+        }
+        setErrors(Errs)
+        return Object.keys(Errs).length === 0
+     }

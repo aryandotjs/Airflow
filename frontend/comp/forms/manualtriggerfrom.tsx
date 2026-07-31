@@ -29,7 +29,20 @@ const initialValue = {data:""}
                 }
             }
         },[formDetail.nodeid,nodes.length])
-
+    const [errors, setErrors] = useState<any>({});
+        function validateForm(){
+            const newError:any = {}
+           
+            if (formdata.data?.trim()) {
+                try {
+                    JSON.parse(formdata.data);
+                } catch {
+                    newError.data = "Invalid JSON";
+            }
+        }
+            setErrors(newError)
+            return Object.keys(newError).length === 0;
+        }
   return (<div className={` transition duration-300 ease-initial ${formDetail.name == "Trigger-manually" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
         <div className={` transition duration-300 ${formDetail.name == "Trigger-manually"?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
             <div className={`p-6 `} >
@@ -49,7 +62,10 @@ const initialValue = {data:""}
                     <div>
                         <BigInput  placeholder={`{\n   "user Id" : "123",\n    "name": "Aryan",\n    "items": "AI automation"\n}`} 
                         name="Trigger Data" state={formdata.data} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , data :a}})}}/>
-
+                         {errors.data&&
+                                        <div className="mt-1 text-xs text-red-500">
+                                        {errors.data}
+                                    </div>}
                         <div className="text-xs">
                             {"Enter JSON data to provide input to the workflow."}
                         </div>
@@ -70,6 +86,9 @@ const initialValue = {data:""}
                 
                 <div  className="flex gap-2 w-full">
                     <div onClick={()=>{
+                        if (!validateForm()) {
+                            return
+                        }
                         setNodes((prev:any)=>{
                                 return prev.map((n:any)=>{
                                     if (n.id === formDetail.nodeid) {
