@@ -6,9 +6,20 @@ import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative";
 
 
 export function Addform({children , callback , name ,setformopen, formopen , buttonname ,manualbutton = false}:{buttonname:string,children:ReactNode ,name :string , setformopen : Dispatch<SetStateAction<boolean>>,formopen :boolean , callback : any ,manualbutton? :boolean}){
-   
+     const openmodalref = useRef<HTMLDivElement>(null)
+     useEffect(()=>{
+            const clickeventfunc = (a:any) => {
+                if (openmodalref.current && !openmodalref.current.contains(a.target)) {
+                    setformopen(false)
+                }
+            }
+            document.addEventListener("mousedown",clickeventfunc)
+            return ()=>{
+                document.removeEventListener("mousedown",clickeventfunc)
+            }
+        },[])
      return <div className={` transition duration-300 ease-initial ${formopen ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
-        <div className={` transition duration-300 ${formopen ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
+        <div ref={openmodalref} className={` transition duration-300 ${formopen ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
             <div className={`p-6 `} >
                 <div className="flex w-full justify-between items-center ">
                      <div className="text-[17px] font-semibold dark:text-brand-bg ">{name}</div>

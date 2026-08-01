@@ -14,7 +14,7 @@ import Spin from "./buttons/spinningwheel"
 import toastsetterremover from "./toastfunction"
 import { useToast } from "./toastprovider"
 import useToastSetterRemover from "./toastfunction"
-import { DeleteConfirm } from "./deleteconfirmation"
+import { Deletebutton, DeleteConfirm } from "./deleteconfirmation"
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -32,7 +32,7 @@ export function Credentials(){
 
      const [filter1,setfilter1] = useState("ALL")
      const [search,setsearch] = useState("")
-         const {toasts, setToasts} = useToast()
+     const {toasts, setToasts} = useToast()
      
      const showToast = useToastSetterRemover()
     
@@ -197,12 +197,12 @@ export function Credentials(){
 function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Dispatch<SetStateAction<boolean>>,filteredCreds : any}){
 
         const [option,setoption] = useState({open : false , id : null})
-        const [updateform,setupdateform] = useState(false)
-        const openmodalref = useRef<HTMLDivElement>(null)
 
-        // const [UpdateName ,setUpdateName] = useState("")
-        // const [UpdateApikey ,setUpdateApikeys] = useState("")
-        // const [Updatetype ,setUpdatetype] = useState("GEMINI")
+        const [updateform,setupdateform] = useState(false)
+
+        const openmodalref = useRef<HTMLDivElement>(null)
+         
+        
 
         const defaultValue = {credName:"",Apikey:"",type:""}
         const [formData ,setformData] = useState(defaultValue)
@@ -330,84 +330,105 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                             </div>
                         </div>
                             <DeleteConfirm callback={async()=>{
-                                        if (!crediddb) {
-                                            return ;
-                                        }
-                                        const response = await axios.delete(`${BACKEND_URL}/api/v1/credentials/delete`,{
-                                            data : {
-                                                apiId : crediddb
-                                            }
-                                        })
-                                        setoption((prev:any)=> ({open:false , id :null }))
-                                        setRefreshTrigger((prev)=>!prev)
-                                        showToast({msg :response.data.msg,isError:false})
+                                        
                                     }} buttonname={"Delete API key"} name={"Delete API Key"} setformopen={setdeleteformopen} formopen={deleteformopen}>
                                     
                                     <div className=" pt-5 text-sm">{ option.id == "0" || option.id ?filteredCreds[option.id].name:"invalid id "}</div>
+                                    <div className="my-7 min-w-100">
+                                        <div className="text-sm ">Are you sure you want to delete this API Key?</div>
+                                        <div className="text-sm font-medium text-[#CE292E] dark:text-[#FF9592]">This can not be undone.</div>
+                                    </div>
+                                    <div  className="flex gap-2 w-full">
+                                        <div onClick={async()=>{
+                                            setdeleteformopen(false)
+                                            if (!crediddb) {
+                                            return ;
+                                            }
+                                            const response = await axios.delete(`${BACKEND_URL}/api/v1/credentials/delete`,{
+                                                data : {
+                                                    apiId : crediddb
+                                                }
+                                            })
+                                            setoption((prev:any)=> ({open:false , id :null }))
+                                            setRefreshTrigger((prev)=>!prev)
+                                            showToast({msg :response.data.msg,isError:false})
+                                            }} className="h-8 min-w-30 transition-all duration-150 active:scale-95">
+                                                <Deletebutton name={"Delete API Key"}>
+                                                </Deletebutton>
+                                            </div>
+                                            <div onClick={()=>{setdeleteformopen(!open)}} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
+                                                <Secondarybutton>
+                                                    <div className=" px-1  text-sm pb-0.5">
+                                                        Cancle
+                                                    </div>
+                                                </Secondarybutton>
+                                            </div>
+                                    </div>
                                  
                             </DeleteConfirm>
                  </div>
             })}
             
+            <Addform  callback={async()=>{
+                try{
+                    if (!validateForm({formData,setErrors})) {
+                        return
+                    }
+                    // if (formData) {
+                    //     return
+                    // }
+                        const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/update`,{
+                        name : formData.credName,
+                        apikey :formData.Apikey,
+                        type : formData.type,
+                        credid : crediddb
+                    })
+                    setupdateform(false)
+                    setRefreshTrigger((prev)=>!prev)
+                    
+                    showToast({msg :response.data.msg,isError:false})
+                }catch(err:any){
+                    setupdateform(false)
+                    showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                }
+                    
+                }} name={"Update credentials"} buttonname={"Update"} formopen={updateform} setformopen={setupdateform}>
+                
+                <div className="my-6 flex flex-col gap-4 w-115">
+                    <div>
+                            <Input placeholder="Credentials Name" name="Name" state={formData.credName}  statesetter={(a)=>{
+                                setformData((prev:any)=>({...prev , credName : a}))   }}>
+                            </Input>
+                            {Errors.credName&&
+                                <div className="mt-1 text-xs text-red-500">
+                                {Errors.credName}
+                            </div>}
+                    </div>
+                    
+                    <div className="w-40 flex flex-col gap-2 text-sm font-medium">
+                        <div className="">Type</div>
 
-                    <Addform  callback={async()=>{
-                        try{
-                            if (!validateForm({formData,setErrors})) {
-                                return
-                            }
-                            // if (formData) {
-                            //     return
-                            // }
-                             const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/update`,{
-                                name : formData.credName,
-                                apikey :formData.Apikey,
-                                type : formData.type,
-                                credid : crediddb
-                            })
-                            setupdateform(false)
-                            setRefreshTrigger((prev)=>!prev)
-                            
-                            showToast({msg :response.data.msg,isError:false})
-                        }catch(err:any){
-                            setupdateform(false)
-                            showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
-                        }
-                            
-                        }} name={"Update credentials"} buttonname={"Update"} formopen={updateform} setformopen={setupdateform}>
+                        <OpenerBoxWithOptions options={["CHATGPT" , "GEMINI","CLAUDE","DISCORD"]} simplefilter={formData.type || "Select type"} setsimplefilter={(a)=>{
+                            setformData((prev:any)=>({...prev , type : a}))
+                        }} ></OpenerBoxWithOptions> 
                         
-                        <div className="my-6 flex flex-col gap-4 w-115">
-                            <div>
-                                 <Input placeholder="Credentials Name" name="Name" state={formData.credName}  statesetter={(a)=>{
-                                      setformData((prev:any)=>({...prev , credName : a}))   }}>
-                                 </Input>
-                                  {Errors.credName&&
-                                        <div className="mt-1 text-xs text-red-500">
-                                        {Errors.credName}
-                                  </div>}
-                            </div>
-                           
-                            <div className="w-40 flex flex-col gap-2 text-sm font-medium">
-                                <div className="">Type</div>
-                                <OpenerBoxWithOptions options={["CHATGPT" , "GEMINI","CLAUDE","DISCORD"]} simplefilter={formData.type || "Select type"} setsimplefilter={(a)=>{
-                                    setformData((prev:any)=>({...prev , type : a}))
-                                }} ></OpenerBoxWithOptions> 
-                                {Errors.type&&
-                                        <div className="mt-1 text-xs text-red-500">
-                                        {Errors.type}
-                                  </div>}
-                            </div>
-                            <div>
-                                <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" state={formData.Apikey} statesetter={(a)=>{
-                                    setformData((prev:any)=>({...prev , Apikey : a}))
-                                }}></Input>
-                                {Errors.Apikey&&
-                                        <div className="mt-1 text-xs text-red-500">
-                                        {Errors.Apikey}
-                                  </div>}
-                            </div>
-                        </div>
+                        {Errors.type&&
+                                <div className="mt-1 text-xs text-red-500">
+                                {Errors.type}
+                            </div>}
+                    </div>
+                    <div>
+                        <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" state={formData.Apikey} statesetter={(a)=>{
+                            setformData((prev:any)=>({...prev , Apikey : a}))
+                        }}></Input>
+                        {Errors.Apikey&&
+                                <div className="mt-1 text-xs text-red-500">
+                                {Errors.Apikey}
+                            </div>}
+                    </div>
+                </div>
 
-                    </Addform> 
+            </Addform> 
 
         </div>
 }

@@ -3,7 +3,7 @@ import { Addform } from "./addform";
 import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative";
 import { Secondarybutton } from "./buttons/secondarybutton";
 
-export function DeleteConfirm({formopen,setformopen,name,buttonname,callback,children}:any){
+export function DeleteConfirm({formopen,setformopen,name,buttonname,children}:any){
     return <div className="bg-red-300">
         <Addform manualbutton={true} callback={async()=>{
                     //  try{
@@ -24,28 +24,8 @@ export function DeleteConfirm({formopen,setformopen,name,buttonname,callback,chi
                     //         showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
                     //     }
 
-                 }}  name={name} formopen={formopen} buttonname="Add" setformopen={setformopen}>
+                 }}  name={name} formopen={formopen} buttonname={buttonname} setformopen={setformopen}>
                     {children}
-                    <div className="my-7 min-w-100">
-                        <div className="text-sm ">Are you sure you want to delete this API Key?</div>
-                        <div className="text-sm font-medium text-[#CE292E] dark:text-[#FF9592]">This can not be undone.</div>
-                    </div>
-                    <div  className="flex gap-2 w-full">
-                        <div onClick={()=>{
-                            callback()
-                            setformopen(false)
-                        }} className="h-8 min-w-30 transition-all duration-150 active:scale-95">
-                            <Deletebutton name={buttonname}>
-                            </Deletebutton>
-                        </div>
-                        <div onClick={()=>{setformopen(!open)}} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
-                            <Secondarybutton>
-                                <div className=" px-1  text-sm pb-0.5">
-                                    Cancle
-                                </div>
-                            </Secondarybutton>
-                        </div>
-                    </div>
         </Addform>
     </div>
 }

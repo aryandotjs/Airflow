@@ -21,6 +21,7 @@ import { error } from "console";
 import toastsetterremover from "./toastfunction";
 import Spin from "./buttons/spinningwheel";
 import useToastSetterRemover from "./toastfunction";
+import { DeleteConfirm } from "./deleteconfirmation";
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 enum ZapStatus {
   ACTIVE = "ACTIVE",
@@ -163,7 +164,10 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
     const openmodalref = useRef<HTMLDivElement>(null)
     const showToast = useToastSetterRemover()
 
-
+    const [renameFormErrors ,setrenameFormErrors] = useState<any>({})
+    const [deleteformopen ,setdeleteformopen] = useState(false)
+    
+    
      useEffect(()=>{
             const clickeventfunc = (a:any) => {
                 if (openmodalref.current && !openmodalref.current.contains(a.target)) {
@@ -177,6 +181,15 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                 document.removeEventListener("mousedown",clickeventfunc)
             }
         },[])
+
+     function validateForm(){
+        const Errs:any = {}
+        if (!WorkflowName.trim()) {
+            Errs.WorkflowName = "WorkflowName is required"
+        }
+        setrenameFormErrors(Errs)
+        return Object.keys(Errs).length === 0
+     }   
     return <div className=" w-full">
        
         {filteredzap.map((z,index) => 
@@ -203,9 +216,7 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
              <div className="w-[15%] flex justify-center flex-row-reverse">
                          <DateConverter isoString={z.createdAt}></DateConverter>
             </div>
-            <div className="w-[5%] flex items-center justify-end relative" 
-               ref={option.open && option.id == index ? openmodalref : null} >
-
+            <div className="w-[5%] flex items-center justify-end relative"  ref={option.open && option.id == index ? openmodalref : null} >
                 <div 
                     onClick={(a)=>{
                         setoption({open: !option.open , id : index})
@@ -214,108 +225,127 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                     className=" select-none hover:bg-[#E9E9E9] pt-1 hover:dark:bg-[#151619] h-8 w-8  rounded-xl  flex justify-center">
                     ...
                 </div>
-                                    <div className={`absolute  w-45 top-8 z-40 right-0 transition duration-100 ${ option.open && index == option.id ?  "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
-                                        <Opneframe>
-                                                <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
-                                                    <div onClick={async()=> {
-                                                        try{
+                <div className={`absolute  w-45 top-8 z-40 right-0 transition duration-100 ${ option.open && index == option.id ?  "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
+                    <Opneframe>
+                            <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
+                                <div onClick={async()=> {
+                                    try{
 
-                                                            const response = await axios.post(`${BACKEND_URL}/api/v1/workflow/togglestatus`,
-                                                                {
-                                                                    crrstatus:z.status,
-                                                                    workflowid
-                                                                }) 
-                                                                showToast({msg :response.data.msg,isError:false})
+                                        const response = await axios.post(`${BACKEND_URL}/api/v1/workflow/togglestatus`,
+                                            {
+                                                crrstatus:z.status,
+                                                workflowid
+                                            }) 
+                                            showToast({msg :response.data.msg,isError:false})
 
-                                                                setoption({open:false , id : null})
-                                                                setRefreshTrigger((prev)=>!prev)
-                                                            }catch(err:any){
-                                                                  err.response.data.errors.forEach((error:string)=>{
-                                                                    showToast({
-                                                                            msg:error,
-                                                                            isError:true
-                                                                        })
-                                                                    })
-                                                                setoption({open:false , id : null})
+                                            setoption({open:false , id : null})
+                                            setRefreshTrigger((prev)=>!prev)
+                                        }catch(err:any){
+                                                err.response.data.errors.forEach((error:string)=>{
+                                                showToast({
+                                                        msg:error,
+                                                        isError:true
+                                                    })
+                                                })
+                                            setoption({open:false , id : null})
 
-                                                            }
-                                                    }} className="m-1">
-                                                        <MainButton name={z.status !== ZapStatus.ACTIVE ?"Active Workflow" : "Pause Workflow"}>
-                                                            {z.status !== ZapStatus.ACTIVE ?<Play size="17"></Play>  :<Pause size="19"></Pause>}
-                                                        </MainButton>
-                                                    </div>
-                                                </div>
-                                                <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
-                                                    <div onClick={()=> {
+                                        }
+                                }} className="m-1">
+                                    <MainButton name={z.status !== ZapStatus.ACTIVE ?"Active Workflow" : "Pause Workflow"}>
+                                        {z.status !== ZapStatus.ACTIVE ?<Play size="17"></Play>  :<Pause size="19"></Pause>}
+                                    </MainButton>
+                                </div>
+                            </div>
+                            <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
+                                <div onClick={()=> {
 
-                                                           setWorkflowName(z.name)
-                                                           setupdateform(true)
-                                                           setoption({open:false , id : null})
-                                                    }} className="m-1">
-                                                        <MainButton name="Rename Workflow">
-                                                            <Edit size="17"></Edit>
-                                                        </MainButton>
-                                                    </div>
-                                                </div>
-                                                <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
-                                                    <div onClick={async()=> {
-                                                         try{
-                                                           const response = await axios.post(`${BACKEND_URL}/api/v1/workflow/duplicate`,{
-                                                                 workflowid : z.id 
-                                                            })
-                                                            setoption({open:false , id : null})
-                                                            showToast({msg :response.data.msg,isError:false})
-                                                            setRefreshTrigger((prev)=>!prev)
+                                        setWorkflowName(z.name)
+                                        setupdateform(true)
+                                        setoption({open:false , id : null})
+                                }} className="m-1">
+                                    <MainButton name="Rename Workflow">
+                                        <Edit size="17"></Edit>
+                                    </MainButton>
+                                </div>
+                            </div>
+                            <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
+                                <div onClick={async()=> {
+                                        try{
+                                        const response = await axios.post(`${BACKEND_URL}/api/v1/workflow/duplicate`,{
+                                                workflowid : z.id 
+                                        })
+                                        setoption({open:false , id : null})
+                                        showToast({msg :response.data.msg,isError:false})
+                                        setRefreshTrigger((prev)=>!prev)
 
-                                                        }catch(err:any){
-                                                            setoption({open:false , id : null})
-                                                            showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
-                                                        }
-                                                        
-                                                           
-                                                    }} className="m-1">
-                                                        <MainButton name="Duplicate Workflow">
-                                                            <Duplicate size="17"></Duplicate>
-                                                        </MainButton>
-                                                    </div>
-                                                </div>
+                                    }catch(err:any){
+                                        setoption({open:false , id : null})
+                                        showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                                    }
+                                    
+                                        
+                                }} className="m-1">
+                                    <MainButton name="Duplicate Workflow">
+                                        <Duplicate size="17"></Duplicate>
+                                    </MainButton>
+                                </div>
+                            </div>
 
 
-                                                <div className="border-t border-[#C6C6C6] dark:border-[#2C3034]"></div>
-                                                <div  className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
-                                                    <div onClick={async()=>{
-                                                         try{
-                                                           const response = await axios.delete(`${BACKEND_URL}/api/v1/workflow/delete`,{
-                                                             data : {
-                                                                 name : z.name,
-                                                                 workflowid : workflowid
-                                                             }
-                                                            })
-                                                            setRefreshTrigger((prev)=>!prev)
-                                                            showToast({msg :response.data.msg,isError:false})
-                                                            setoption({open:false , id : null})
-
-                                                        }catch(err:any){
-                                                            setoption({open:false , id : null})
-                                                            showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
-
-                                                        }
-
-                                                    }} className="m-1 ">
-                                                        <MainRedButton name="Delete Workflow">
-                                                            <Bin size="17"></Bin>
-                                                        </MainRedButton>
-                                                    </div>
-                                                </div>
-                                        </Opneframe>
-                    </div> 
+                            <div className="border-t border-[#C6C6C6] dark:border-[#2C3034]"></div>
+                            <div  className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
+                                <div onClick={async()=>{
+                                        // setdeleteformopen(true)
+                                }} className="m-1 ">
+                                    <MainRedButton name="Delete Workflow">
+                                        <Bin size="17"></Bin>
+                                    </MainRedButton>
+                                </div>
+                            </div>
+                    </Opneframe>
+                </div> 
             </div>
         </div>)}
         
+         <DeleteConfirm callback={async()=>{
+            try{
+                                        // const response = await axios.delete(`${BACKEND_URL}/api/v1/workflow/delete`,{
+                                        //     data : {
+                                        //         name : z.name,
+                                        //         workflowid : workflowid
+                                        //     }
+                                        // })
+                                        // setRefreshTrigger((prev)=>!prev)
+                                        // showToast({msg :response.data.msg,isError:false})
+                                        // setoption({open:false , id : null})
 
+                                    }catch(err:any){
+                                        setoption({open:false , id : null})
+                                        showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+
+                                    }
+                                        // if (!crediddb) {
+                                        //     return ;
+                                        // }
+                                        // const response = await axios.delete(`${BACKEND_URL}/api/v1/credentials/delete`,{
+                                        //     data : {
+                                        //         apiId : crediddb
+                                        //     }
+                                        // })
+                                        setoption((prev:any)=> ({open:false , id :null }))
+                                        setRefreshTrigger((prev)=>!prev)
+                                        // showToast({msg :response.data.msg,isError:false})
+                                    }} buttonname={"Delete Workflow"} name={"Delete Workflow"} setformopen={setdeleteformopen} formopen={deleteformopen}>
+                                    
+                                    {/* <div className=" pt-5 text-sm">{ option.id == "0" || option.id ?filteredCreds[option.id].name:"invalid id "}</div> */}
+                                 
+         </DeleteConfirm>     
         { updateform ?
             <Addform  callback={async()=>{
                 try{
+                    if (!validateForm()) {
+                        return
+                    }
                     const response : any= await axios.put(`${BACKEND_URL}/api/v1/workflow/rename`,{
                         newname : WorkflowName, 
                         workflowid : workflowid
@@ -334,9 +364,17 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                     
             }} name={"Rename workflow"} buttonname={"Rename"} formopen={updateform} setformopen={setupdateform}>
                 <div className="my-6  w-115">
-                    <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="Name" state={WorkflowName} statesetter={setWorkflowName}></Input>
+                    <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="Name" state={WorkflowName} statesetter={(a)=>{
+                        setWorkflowName(a)
+                        setrenameFormErrors((prev:any)=>{
+                            return {...prev ,WorkflowName:"" }
+                        })
+                    }}></Input>
+                    {renameFormErrors.WorkflowName&&
+                                <div className="mt-1 text-xs text-red-500">
+                                    {renameFormErrors.WorkflowName}
+                    </div>}
                 </div>
-
             </Addform> : ""
         }
     </div>
