@@ -20,7 +20,6 @@ export async function GeminiExecutor({
         const prompt = ResolveTemplate(data.UserPrompt ?? "", context)
         const systemInstruction = ResolveTemplate(data.SystemPrompt ?? "", context)
 
-        console.log(prompt, systemInstruction)
         const response = await geminiReqHandler({
             apiKey: credential.value.apikey,
             prompt: prompt,

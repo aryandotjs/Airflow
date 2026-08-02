@@ -205,23 +205,21 @@ WorkflowRouter.post("/duplicate", async (req, res) => {
 WorkflowRouter.delete("/delete", async (req, res) => {
     // const userId = (req as any).userId;
     const userid = "test-user"
-    const { name, workflowid } = req.body
+    const { workflowid } = req.body
     try {
         const response = await prisma.workflow.delete({
             where: {
                 id: workflowid
             },
         })
-
         return res.json({
-            msg: `${name} deleted`
+            msg: `${response.name ?? "Workflow"} deleted`
         })
 
 
     } catch (error) {
-        console.log(error)
         return res.json({
-            msg: `Failed deleting ${name} `
+            msg: `Failed deleting Workflow `
         })
     }
 

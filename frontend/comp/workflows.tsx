@@ -21,7 +21,7 @@ import { error } from "console";
 import toastsetterremover from "./toastfunction";
 import Spin from "./buttons/spinningwheel";
 import useToastSetterRemover from "./toastfunction";
-import { DeleteConfirm } from "./deleteconfirmation";
+import { Deletebutton, DeleteConfirm } from "./deleteconfirmation";
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 enum ZapStatus {
   ACTIVE = "ACTIVE",
@@ -191,7 +191,6 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
         return Object.keys(Errs).length === 0
      }   
     return <div className=" w-full">
-       
         {filteredzap.map((z,index) => 
           <div key={index} className=" relative py-3 px-3 flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold">
             <div className="w-[25%] flex-1 flex  gap-4">
@@ -295,7 +294,8 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                             <div className="border-t border-[#C6C6C6] dark:border-[#2C3034]"></div>
                             <div  className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                 <div onClick={async()=>{
-                                        // setdeleteformopen(true)
+                                        setoption({open:false , id : index})
+                                        setdeleteformopen(true)
                                 }} className="m-1 ">
                                     <MainRedButton name="Delete Workflow">
                                         <Bin size="17"></Bin>
@@ -307,38 +307,38 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
             </div>
         </div>)}
         
-         <DeleteConfirm callback={async()=>{
-            try{
-                                        // const response = await axios.delete(`${BACKEND_URL}/api/v1/workflow/delete`,{
-                                        //     data : {
-                                        //         name : z.name,
-                                        //         workflowid : workflowid
-                                        //     }
-                                        // })
-                                        // setRefreshTrigger((prev)=>!prev)
-                                        // showToast({msg :response.data.msg,isError:false})
-                                        // setoption({open:false , id : null})
-
-                                    }catch(err:any){
-                                        setoption({open:false , id : null})
-                                        showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
-
-                                    }
-                                        // if (!crediddb) {
-                                        //     return ;
-                                        // }
-                                        // const response = await axios.delete(`${BACKEND_URL}/api/v1/credentials/delete`,{
-                                        //     data : {
-                                        //         apiId : crediddb
-                                        //     }
-                                        // })
-                                        setoption((prev:any)=> ({open:false , id :null }))
-                                        setRefreshTrigger((prev)=>!prev)
-                                        // showToast({msg :response.data.msg,isError:false})
-                                    }} buttonname={"Delete Workflow"} name={"Delete Workflow"} setformopen={setdeleteformopen} formopen={deleteformopen}>
-                                    
-                                    {/* <div className=" pt-5 text-sm">{ option.id == "0" || option.id ?filteredCreds[option.id].name:"invalid id "}</div> */}
-                                 
+         <DeleteConfirm callback={()=>{}}  name={"Delete Workflow"} setformopen={setdeleteformopen} formopen={deleteformopen}>
+                    <div className=" pt-5 text-sm">{ option.id == "0" || option.id ?filteredzap[option.id].name:"invalid id "}</div>
+                    <div className="my-7 min-w-100">
+                        <div className="text-sm ">Are you sure you want to delete this WorkFlow ?</div>
+                        <div className="text-sm font-medium text-[#CE292E] dark:text-[#FF9592]">This can not be undone.</div>
+                    </div>
+                    <div  className="flex gap-2 w-full">
+                        <div onClick={async()=>{
+                            setdeleteformopen(false)
+                            if (!workflowid) {
+                            return ;
+                            }
+                            const response = await axios.delete(`${BACKEND_URL}/api/v1/workflow/delete`,{
+                                data : {
+                                    workflowid : workflowid
+                                }
+                            })
+                            setoption((prev:any)=> ({open:false , id :null }))
+                            setRefreshTrigger((prev)=>!prev)
+                            showToast({msg :response.data.msg,isError:false})
+                            }} className="h-8 min-w-30 transition-all duration-150 active:scale-95">
+                                <Deletebutton  name={"Delete WorkFlow"}>
+                                </Deletebutton>
+                            </div>
+                            <div onClick={()=>{setdeleteformopen(!open)}} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
+                                <Secondarybutton>
+                                    <div className=" px-1  text-sm pb-0.5">
+                                        Cancle
+                                    </div>
+                                </Secondarybutton>
+                            </div>
+                    </div>
          </DeleteConfirm>     
         { updateform ?
             <Addform  callback={async()=>{

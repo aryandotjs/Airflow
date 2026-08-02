@@ -3,28 +3,9 @@ import { Addform } from "./addform";
 import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative";
 import { Secondarybutton } from "./buttons/secondarybutton";
 
-export function DeleteConfirm({formopen,setformopen,name,buttonname,children}:any){
+export function DeleteConfirm({formopen,setformopen,name,buttonname,children,callback}:any){
     return <div className="bg-red-300">
-        <Addform manualbutton={true} callback={async()=>{
-                    //  try{
-                    //       if (!credName.length || !Apikey.length) {
-                    //         setformopen(false)
-                    //         return ;
-                    //       }
-                    //       const response : any= await axios.post(`${BACKEND_URL}/api/v1/credentials/create`,{
-                    //             name : credName,
-                    //             apikey :Apikey ,
-                    //             type : type
-                    //       })
-                    //         setformopen(false)
-                    //         setRefreshTrigger((prev)=>!prev)
-                    //         showToast({msg :response.data.msg,isError:false})
-                    //     }catch(err:any){
-                    //         setformopen(false)
-                    //         showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
-                    //     }
-
-                 }}  name={name} formopen={formopen} buttonname={buttonname} setformopen={setformopen}>
+        <Addform manualbutton={true} callback={callback}  name={name} formopen={formopen} buttonname={buttonname} setformopen={setformopen}>
                     {children}
         </Addform>
     </div>
@@ -37,3 +18,4 @@ export function Deletebutton({onclick , name , className } : { onclick? : ()=> v
       </div>
      </div>
 } 
+
