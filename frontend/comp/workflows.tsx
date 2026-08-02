@@ -190,6 +190,18 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
         setrenameFormErrors(Errs)
         return Object.keys(Errs).length === 0
      }   
+
+     if (!filteredzap.length) {
+          return <div className="h-90 flex flex-col items-center justify-center">
+            <div className="text-sm font-medium dark:text-[#F0F0F0] text-[#191919]">
+                You haven't created any workflows
+            </div>
+
+            <div className="mt-1 text-xs dark:text-[#9C9FA0] text-[#666666]">
+               Get started by creating a workflow 
+            </div>
+        </div>
+     }
     return <div className=" w-full">
         {filteredzap.map((z,index) => 
           <div key={index} className=" relative py-3 px-3 flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold">

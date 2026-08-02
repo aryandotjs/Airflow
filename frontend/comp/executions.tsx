@@ -141,7 +141,7 @@ function History({filteredZapruns} :any){
     if (!filteredZapruns) {
         return <div>loading</div>
     }
-    if (filteredZapruns.length < 1) {
+    if (!filteredZapruns.length) {
         return <div className="h-90 flex flex-col items-center justify-center">
         <div className="text-sm font-medium dark:text-[#F0F0F0] text-[#191919]">
             No executions yet

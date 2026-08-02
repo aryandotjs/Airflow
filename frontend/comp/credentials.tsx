@@ -239,9 +239,9 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
     </div>
         }
         return <div className="px-2 pr-4 ">
-            {/* {JSON.stringify(option)} */}
+            {crediddb}
+            {JSON.stringify(option)}
             {filteredCreds.map((z:any,index:any)=>{
-                console.log(z)
                 return <div key={index} className="relative flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold ">
                         <div className="flex w-full h-8 my-3 gap-2 justify-between">
                             <div className="  flex items-center  gap-3 w-[20%] overflow-hidden">
@@ -296,9 +296,6 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                     <Opneframe>
                                             <div onClick={()=>{}} className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                 <div onClick={()=> {
-                                                    // setUpdateName(z.name)
-                                                    // setUpdateApikeys(z.value.apikey)
-                                                    // setUpdatetype(z.type)
                                                     setformData({credName:z.name,Apikey:z.value.apikey,type:z.type})
                                                     setupdateform(true)
                                                     setoption({open:false , id : null})
@@ -329,34 +326,32 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                 </div> 
                             </div>
                         </div>
-                            <DeleteConfirm callback={async()=>{
-                                        
-                                    }} buttonname={"Delete API key"} name={"Delete API Key"} setformopen={setdeleteformopen} formopen={deleteformopen}>
-                                    
+                            <DeleteConfirm callback={async()=>{}}  name={"Delete API Key"} setformopen={setdeleteformopen} formopen={deleteformopen}>
                                     <div className=" pt-5 text-sm">{ option.id == "0" || option.id ?filteredCreds[option.id].name:"invalid id "}</div>
                                     <div className="my-7 min-w-100">
                                         <div className="text-sm ">Are you sure you want to delete this API Key?</div>
                                         <div className="text-sm font-medium text-[#CE292E] dark:text-[#FF9592]">This can not be undone.</div>
                                     </div>
                                     <div  className="flex gap-2 w-full">
-                                        <div onClick={async()=>{
-                                            setdeleteformopen(false)
-                                            if (!crediddb) {
-                                            return ;
-                                            }
-                                            const response = await axios.delete(`${BACKEND_URL}/api/v1/credentials/delete`,{
-                                                data : {
-                                                    apiId : crediddb
-                                                }
-                                            })
-                                            setoption((prev:any)=> ({open:false , id :null }))
-                                            setRefreshTrigger((prev)=>!prev)
-                                            showToast({msg :response.data.msg,isError:false})
-                                            }} className="h-8 min-w-30 transition-all duration-150 active:scale-95">
+                                            <div onClick={async()=>{
+                                                console.log("hiiiii")
+                                                    setdeleteformopen(false)
+                                                    if (!crediddb) {
+                                                    return ;
+                                                    }
+                                                    const response = await axios.delete(`${BACKEND_URL}/api/v1/credentials/delete`,{
+                                                        data : {
+                                                            apiId : crediddb
+                                                        }
+                                                    })
+                                                    setoption((prev:any)=> ({open:false , id :null }))
+                                                    setRefreshTrigger((prev)=>!prev)
+                                                    showToast({msg :response.data.msg,isError:false})
+                                                }} className="h-8 min-w-30 transition-all duration-150 active:scale-95">
                                                 <Deletebutton name={"Delete API Key"}>
                                                 </Deletebutton>
                                             </div>
-                                            <div onClick={()=>{setdeleteformopen(!open)}} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
+                                            <div onClick={()=>{setdeleteformopen(false)}} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
                                                 <Secondarybutton>
                                                     <div className=" px-1  text-sm pb-0.5">
                                                         Cancle
