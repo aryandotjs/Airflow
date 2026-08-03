@@ -296,11 +296,21 @@ WorkflowRouter.put("/:workflowid", async (req, res) => {
     try {
 
         await prisma.$transaction(async (tsx) => {
+            await tsx.workflow.update({
+                where: {
+                    id: workflowid
+                },
+                data: {
+                    status: "DRAFT"
+                }
+            })
+
             await tsx.node.deleteMany({
                 where: {
                     workflowId: workflowid
                 }
             })
+
             await tsx.connection.deleteMany({
                 where: {
                     workflowId: workflowid

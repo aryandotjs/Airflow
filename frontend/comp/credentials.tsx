@@ -239,8 +239,8 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
     </div>
         }
         return <div className="px-2 pr-4 ">
-            {crediddb}
-            {JSON.stringify(option)}
+            {/* {crediddb} */}
+            {/* {JSON.stringify(option)} */}
             {filteredCreds.map((z:any,index:any)=>{
                 return <div key={index} className="relative flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold ">
                         <div className="flex w-full h-8 my-3 gap-2 justify-between">
@@ -326,7 +326,10 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                 </div> 
                             </div>
                         </div>
-                            <DeleteConfirm callback={async()=>{}}  name={"Delete API Key"} setformopen={setdeleteformopen} formopen={deleteformopen}>
+                            
+                 </div>
+            })}
+            <DeleteConfirm callback={async()=>{}}  name={"Delete API Key"} setformopen={setdeleteformopen} formopen={deleteformopen}>
                                     <div className=" pt-5 text-sm">{ option.id == "0" || option.id ?filteredCreds[option.id].name:"invalid id "}</div>
                                     <div className="my-7 min-w-100">
                                         <div className="text-sm ">Are you sure you want to delete this API Key?</div>
@@ -361,9 +364,6 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                     </div>
                                  
                             </DeleteConfirm>
-                 </div>
-            })}
-            
             <Addform  callback={async()=>{
                 try{
                     if (!validateForm({formData,setErrors})) {

@@ -318,7 +318,6 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                 </div> 
             </div>
         </div>)}
-        
          <DeleteConfirm callback={()=>{}}  name={"Delete Workflow"} setformopen={setdeleteformopen} formopen={deleteformopen}>
                     <div className=" pt-5 text-sm">{ option.id == "0" || option.id ?filteredzap[option.id].name:"invalid id "}</div>
                     <div className="my-7 min-w-100">
@@ -351,7 +350,8 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                                 </Secondarybutton>
                             </div>
                     </div>
-         </DeleteConfirm>     
+         </DeleteConfirm>   
+
         { updateform ?
             <Addform  callback={async()=>{
                 try{
