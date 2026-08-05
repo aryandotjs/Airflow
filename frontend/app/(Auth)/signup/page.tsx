@@ -1,6 +1,5 @@
 "use client";
 import "dotenv"
-import { Appbar } from "@/comp/Appbar";
 import { MainButton } from "@/comp/buttons/mainbutton";
 import { CheckFeature } from "@/comp/checkfeature";
 import { Feature } from "@/comp/feature";
