@@ -11,7 +11,7 @@ import { OpenerButton } from "../buttons/openerButton"
 import { OpenOptions } from "../openoptions"
 import { Opneframe } from "../openframe"
 import { MainButton } from "../buttons/mainbutton"
-const BACKEND_URL = "http://localhost:3001";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{nodes:any,setNodes:any,setformDetail:Dispatch<SetStateAction<any>>,formDetail:any}){
         const [variables,setVariables] = useState<string[]>([])

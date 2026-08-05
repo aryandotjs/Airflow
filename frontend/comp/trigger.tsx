@@ -16,7 +16,8 @@ type TriggerNodeProp = NodeProps<BuiltInNode> & {
         openForm : Dispatch<SetStateAction<any>>
       }
 }
-const BACKEND_URL = "http://localhost:3001";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 
 export default function Trigger({id,data:{name,metadata,openForm}}: TriggerNodeProp) {
    const route = usePathname()

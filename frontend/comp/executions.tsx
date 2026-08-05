@@ -12,7 +12,7 @@ import { DateConverter } from "./RunTimeBadge";
 import { SvgforActionsTriggers } from "./SvgforActionsTriggers";
 import { Opneframe } from "./openframe";
 
-const BACKEND_URL = "http://localhost:3001";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
  interface Zap {
   id : String ,
   userId : number,

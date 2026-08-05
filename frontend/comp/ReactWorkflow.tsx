@@ -41,7 +41,7 @@ import { WebhookForm } from "./forms/webhookform";
 // }]
 
 
-const BACKEND_URL = "http://localhost:3001";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
 export const  nodeTypes  = {
     "trigger": Trigger,
@@ -70,7 +70,7 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
     const  showToast = useToastSetterRemover()
     useEffect(() => {
         axios
-            .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/workflow/${workflowid}`)
+            .get(`${BACKEND_URL}/api/v1/workflow/${workflowid}`)
             .then((a: any) => {
             setwholeworkflow(a.data)
             const structuredNodes = a.data.nodes.map((n: any) => ({
