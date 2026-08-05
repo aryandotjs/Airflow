@@ -1,5 +1,5 @@
-import { ResolveTemplate } from "../resolveTemplate"
-import { geminiReqHandler } from "./geminiReqHandler"
+import { ResolveTemplate } from "../resolveTemplate.js"
+import { geminiReqHandler } from "./geminiReqHandler.js"
 
 
 export async function GeminiExecutor({

@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { authmiddleware } from "../middleware";
-import { prisma } from "../db";
-import { ZapCreateSchema } from "../types";
-import { executeWorkflow } from "../workflow-engine/executeWorkflow";
-import { validateWorkflow } from "../workflow-engine/validateWorkflow";
+import { authmiddleware } from "../middleware.js";
+import { prisma } from "../db/index.js";
+import { ZapCreateSchema } from "../types/index.js";
+import { executeWorkflow } from "../workflow-engine/executeWorkflow.js";
+import { validateWorkflow } from "../workflow-engine/validateWorkflow.js";
 import { nanoid } from "nanoid";
 // import { ZapStatus } from "../generated/prisma/enums";
 

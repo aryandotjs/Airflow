@@ -1,11 +1,11 @@
 import { response, Router } from "express";
 ;
-import { SignInSchema } from "../types";
-import { SignUpSchema } from "../types";
-import { prisma } from "../db";
+import { SignInSchema } from "../types/index.js";
+import { SignUpSchema } from "../types/index.js";
+import { prisma } from "../db/index.js";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
-import { authmiddleware } from "../middleware";
+import { authmiddleware } from "../middleware.js";
 import { email } from "zod";
 import { da } from "zod/locales";
 export const userRouter = Router()

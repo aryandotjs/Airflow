@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { prisma } from "../db";
-import { authmiddleware } from "../middleware";
-import { FlattenVariables } from "../workflow-engine/utils/flattenVariables";
+import { prisma } from "../db/index.js";
+import { authmiddleware } from "../middleware.js";
+import { FlattenVariables } from "../workflow-engine/utils/flattenVariables.js";
 
 
 export const testRouter = Router()

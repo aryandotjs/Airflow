@@ -1,7 +1,7 @@
-import { prisma } from "../db"
-import type { WorkflowContext } from "./contex"
-import { executeNode } from "./executeNode"
-import { topologicalSort } from "./topologicalSort"
+import { prisma } from "../db/index.js"
+import type { WorkflowContext } from "./contex.js"
+import { executeNode } from "./executeNode.js"
+import { topologicalSort } from "./topologicalSort.js"
 
 
 

@@ -1,11 +1,11 @@
 import express from "express"
-import { userRouter } from "./router/user"
+import { userRouter } from "./router/user.js"
 import cors from "cors"
-import { CredentialRouter } from "./router/credentials"
-import { WorkflowRouter } from "./router/workflow"
-import { NodeRouter } from "./router/node"
-import { testRouter } from "./router/testRouter"
-import { webhookRouter } from "./router/webhoook"
+import { CredentialRouter } from "./router/credentials.js"
+import { WorkflowRouter } from "./router/workflow.js"
+import { NodeRouter } from "./router/node.js"
+import { testRouter } from "./router/testRouter.js"
+import { webhookRouter } from "./router/webhoook.js"
 
 const PORT = process.env.PORT || 3001
 const app = express()

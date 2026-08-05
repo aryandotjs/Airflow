@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { prisma } from "../db";
-import { authmiddleware } from "../middleware";
+import { prisma } from "../db/index.js";
+import { authmiddleware } from "../middleware.js";
+import { error } from "node:console";
 
 
 export const CredentialRouter = Router()
@@ -28,6 +29,7 @@ CredentialRouter.post("/create", async (req, res) => {
             credid: cred.id
         })
     } catch (err: any) {
+        console.log(err)
         res.status(400).json({
             msg: "creadential creation failed"
         })

@@ -1,4 +1,4 @@
-import { ResolveTemplate } from "./resolveTemplate"
+import { ResolveTemplate } from "./resolveTemplate.js"
 
 export function ResolveObjectTemplate(value: any, context: any): any {
 

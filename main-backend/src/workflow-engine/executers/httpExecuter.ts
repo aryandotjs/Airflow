@@ -1,7 +1,7 @@
 import axios from "axios";
 import { json } from "express";
-import { ResolveTemplate } from "../resolveTemplate";
-import { ResolveObjectTemplate } from "../ResolveObjectTemplate";
+import { ResolveTemplate } from "../resolveTemplate.js";
+import { ResolveObjectTemplate } from "../ResolveObjectTemplate.js";
 
 export async function httpExecuter(
     {

@@ -1,6 +1,6 @@
-import { prisma } from "../db";
-import type { WorkflowContext } from "./contex";
-import { getExecuter } from "./executorRegistry";
+import { prisma } from "../db/index.js";
+import type { WorkflowContext } from "./contex.js";
+import { getExecuter } from "./executorRegistry.js";
 
 export async function executeNode(node: any, context: WorkflowContext) {
 

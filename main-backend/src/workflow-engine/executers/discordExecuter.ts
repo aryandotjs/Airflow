@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ResolveTemplate } from "../resolveTemplate";
+import { ResolveTemplate } from "../resolveTemplate.js";
 
 export async function DiscordExecuter({
     data,

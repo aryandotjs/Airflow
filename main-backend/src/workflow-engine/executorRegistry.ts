@@ -1,9 +1,9 @@
 import { response } from "express"
-import { httpExecuter } from "./executers/httpExecuter"
-import type { Executor } from "./executor-types"
+import { httpExecuter } from "./executers/httpExecuter.js"
+import type { Executor } from "./executor-types.js"
 import { da } from "zod/locales"
-import { DiscordExecuter } from "./executers/discordExecuter"
-import { GeminiExecutor } from "./executers/geminiExecutor"
+import { DiscordExecuter } from "./executers/discordExecuter.js"
+import { GeminiExecutor } from "./executers/geminiExecutor.js"
 
 const executors: Record<string, Executor> = {
     "HTTP-REQUEST": httpExecuter,

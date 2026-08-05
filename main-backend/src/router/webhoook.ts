@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { prisma } from "../db";
-import { authmiddleware } from "../middleware";
-import { FlattenVariables } from "../workflow-engine/utils/flattenVariables";
-import { executeWorkflow } from "../workflow-engine/executeWorkflow";
+import { prisma } from "../db/index.js";
+import { authmiddleware } from "../middleware.js";
+import { FlattenVariables } from "../workflow-engine/utils/flattenVariables.js";
+import { executeWorkflow } from "../workflow-engine/executeWorkflow.js";
 
 export type WorkflowContext = Record<string, any>
 export const webhookRouter = Router()
