@@ -2,7 +2,20 @@ import { prisma } from "../db/index.js";
 import type { WorkflowContext } from "./contex.js";
 import { getExecuter } from "./executorRegistry.js";
 
-export async function executeNode(node: any, context: WorkflowContext) {
+interface workflowNode {
+    id: string;
+    name: string;
+    type: string;
+    data: Record<string, any>;
+    credential?: {
+        id: string;
+        name: string;
+        type: string;
+        value: unknown;
+    } | null;
+}
+
+export async function executeNode(node: workflowNode, context: WorkflowContext) {
 
     const executer = getExecuter((node.name).toUpperCase())
 

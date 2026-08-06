@@ -2,8 +2,17 @@ import { prisma } from "../db/index.js"
 import type { WorkflowContext } from "./contex.js"
 import { executeNode } from "./executeNode.js"
 import { topologicalSort } from "./topologicalSort.js"
+import { Prisma } from "../generated/prisma/client.js"
 
-
+interface ExecutionStep {
+    nodeId: string;
+    nodeName: string;
+    status: "RUNNING" | "SUCCESS" | "FAILED";
+    startedAt: Date;
+    completedAt?: Date;
+    duration?: number;
+    error?: string;
+}
 
 export async function executeWorkflow(
     workflowId: string,
@@ -17,7 +26,7 @@ export async function executeWorkflow(
         }
     })
     let contex: WorkflowContext = initialContext
-    const steps: any[] = []
+    const steps: ExecutionStep[] = []
     try {
 
         const workflow = await prisma.workflow.findUnique({
@@ -42,7 +51,7 @@ export async function executeWorkflow(
 
 
         for (const node of sortednodes) {
-            const step: any = {
+            const step: ExecutionStep = {
                 nodeId: node.id,
                 nodeName: node.name,
                 status: "RUNNING",
@@ -59,10 +68,11 @@ export async function executeWorkflow(
                     -
                     step.startedAt.getTime()
 
-            } catch (err: any) {
+            } catch (err: unknown) {
+                const message = err instanceof Error ? err.message : "Unknown error"
                 step.status = "FAILED"
                 step.completedAt = new Date()
-                step.error = err.message
+                step.error = message
                 step.duration =
                     step.completedAt.getTime()
                     -
@@ -81,7 +91,7 @@ export async function executeWorkflow(
                 output: {
                     context: contex,
                     steps
-                }
+                } as unknown as Prisma.InputJsonValue
             }
         })
 
@@ -90,8 +100,8 @@ export async function executeWorkflow(
             steps,
             executionId: execution.id
         }
-    } catch (err: any) {
-
+    } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "unknown error"
         const reser = await prisma.execution.update({
             where: {
                 id: execution.id
@@ -99,11 +109,11 @@ export async function executeWorkflow(
             data: {
                 status: "FAILED",
                 completedAt: new Date(),
-                error: err.message,
+                error: message,
                 output: {
                     context: contex,
                     steps
-                }
+                } as unknown as Prisma.InputJsonValue
             }
         })
         throw err

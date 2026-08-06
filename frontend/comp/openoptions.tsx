@@ -10,13 +10,15 @@ export function OpenOptions({open ,setsimplefilter, children,simplefilter , opti
     return <div className={`h-full w-full `} onClick={()=>{}}>
              <div>{options?
             <Opneframe> {options.map((a:string,b)=>{ 
-                 return <div key={b} className="h-8 m-1" onClick={()=>{
+                 return <div key={b} className="h-7 lg:h-8 m-1" onClick={()=>{
                             setsimplefilter(a)
                             setopen(!open) }}>
                             <MainButton name="">
                                 <div className="flex justify-between items-center w-full mr-2 text-xs">
-                                    <div >{a}</div>
-                                    {a === simplefilter ? <Check size="16"></Check> : ""}
+                                    <div className="overflow-hidden">{a}</div>
+                                    <div className="hidden md:block">
+                                       {a === simplefilter ? <Check size="16"></Check> : ""}
+                                    </div>
                                 </div>
                             </MainButton>
                          </div>

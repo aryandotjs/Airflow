@@ -1,12 +1,13 @@
 import axios from "axios";
 import { ResolveTemplate } from "../resolveTemplate.js";
+import { WorkflowContext } from "../contex.js";
 
 export async function DiscordExecuter({
     data,
     context
 }: {
-    data: any,
-    context: any
+    data: Record<string, any>,
+    context: WorkflowContext
 }) {
 
     console.log("Discord executor running");
@@ -25,11 +26,17 @@ export async function DiscordExecuter({
             status: response.status,
             sent: true
         }
-    } catch (err: any) {
+    } catch (err: unknown) {
         console.log(err)
-        if (err.code === "ENOTFOUND" || err.response?.status === 404 || err.response?.status === 401) {
+        if (err instanceof Error && (
+            (err as any).code === "ENOTFOUND" ||
+            (err as any).response?.status === 404 ||
+            (err as any).response?.status === 401
+        )) {
+
             throw new Error("Discord webhook is invalid or no longer exists")
         }
+
         throw new Error("Failed to send message to Discord")
     }
 }

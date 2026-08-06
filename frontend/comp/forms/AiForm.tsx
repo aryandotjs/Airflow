@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 import { UseCred } from "../ReactWorkflow"
 import { Addform } from "../addform"
 import { Input } from "../buttons/input"
@@ -51,17 +51,35 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
             setErrors(newError)
             return Object.keys(newError).length === 0;
         }
+     const openmodalrefwebhook = useRef<HTMLDivElement>(null)
+                         
+            useEffect(()=>{
+                if (formDetail.name !== aimap[AiName]) {
+                    return;
+                }
+    
+                const clickeventfunc = (a:any) => {
+                    if (openmodalrefwebhook.current && !openmodalrefwebhook.current.contains(a.target)) {
+                            setformDetail({nodeid:"" , name:"",open:false } )
+                    }
+                }
+                document.addEventListener("mousedown",clickeventfunc)
+                return ()=>{
+                    document.removeEventListener("mousedown",clickeventfunc)
+                }
+            },[formDetail.name])
+    
 
+    return <div className={` transition duration-100 ease-initial ${formDetail.name == aimap[AiName] ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
 
-    return <div className={` transition duration-100 ease-initial ${formDetail.name == aimap[AiName] ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
-
-            <div className={` transition duration-100 ${formDetail.open ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
+            <div ref={openmodalrefwebhook} className={` transition duration-100 ${formDetail.open ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
                 <div className={`p-6 `} >
                     <div className="flex w-full justify-between items-center">
                          
                            <div className="flex gap-1  items-center ">
                              <div className="text-[17px] font-semibold dark:text-brand-bg ">{`${AiName} Configuration`}</div>
-                              <img className='h-5 ' src={`/actiontriggerimages/${AiName}.png`}></img>
+                              {/* <img className='h-5 ' src={`/actiontriggerimages/${AiName}.png`}></img> */}
+                              <img className='h-5 ' src={`/actiontriggerimages/${"gemini"}.png`}></img>
                             </div>
 
                          <div onClick={()=>{
@@ -70,7 +88,7 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                                 }} className="h-6 w-6 rounded-md flex items-center justify-center  hover:bg-[#E9E9E9] hover:dark:bg-[#151619]"><Cross size="16"></Cross></div>
                     </div>
                       <div className="">
-                     <div className="my-6 flex flex-col gap-4 w-115 overflow-y-scroll h-100 p-2 ">
+                     <div className="my-6 flex flex-col gap-4 w-70 md:w-115 overflow-y-scroll h-100 p-2 ">
                         <div>
                             <Input placeholder={`my-${AiName}-variable`} name="Variable Name" state={formdata.variableName} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , variableName :a}})}}></Input>
                             <div className="mt-1 text-xs">{`Name of the variable to store the response :{{${AiName}.text}}`}</div>
@@ -93,7 +111,7 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                                                 </div> : "Select a credential"
 
                                                 } open={open} setopen={setopen}></OpenerButton>
-                                        <div className={`absolute w-full top-7 transition duration-150 ${open ? "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
+                                        <div className={`absolute w-full top-7 transition duration-100 ${open ? "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
                                             <OpenOptions simplefilter={formdata.Credential?.name??""} open={open} setopen={setopen} setsimplefilter={(a)=>{setformdata((prev:any)=>{return {...prev , AiCredentials :a}})}}>
                                                     <Opneframe>
                                                             {newcreds.map((z:any,index)=>{
@@ -155,7 +173,7 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                                 </div>
                                 <button 
                                     onClick={()=>{navigator.clipboard.writeText(`{{${formdata.variableName?formdata.variableName:AiName}.data.yourObjectKey}}`)}}
-                                        className="transition-all active:scale-80 duration-150  text-[#71767B]   hover:dark:bg-[#2C3034] hover:bg-[#E9E9E9] rounded-md p-0.5 z-10"
+                                        className="transition-all active:scale-80 duration-50  text-[#71767B]   hover:dark:bg-[#2C3034] hover:bg-[#E9E9E9] rounded-md p-0.5 z-10"
                                     >
                                     <Copy size="19"></Copy>
                                 </button>
@@ -177,7 +195,7 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                                 })
                                 setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
                                 setformdata(initialValue)
-                        }} className="h-8 w-30 transition-all duration-150 active:scale-95">
+                        }} className="h-8 w-30 transition-all duration-50 active:scale-95">
                             <SecondarybuttonNegative>
                                 <div className=" px-1 text-brand-bg text-sm pb-0.5 dark:text-brand-dark-bg dark:font-semibold">
                                     Save
@@ -187,7 +205,7 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                         <div onClick={()=>{
                                     setformDetail((a:any)=>{ return {nodeid : "" , name:"",open:false } })
                                     setformdata(initialValue)
-                                    }} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
+                                    }} className="h-8 w-30 transition-all duration-50 active:scale-95 ">
                             <Secondarybutton>
                                 <div className=" px-1  text-sm pb-0.5">
                                     Cancle

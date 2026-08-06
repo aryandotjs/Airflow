@@ -24,9 +24,9 @@ export async function geminiReqHandler({
         const response = await ai.models.generateContent(args)
         return response.text || null
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.log(error)
-        const ermsg = error?.message || ""
+        const ermsg = error instanceof Error ? error?.message : ""
         if (ermsg.includes("API key not valid")) {
             throw new Error("Gemini API key not valid")
         }

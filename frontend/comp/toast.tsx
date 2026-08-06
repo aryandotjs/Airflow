@@ -3,8 +3,7 @@ import { Opneframe } from "./openframe";
 import { Canclesolid, Checksolid, Cross } from "./svg/allsvg";
 
 export function Toast({settoast,toast}:{toast:any,settoast:Dispatch<SetStateAction<any>>}){
-   console.log(toast.show)
-     return <div className={`z-50 transition-all duration-300 w-full flex  border  rounded-xl bg-linear-to-r overflow-hidden
+     return <div className={`z-50 transition-all duration-200 w-full flex  border  rounded-xl bg-linear-to-r overflow-hidden
         ${toast.isError ? " dark:border-[#641822] border-[#FCC2C2] dark:from-[#2D040B]  dark:from-10% dark:to-black dark:to-70%  from-[#FCE9EA] from-10% to-brand-bg to-70% " : "from-[#E4F4E9] from-10% to-brand-bg to-70%  dark:from-[#041E12] dark:from-10% dark:to-black dark:to-70%  dark:border-[#144A31] border-[#ACDCBF] "}
        ${toast.show ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"}
      `}> 
@@ -33,7 +32,6 @@ export function Toast({settoast,toast}:{toast:any,settoast:Dispatch<SetStateActi
             );
             setTimeout(() => {
                settoast((prev:any)=> prev.filter((a:any)=>{ 
-                  console.log(toast.id , a.id)
                   return toast.id !== a.id}))
             }, 300);
          }}

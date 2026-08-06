@@ -1,3 +1,5 @@
+import { WorkflowContext } from "../contex.js"
+import { ExecutorCredential } from "../executor-types.js"
 import { ResolveTemplate } from "../resolveTemplate.js"
 import { geminiReqHandler } from "./geminiReqHandler.js"
 
@@ -7,9 +9,9 @@ export async function GeminiExecutor({
     context,
     credential
 }: {
-    data: any,
-    context: any,
-    credential: any
+    data: Record<string, any>,
+    context: WorkflowContext,
+    credential?: ExecutorCredential | null
 }) {
 
     if (!credential) {
@@ -21,7 +23,7 @@ export async function GeminiExecutor({
         const systemInstruction = ResolveTemplate(data.SystemPrompt ?? "", context)
 
         const response = await geminiReqHandler({
-            apiKey: credential.value.apikey,
+            apiKey: (credential.value as { apikey: string }).apikey,
             prompt: prompt,
             systemInstruction: systemInstruction
         })

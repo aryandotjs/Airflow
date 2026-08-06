@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 import { Input } from "../buttons/input"
 import { BigInput } from "../biggerinput"
 import { SecondarybuttonNegative } from "../buttons/secondarybuttonnegative"
@@ -20,12 +20,12 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
         
         const {creds} = UseCred()
         
-        useEffect(()=>{
-            axios.get(`${BACKEND_URL}/api/v1/test/variables`)
-            .then(res=>{
-                setVariables(res.data.variables)
-            })
-        },[])
+        // useEffect(()=>{
+        //     axios.get(`${BACKEND_URL}/api/v1/test/variables`)
+        //     .then(res=>{
+        //         setVariables(res.data.variables)
+        //     })
+        // },[])
         
         useEffect(()=>{
             
@@ -62,8 +62,30 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
             return Object.keys(newError).length === 0;
         }
 
-        return <div className={` transition duration-100 ease-initial ${ formDetail.name == "discord" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
-                <div className={` transition duration-100 ${ formDetail.name  == "discord" ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
+
+        const openmodalrefdiscord = useRef<HTMLDivElement>(null)
+             
+             useEffect(()=>{
+                console.log(" man see")
+                    if (formDetail.name !== "discord") {
+                        return;
+                    }
+
+                    const clickeventfunc = (a:any) => {
+                        if (openmodalrefdiscord.current && !openmodalrefdiscord.current.contains(a.target)) {
+                                setformDetail({nodeid:"" , name:"",open:false } )
+                        }
+                    }
+                    document.addEventListener("mousedown",clickeventfunc)
+                    return ()=>{
+                        document.removeEventListener("mousedown",clickeventfunc)
+                    }
+                },[formDetail.name])
+
+
+
+        return <div className={` transition duration-100 ease-initial ${ formDetail.name == "discord" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
+                <div ref={openmodalrefdiscord} className={` transition duration-100 ${ formDetail.name  == "discord" ?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg `}>
                     <div className={`p-6 `} >
                         <div className="flex w-full justify-between items-center ">
                             <div className="flex gap-1 items-center ">
@@ -76,7 +98,7 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                               }} className="h-6 w-6 rounded-md flex items-center justify-center  hover:bg-[#E9E9E9] hover:dark:bg-[#151619]"><Cross size="16"></Cross></div>
                         </div>
                         <div className="">
-                         <div className="my-6 flex flex-col gap-6 w-115 overflow-y-scroll max-h-100 p-2 ">
+                         <div className="my-6 flex flex-col gap-6 w-70 md:w-115 overflow-y-scroll max-h-100 p-2 ">
                             <div>
                                 <Input placeholder={`my-Discord-variable`} name="Variable Name " state={formdata.variableName} statesetter={(a)=>{
                                      setformdata((prev:any)=>{
@@ -111,7 +133,7 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                                     </div>
                                 </div>
                                 <div className="w-full absolute top-6 z-10 " >
-                                    <div className={`absolute w-full top-7 transition duration-150 ${open ? "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
+                                    <div className={`absolute w-full top-7 transition duration-100 ${open ? "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
                                         <OpenOptions simplefilter={formdata.webhookUrl??""} open={open} setopen={setopen} setsimplefilter={(a)=>{setformdata((prev:any)=>{return {...prev , AiCredentials :a}})}}>
                                                 <Opneframe>
                                                         {creds.map((z:any,index)=>{
@@ -177,7 +199,7 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                                 </div>
                                 <button 
                                     onClick={()=>{navigator.clipboard.writeText(`{{${formdata.variableName?formdata.variableName:"discord"}.data.yourObjectKey}}`)}}
-                                        className="transition-all active:scale-80 duration-150  text-[#71767B]   hover:dark:bg-[#2C3034] hover:bg-[#E9E9E9] rounded-md p-0.5 z-10"
+                                        className="transition-all active:scale-80 duration-50  text-[#71767B]   hover:dark:bg-[#2C3034] hover:bg-[#E9E9E9] rounded-md p-0.5 z-10"
                                     >
                                     <Copy size="19"></Copy>
                                 </button>
@@ -200,7 +222,7 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                                 setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
                                 setformdata(initialValue)
 
-                            }} className="h-8 w-30 transition-all duration-150 active:scale-95">
+                            }} className="h-8 w-30 transition-all duration-50 active:scale-95">
                                 <SecondarybuttonNegative>
                                     <div className=" px-1 text-brand-bg text-sm pb-0.5 dark:text-brand-dark-bg dark:font-semibold">
                                         Save
@@ -210,7 +232,7 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                             <div onClick={()=>{
                                     setformDetail((a:any)=>{ return {nodeid : "" , name:"",open:false } })
                                     setformdata(initialValue)
-                                }} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
+                                }} className="h-8 w-30 transition-all duration-50 active:scale-95 ">
                                 <Secondarybutton>
                                     <div className=" px-1  text-sm pb-0.5">
                                         Cancle

@@ -1,6 +1,7 @@
+import { WorkflowContext } from "./contex.js"
 import { ResolveTemplate } from "./resolveTemplate.js"
 
-export function ResolveObjectTemplate(value: any, context: any): any {
+export function ResolveObjectTemplate(value: any, context: WorkflowContext): any {
 
     if (typeof value === "string") {
         return ResolveTemplate(value, context)

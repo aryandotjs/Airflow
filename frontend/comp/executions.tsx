@@ -55,23 +55,53 @@ import { CodeShow } from "./CodeShow";
 import Spin from "./buttons/spinningwheel";
 import { useRouter } from "next/navigation";
 import { ExecutionTimeline } from "./ExecutionTimeline";
+import { api } from "@/lib/api";
+import useToastSetterRemover from "./toastfunction";
+
+const getExecutions = async (setzapruns:any,showToast:any) => {
+    try {
+        const response = await api.get(`${BACKEND_URL}/api/v1/workflow/executions/all`)
+        setzapruns(response.data.sort((a:any,b:any)=> new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()));
+    } catch (error:any) {
+               showToast({ msg: error?.response?.data?.message ?? "Failed to load Executions",isError:true });
+    }
+        
+}
 
 export  function Executions(){
+    const showToast = useToastSetterRemover()
     const [refreshTrigger, setRefreshTrigger] = useState(false);
-    const [zapruns,setzapruns] = useState()
+    const [zapruns,setzapruns] = useState<[]>()
     const [filter1,setfilter1] = useState("ALL")
     const [filter2,setfilter2] = useState("Last 15 days")
     const [search,setsearch] = useState("")
     useEffect(()=>{
-        axios.get(`${BACKEND_URL}/api/v1/workflow/executions/all`,{
-            // headers : {
-            //     "authorization" : `Bearer ${localStorage.getItem("token")}`
-            // }
-        }).then((a)=>{
-            setzapruns(a.data.sort((a:any,b:any)=> new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()))
-        })
-    },[])
+           getExecutions(setzapruns,showToast);
+        // api.get(`${BACKEND_URL}/api/v1/workflow/executions/all`)
+        // .then((a)=>{
+        //     setzapruns(a.data.sort((a:any,b:any)=> new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()))
+        //  }).catch((err:any)=>{
+        //        showToast({ msg: err?.response?.data?.message ?? "Failed to load Executions",isError:true });
+        //  })
+    })
+    useEffect(()=>{
+        if(!zapruns) return ;
 
+        const hasRunning = zapruns.some(
+            (e:any) => e.status === "RUNNING"
+        );
+
+        if (!hasRunning) return;
+        
+        const interval = setInterval(() => {
+                getExecutions(setzapruns,showToast);
+            }, 3000);
+
+        return () => clearInterval(interval);
+        
+    },[zapruns])
+
+    
 
      const filteredZapruns : any = useMemo(()=>{
 
@@ -86,12 +116,12 @@ export  function Executions(){
 
          },[zapruns,search,filter1,filter2])
 
-    return  <div className="flex flex-col gap-4 px-24  h-screen ">
+    return  <div className="flex flex-col gap-4 px-10 lg:px-24  h-screen ">
                 <div className="flex justify-between mt-6 items-center ">
-                    <div className=" text-[28px] tracking-tight  font-semibold    dark:text-brand-bg text-brand-dark-bg">Executions</div>
+                    <div className=" text-lg lg:text-[28px] tracking-tight  font-semibold   h-6  lg:h-7.5   dark:text-brand-bg text-brand-dark-bg">Executions</div>
                 </div>
                 <div className="flex justify-between mt-5 items-center gap-2">
-                    <div className="h-8 w-[50%]">
+                    <div className="h-7 lg:h-8 w-[30%] lg:w-[50%]"> 
                         <Secondarybutton onclick={()=>{}}>
                             <div className="flex h-full items-center gap-2 w-full">
                                 <Search size="16"></Search>
@@ -99,13 +129,13 @@ export  function Executions(){
                             </div>
                         </Secondarybutton>
                     </div>
-                    <div className="w-[25%]">
+                    <div className="w-[30%] lg:w-[25%]">
                          <OpenerBoxWithOptions options={[ "ALL","PENDING","RUNNING","SUCCESS","FAILED"]} simplefilter={filter1} setsimplefilter={setfilter1} ></OpenerBoxWithOptions> 
                     </div>
-                    <div className="w-[25%]">
+                    <div className="w-[40%] lg:w-[25%]">
                          <OpenerBoxWithOptions options={["Today","Last 3 days","Last 7 days","Last 15 days","ALL"]} simplefilter={filter2} setsimplefilter={setfilter2} ></OpenerBoxWithOptions> 
                     </div>
-                    <div className="h-8">
+                    <div className="h-8 hidden lg:block">
                          <Secondarybutton small={true}>
                             <Adjust size="20"></Adjust>
                          </Secondarybutton>
@@ -113,11 +143,11 @@ export  function Executions(){
                 </div>
                 <div className=" h-8 ">
                     <Secondarybutton onclick={()=>{}} >
-                        <div className="flex justify-between w-full text-xs p-3">
-                            <div className="w-[20%] "></div>
-                            <div className="w-[20%]  text-start ml-5">Name</div>
+                        <div className="flex justify-between w-full text-xs lg:p-3">
+                            <div className="w-[20%] hidden lg:block "></div>
+                            <div className="w-[20%]  text-start lg:ml-5">Name</div>
                             <div className="w-[15%] text-center">Status</div>
-                            <div className="w-[25%] text-center">Duration</div>
+                            <div className="w-[25%] hidden sm:block text-center">Duration</div>
                             <div className="w-[15%] flex flex-row-reverse ">Started</div>
                         </div>
                     </Secondarybutton>
@@ -156,7 +186,7 @@ function History({filteredZapruns} :any){
         {filteredZapruns.map((z:any,index:any)=>{
             return <div key={index} className={`${z.status === "RUNNING" ? "pointer-events-none":""} flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold `}>
                 <div className="flex w-full h-8 my-3 gap-5 justify-between">
-                    <div className="  flex items-center gap-1 w-[20%]">
+                    <div className="   items-center gap-1 w-[20%] hidden lg:flex">
                         <Svgframe status={z.status.toLowerCase()}>
                             <Execution size={"18"} ></Execution>
                         </Svgframe>
@@ -173,14 +203,14 @@ function History({filteredZapruns} :any){
                     
                     <div  onClick={()=>{ 
                           router.push(`/executions/${z.id}`)
-                        }} className="w-[20%] dark:text-[#F0F0F0] text-[#191919] text-xs flex items-center gap-3 underline decoration-dashed decoration-[#EEEEEE] dark:decoration-[#191B1E] hover:decoration-blue-400 dark:hover:decoration-[#EEEEEE]  underline-offset-6 transition-all duration-400  font-normal dark:font-medium ">
+                        }} className="w-[20%] dark:text-[#F0F0F0] text-[#191919] text-xs flex items-center gap-3 underline decoration-dashed decoration-[#EEEEEE] dark:decoration-[#191B1E] hover:decoration-blue-400 dark:hover:decoration-[#EEEEEE]  underline-offset-3 lg:underline-offset-6 transition-all duration-100  font-normal dark:font-medium ">
                       {z.workflow.name}
                     </div>
                     
                     <div className="w-[15%]  flex items-center justify-center ">
                         <StatusButton status={z.status.toLowerCase()}></StatusButton>
                     </div>
-                    <div className="w-[25%]  flex items-center justify-center">
+                    <div className="w-[25%] hidden sm:flex items-center justify-center">
 
                             <div>{DurationCalculator(z.startedAt,z.completedAt)}</div>
                         {/* <div className="flex bg-[#E9E9E9] h-5 dark:bg-[#151619] text-xs px-2 rounded-lg py-0.5 w-full overflow-hidden ">{z.id}</div> */}
@@ -198,17 +228,15 @@ function History({filteredZapruns} :any){
 
 
 export function DetailCard({id} : any){
+    const showToast = useToastSetterRemover()
     const [execution , setexecution] = useState<any>(null)
     
     useEffect(()=>{
-        axios.get(`${BACKEND_URL}/api/v1/workflow/executions/all`,{
-            // headers : {
-            //     "authorization" : `Bearer ${localStorage.getItem("token")}`
-            // }
-        }).then((a)=>{
-
+        api.get(`${BACKEND_URL}/api/v1/workflow/executions/all`).then((a)=>{
             let filtered = a.data.find((e:any)=>e.id === id)
             setexecution(filtered)
+        }).catch((err:any)=>{
+            showToast({ msg: err?.response?.data?.message ?? "Failed to load execution detail",isError:true });
         })
     },[])
     
@@ -218,16 +246,18 @@ export function DetailCard({id} : any){
         return <div></div>
     }
     return <div className="h-screen ">
-        <div className={` bg-brand-bg dark:bg-brand-dark-bg px-24 pb-50`}>
+        <div className={` bg-brand-bg dark:bg-brand-dark-bg px-10 lg:px-24 pb-50`}>
             <div className={` mt-8 z-50`}> 
                 <div className="flex text-l font-medium items-center justify-between ">
                     <div className=" gap-6 flex">
-                        <Svgframe status={execution.status.toLowerCase()} big={true}> 
-                            <Execution size={"40"} ></Execution>
-                        </Svgframe>
+                        <div className="hidden lg:block">
+                            <Svgframe status={execution.status.toLowerCase()} big={true}> 
+                                <Execution size={"40"} ></Execution>
+                            </Svgframe>
+                        </div>
                         <div className=" flex flex-col justify-center">
-                            <div>Execution</div>
-                            <div className="dark:text-[#F0F0F0] text-[#191919] text-xl font-semibold">{execution.workflow.name}</div>
+                            <div className="text-xs lg:text-l">Execution</div>
+                            <div className="dark:text-[#F0F0F0] text-[#191919] text-sm lg:text-xl  font-semibold">{execution.workflow.name}</div>
                         </div>
                     </div>
                     <div onClick={()=>router.push("/executions")} className="h-8 flex items-center ease-in-out active:scale-80 transition-transform">
@@ -239,24 +269,24 @@ export function DetailCard({id} : any){
                 <div className="flex my-6 w-full">
                     
                     <div className="w-[33%] flex flex-col gap-1">
-                        <div className="text-[13px] font-normal ">Duration</div>
-                        <div className="dark:text-[#F0F0F0] text-[#191919]">{DurationCalculator(execution.startedAt,execution.completedAt)}</div>
+                        <div className=" text-[13px] font-normal ">Duration</div>
+                        <div className="text-xs lg:text-sm dark:text-[#F0F0F0] text-[#191919]">{DurationCalculator(execution.startedAt,execution.completedAt)}</div>
                     </div>
                     <div className="w-[33%] flex flex-col gap-1">
                         <div className="text-[13px] font-normal ">Status</div>
-                        <div className="w-14"><StatusButton status={execution.status.toLowerCase()}></StatusButton></div>
+                        <div className=" w-14"><StatusButton status={execution.status.toLowerCase()}></StatusButton></div>
                     </div>
                 </div>
                 <div className="flex my-6 w-full">
                     <div className="w-[33%] flex flex-col gap-1">
                         <div className="text-[13px] font-normal ">Start Date</div>
-                        <div className="dark:text-[#F0F0F0] text-[#191919]">
+                        <div className="text-xs lg:text-sm dark:text-[#F0F0F0] text-[#191919]">
                             <DateConverter isoString={execution.startedAt}></DateConverter>
                         </div>
                     </div>
                     <div className="w-[33%] flex flex-col gap-1">
                         <div className="text-[13px] font-normal ">End Date</div>
-                        <div className="dark:text-[#F0F0F0] text-[#191919]">
+                        <div className="text-xs lg:text-sm dark:text-[#F0F0F0] text-[#191919]">
                             <DateConverter isoString={execution.completedAt}></DateConverter>
                         </div>
                     </div>
@@ -264,8 +294,8 @@ export function DetailCard({id} : any){
                         <div className="text-[13px] font-normal ">WorkFlow Id</div>
                         <div className="">
                             <div className="w-full h-full text-[14px] flex justify-between items-center rounded-lg font-semibold  px-2 bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040]">
-                                <div className="my-0.5">{execution.id}</div>
-                                <div onClick={()=>{navigator.clipboard.writeText(execution.id)}} className=" transition-all active:scale-80 duration-150 hover:bg-[#C6C6C6] dark:hover:bg-[#2C3034] rounded-md p-0.5">
+                                <div className="my-0.5 overflow-hidden text-xs lg:text-sm">{execution.id}</div>
+                                <div onClick={()=>{navigator.clipboard.writeText(execution.id)}} className=" transition-all active:scale-80 duration-50 hover:bg-[#C6C6C6] dark:hover:bg-[#2C3034] rounded-md p-0.5">
                                     <Copy size="19"></Copy>
                                 </div>
                             </div>
@@ -297,8 +327,8 @@ function DurationCalculator(start:string,end:string):string{
 }
 
 export function Svgframe({children,status , big = false}: {children:ReactNode,status:string, big? : boolean}){
-    return <div className={`h-8 w-8 flex items-center justify-center  border border-[#D6D6D6] dark:border-[#D2D6D5] ${big?  "h-20 w-20 rounded-3xl  border-3 dark:border-2" : "rounded-lg"} `}>
-        <div className={`bg-radial  border-brand-bg dark:border-brand-dark-bg h-full w-full flex items-center justify-center ${big?  "rounded-3xl border-3 dark:border-4" : " rounded-lg border-2 "} 
+    return <div className={`h-8 w-8 flex items-center justify-center  border border-[#D6D6D6] dark:border-[#D2D6D5] ${big?  "lg:h-20 h-12 lg:w-20 w-12 rounded-lg lg:rounded-3xl border lg:border-3 dark:border-2" : "rounded-lg"} `}>
+        <div className={`bg-radial  border-brand-bg dark:border-brand-dark-bg h-full w-full flex items-center justify-center ${big?  "rounded-lg lg:rounded-3xl border-3 dark:border-4" : " rounded-lg border-2 "} 
             ${
             status === "success" ? "bg-radial from-[#E4F4E9] to-[#E4F4E9] dark:from-[#3BD88C] dark:to-[#041E12] text-[#357557] dark:text-[#D2D6D5]" : 
             status === "active" ? "bg-radial from-[#E4F4E9] to-[#E4F4E9] dark:from-[#3BD88C] dark:to-[#041E12] text-[#357557] dark:text-[#D2D6D5]" : 

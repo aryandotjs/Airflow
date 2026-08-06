@@ -1,11 +1,10 @@
 import { Router } from "express";
 import { authmiddleware } from "../middleware.js";
 import { prisma } from "../db/index.js";
-import { ZapCreateSchema } from "../types/index.js";
 import { executeWorkflow } from "../workflow-engine/executeWorkflow.js";
 import { validateWorkflow } from "../workflow-engine/validateWorkflow.js";
 import { nanoid } from "nanoid";
-// import { ZapStatus } from "../generated/prisma/enums";
+import { Prisma } from "../generated/prisma/client.js";
 
 export const WorkflowRouter = Router()
 const name1 = [
@@ -34,21 +33,19 @@ const name2 = [
     "AlphaPrism"
 ]
 
-WorkflowRouter.post("/", async (req, res) => {
-    // const Id = (req as any).userId
-    // const body = req.body;
-    // const parsedbody = ZapCreateSchema.safeParse(body)
-    // if (!parsedbody.success) {
-    //     return res.status(401).json({ message: "invalid data" })
-
-    // }
-    const id = "test-user"
+WorkflowRouter.post("/", authmiddleware, async (req, res) => {
+    const userid = req.userId
+    if (!userid) {
+        return res.status(401).json({
+            msg: "Unauthorized"
+        });
+    }
     const name = name1[Math.floor(Math.random() * 10)] + "-" + name1[Math.floor(Math.random() * 10)]
     try {
         const workflow = await prisma.workflow.create({
             data: {
                 name: name,
-                userId: id
+                userId: userid
             }
         })
         return res.json({
@@ -63,35 +60,16 @@ WorkflowRouter.post("/", async (req, res) => {
     }
 })
 
-// zapRouter.get("/", authmiddleware, async (req, res) => {
-//     // const userId = (req as any).userId;
-
-//     const zaps = await prisma.zap.findMany({
-//         where: {
-//             userId: 3
-//         },
-//         include: {
-//             actions: {
-//                 include: {
-//                     type: true
-//                 }
-//             },
-//             trigger: {
-//                 include: {
-//                     type: true
-//                 }
-//             }
-//         }
-//     })
-//     return res.json({ zaps })
-// })
 
 WorkflowRouter.post("/togglestatus", authmiddleware, async (req, res) => {
-    // const userId = (req as any).userId;
-    const userid = 3
+    const userid = req.userId;
+    if (!userid) {
+        return res.status(401).json({
+            msg: "Unauthorized"
+        });
+    }
     const { crrstatus, workflowid } = req.body
     let status = crrstatus;
-
     if (crrstatus === "DRAFT") {
 
         const validation = await validateWorkflow(workflowid)
@@ -116,7 +94,8 @@ WorkflowRouter.post("/togglestatus", authmiddleware, async (req, res) => {
 
     await prisma.workflow.update({
         where: {
-            id: workflowid
+            id: workflowid,
+            userId: userid
         },
         data: {
             status
@@ -131,23 +110,30 @@ WorkflowRouter.post("/togglestatus", authmiddleware, async (req, res) => {
 
 
 
-WorkflowRouter.post("/duplicate", async (req, res) => {
-    // const userId = (req as any).userId;
-    const userid = "test-user"
+WorkflowRouter.post("/duplicate", authmiddleware, async (req, res) => {
+    const userid = req.userId;
+
+    if (!userid) {
+        return res.status(401).json({
+            msg: "Unauthorized"
+        });
+    }
+
     const { workflowid } = req.body
 
     try {
 
         const ogWorkflow = await prisma.workflow.findUnique({
             where: {
-                id: workflowid
+                id: workflowid,
+                userId: userid
             },
             include: { nodes: true, connections: true }
         })
 
-        if (!ogWorkflow) return res.json({ msg: `Workflow not found` })
+        if (!ogWorkflow) return res.status(404).json({ msg: `Workflow not found` })
 
-        const duplicateZap = await prisma.$transaction(async (tx) => {
+        const duplicateZap = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 
             const newWorkflow = await tx.workflow.create({
                 data: {
@@ -156,7 +142,7 @@ WorkflowRouter.post("/duplicate", async (req, res) => {
                 }
             })
 
-            const idMap = new Map()
+            const idMap = new Map<string, string>()
 
 
             await tx.node.createMany({
@@ -175,14 +161,22 @@ WorkflowRouter.post("/duplicate", async (req, res) => {
             })
 
             await tx.connection.createMany({
-                data: ogWorkflow.connections.map((c) => {
+                data:
+                    ogWorkflow.connections.map((c) => {
 
-                    return {
-                        workflowId: newWorkflow.id,
-                        fromNodeId: idMap.get(c.fromNodeId),
-                        toNodeId: idMap.get(c.toNodeId),
-                    }
-                })
+                        const fromNodeId = idMap.get(c.fromNodeId)
+                        const toNodeId = idMap.get(c.toNodeId)
+
+                        if (!fromNodeId || !toNodeId) {
+                            return null
+                        }
+
+                        return {
+                            workflowId: newWorkflow.id,
+                            fromNodeId,
+                            toNodeId
+                        }
+                    }).filter((c) => c !== null)
             })
 
             return newWorkflow
@@ -202,14 +196,20 @@ WorkflowRouter.post("/duplicate", async (req, res) => {
 
 })
 
-WorkflowRouter.delete("/delete", async (req, res) => {
-    // const userId = (req as any).userId;
-    const userid = "test-user"
+WorkflowRouter.delete("/delete", authmiddleware, async (req, res) => {
+    const userid = req.userId;
+    if (!userid) {
+        return res.status(401).json({
+            msg: "Unauthorized"
+        });
+    }
     const { workflowid } = req.body
     try {
         const response = await prisma.workflow.delete({
             where: {
-                id: workflowid
+                id: workflowid,
+                userId: userid
+
             },
         })
         return res.json({
@@ -217,8 +217,8 @@ WorkflowRouter.delete("/delete", async (req, res) => {
         })
 
 
-    } catch (error) {
-        return res.json({
+    } catch (error: unknown) {
+        return res.status(500).json({
             msg: `Failed deleting Workflow `
         })
     }
@@ -226,27 +226,36 @@ WorkflowRouter.delete("/delete", async (req, res) => {
 })
 
 
-WorkflowRouter.get("/all", async (req, res) => {
-    // const userId = (req as any).userId;
+WorkflowRouter.get("/all", authmiddleware, async (req, res) => {
+    const userid = req.userId;
+    if (!userid) {
+        return res.status(401).json({
+            msg: "Unauthorized"
+        });
+    }
     try {
 
         const workflows = await prisma.workflow.findMany({
             where: {
-                userId: "test-user"
+                userId: userid
             }
         })
         return res.json({ workflows })
 
-    } catch (error) {
+    } catch (error: unknown) {
         console.log(error)
-        return res.json({ msg: "eroro aaya bhai dekhle " })
+        return res.status(500).json({ msg: "error getting workflows" })
     }
 
 })
 
 WorkflowRouter.put("/rename", authmiddleware, async (req, res) => {
-    // const userId = (req as any).userId;
-    const userid = "test-user"
+    const userid = req.userId;
+    if (!userid) {
+        return res.status(401).json({
+            msg: "Unauthorized"
+        });
+    }
     const { newname, workflowid } = req.body
     try {
         const response = await prisma.workflow.update({
@@ -264,8 +273,8 @@ WorkflowRouter.put("/rename", authmiddleware, async (req, res) => {
         })
 
 
-    } catch (error) {
-        return res.json({
+    } catch (error: unknown) {
+        return res.status(500).json({
             msg: `Failed changing name`
         })
     }
@@ -274,31 +283,48 @@ WorkflowRouter.put("/rename", authmiddleware, async (req, res) => {
 
 
 WorkflowRouter.get("/:workflowid", authmiddleware, async (req, res) => {
-    // const userId = (req as any).userId;
-    const { workflowid } = req.params
+    const userid = req.userId;
+    if (!userid) {
+        return res.status(401).json({
+            msg: "Unauthorized"
+        });
+    }
+    const workflowid = req.params.workflowid as string
+
     const workflow = await prisma.workflow.findFirst({
         where: {
-            id: workflowid
+            id: workflowid,
+            userId: userid
         },
         include: {
             nodes: true,
             connections: true
         }
     })
+    if (!workflow) {
+        return res.status(404).json({
+            msg: "Workflow not found"
+        });
+    }
     return res.json(workflow)
 })
 
 
-WorkflowRouter.put("/:workflowid", async (req, res) => {
-    // const userId = (req as any).userId;
-    const { workflowid } = req.params
+WorkflowRouter.put("/:workflowid", authmiddleware, async (req, res) => {
+    const userid = req.userId;
+    if (!userid) {
+        return res.status(401).json({
+            msg: "Unauthorized"
+        });
+    }
+    const workflowid = req.params.workflowid as string
     const { nodes, edges } = req.body
     try {
 
-        await prisma.$transaction(async (tsx) => {
+        await prisma.$transaction(async (tsx: Prisma.TransactionClient) => {
             await tsx.workflow.update({
                 where: {
-                    id: workflowid
+                    id: workflowid,
                 },
                 data: {
                     status: "DRAFT"
@@ -307,18 +333,18 @@ WorkflowRouter.put("/:workflowid", async (req, res) => {
 
             await tsx.node.deleteMany({
                 where: {
-                    workflowId: workflowid
+                    workflowId: workflowid,
                 }
             })
 
             await tsx.connection.deleteMany({
                 where: {
-                    workflowId: workflowid
+                    workflowId: workflowid,
                 }
             })
             await tsx.node.createMany({
                 data: nodes.map((node: any) => {
-                    const metadata = node.data.metadata
+                    const metadata = node.data.metadata ?? {}
                     if (node.data.name === "Webhook") {
                         metadata.WebhookId = nanoid()
                     }
@@ -347,7 +373,7 @@ WorkflowRouter.put("/:workflowid", async (req, res) => {
             msg: "workflow saved successfully"
         });
 
-    } catch (error) {
+    } catch (error: unknown) {
         console.log(error)
         res.status(500).json({
             success: false,
@@ -357,9 +383,13 @@ WorkflowRouter.put("/:workflowid", async (req, res) => {
 })
 
 
-WorkflowRouter.get("/executions/all", async (req, res) => {
-    // const userId = (req as any).userId;
-    const userid = "test-user"
+WorkflowRouter.get("/executions/all", authmiddleware, async (req, res) => {
+    const userid = req.userId;
+    if (!userid) {
+        return res.status(401).json({
+            msg: "Unauthorized"
+        });
+    }
     const allExecutions = await prisma.execution.findMany({
         where: {
             workflow: {
@@ -382,9 +412,16 @@ WorkflowRouter.get("/executions/all", async (req, res) => {
 })
 
 
-WorkflowRouter.post("/test/:workflowId", async (req, res) => {
+WorkflowRouter.post("/test/:workflowId", authmiddleware, async (req, res) => {
+    const userid = req.userId;
 
-    const workflowId = req.params.workflowId
+    if (!userid) {
+        return res.status(401).json({
+            msg: "Unauthorized"
+        });
+    }
+
+    const workflowId = req.params.workflowId as string
 
     try {
         const result = await executeWorkflow(workflowId);
@@ -393,11 +430,11 @@ WorkflowRouter.post("/test/:workflowId", async (req, res) => {
             msg: "Workflow executed",
             executionId: result.executionId
         })
-    } catch (error: any) {
+    } catch (error: unknown) {
 
         res.status(500).json({
             msg: "Workflow failed",
-            error: error.message
+            error: error instanceof Error ? error.message : "Workflow execution failed"
         })
     }
 

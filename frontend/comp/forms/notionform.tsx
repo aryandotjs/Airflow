@@ -32,8 +32,8 @@ export function NotionTriggerForm({
 
 
 
-  return (<div className={` transition duration-300 ease-initial ${formDetail.name == "Notion" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
-        <div className={` transition duration-300 ${formDetail.name == "Notion"?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
+  return (<div className={` transition duration-100 ease-initial ${formDetail.name == "Notion" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
+        <div className={` transition duration-100 ${formDetail.name == "Notion"?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
             <div className={`p-6 `} >
                 <div className="flex w-full justify-between items-center ">
                      <div className="text-[17px] font-semibold dark:text-brand-bg ">{formDetail.name}</div>
@@ -90,7 +90,7 @@ export function NotionTriggerForm({
                         })
                         setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
                         setformdata(initialValue)
-                    }} className="h-8 w-30 transition-all duration-150 active:scale-95">
+                    }} className="h-8 w-30 transition-all duration-50 active:scale-95">
                         <SecondarybuttonNegative>
                             <div className=" px-1 text-brand-bg text-sm pb-0.5 dark:text-brand-dark-bg dark:font-semibold">
                                 Save
@@ -100,7 +100,7 @@ export function NotionTriggerForm({
                     <div onClick={()=>{
                         setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
                         setformdata(initialValue)
-                    }} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
+                    }} className="h-8 w-30 transition-all duration-50 active:scale-95 ">
                         <Secondarybutton>
                             <div className=" px-1  text-sm pb-0.5">
                                 Cancle

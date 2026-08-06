@@ -1,16 +1,13 @@
 import { Router } from "express";
 import { prisma } from "../db/index.js";
-import { authmiddleware } from "../middleware.js";
-import { FlattenVariables } from "../workflow-engine/utils/flattenVariables.js";
 import { executeWorkflow } from "../workflow-engine/executeWorkflow.js";
 
-export type WorkflowContext = Record<string, any>
 export const webhookRouter = Router()
 
 
 
 webhookRouter.post("/:webhookId", async (req, res) => {
-    const { webhookId } = req.params
+    const webhookId = req.params.webhookId as string
     const webhooknode = await prisma.node.findFirst({
         where: {
             data: {
@@ -33,7 +30,7 @@ webhookRouter.post("/:webhookId", async (req, res) => {
             message: "Webhook inactive"
         })
     }
-    await executeWorkflow(webhooknode?.workflowId, {
+    await executeWorkflow(webhooknode.workflowId, {
         Webhookpayload: {
             body: req.body
         }

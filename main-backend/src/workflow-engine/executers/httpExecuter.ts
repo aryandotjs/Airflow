@@ -1,15 +1,15 @@
 import axios from "axios";
-import { json } from "express";
 import { ResolveTemplate } from "../resolveTemplate.js";
 import { ResolveObjectTemplate } from "../ResolveObjectTemplate.js";
+import type { WorkflowContext } from "../contex.js";
 
 export async function httpExecuter(
     {
         data,
         context
     }: {
-        data: any,
-        context: any
+        data: Record<string, any>,
+        context: WorkflowContext
     }) {
     console.log("HTTP executor running");
 
@@ -18,14 +18,13 @@ export async function httpExecuter(
         context
     )
     const RequestBody = ResolveObjectTemplate(
-        JSON.parse(data.RequestBody) || {},
+        data.RequestBody ? JSON.parse(data.RequestBody) : {},
         context
     )
     const RequestHeader = ResolveObjectTemplate(
-        JSON.parse(data.headers) || {},
+        data.headers ? JSON.parse(data.headers) : {},
         context
     )
-    console.log(RequestBody)
     let result;
     if (data.Method == "GET") {
         const response = await axios.get(endpoint, {

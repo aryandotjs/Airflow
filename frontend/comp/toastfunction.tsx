@@ -3,7 +3,6 @@ import { useToast } from "./toastprovider";
 export default function useToastSetterRemover(){
     const { setToasts} = useToast()
     function showToast(data:any){
-        console.log(data)
         let id : any;
 
             setToasts((prev:any) => {
@@ -32,9 +31,29 @@ export default function useToastSetterRemover(){
                     )
                 );
             }, 10);
+           
 
-            setTimeout(() => {
-                    setToasts((prev:any) => {
+            if (data.submsg) {
+                setTimeout(() => {
+                setToasts((prev:any) => {
+                    return prev.map((toast:any) =>
+                        toast.id === id
+                            ? { ...toast, show:false }
+                            : toast
+                    )
+                });
+
+                setTimeout(() => {
+                     setToasts((prev:any) =>
+                    prev.filter((toast:any) => toast.id !== id));
+                }, 300);
+               
+
+            }, 15000);
+            }
+            if (!data.submsg) {
+                setTimeout(() => {
+                setToasts((prev:any) => {
                     return prev.map((toast:any) =>
                         toast.id === id
                             ? { ...toast, show:false }
@@ -49,6 +68,8 @@ export default function useToastSetterRemover(){
                
 
             }, 5000);
+            }
+            
 
     }
      return showToast;

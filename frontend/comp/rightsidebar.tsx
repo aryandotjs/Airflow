@@ -103,9 +103,9 @@ export default function RightsideBar({sidebaropen ,setsidebaropen,setformDetail 
      }
   },[])
   return (
-    <div className={`fixed top-0 left-0 bg-black/50 dark:bg-white/10 z-50 h-full w-full transition-opacity duration-300 ${sidebaropen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+    <div className={`fixed top-0 left-0 bg-black/50 dark:bg-white/10 z-50 h-full w-full transition-opacity duration-200 ${sidebaropen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
     <div ref={modalref} className={`fixed top-0 right-0 h-full w-110  bg-brand-bg dark:bg-brand-dark-bg  z-50 overflow-y-scroll
-      transition-transform duration-300 ease-in-out 
+      transition-transform duration-200 ease-in-out 
       ${sidebaropen ? "translate-x-0" : "translate-x-full"}`} >
          <div className='w-full p-3 flex justify-between items-center'>
             <div className='flex gap-2'>

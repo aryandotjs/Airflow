@@ -28,6 +28,7 @@ import useToastSetterRemover from "./toastfunction";
 import { HttpForm } from "./forms/httpfrom";
 import { ManualTriggerForm } from "./forms/manualtriggerfrom";
 import { WebhookForm } from "./forms/webhookform";
+import { api } from "@/lib/api";
 
 // export let InitialNodes : Node<{name :string , metadata :string , onDelete : (id:any)=>void}>[] = [{
 //     id : '1',
@@ -57,7 +58,7 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
     const [formDetail, setformDetail] = useState<{name :string , open : boolean}>({name :"" , open : false});
 
     const [refreshagain,setrefreshagain] = useState(false)
-
+    const [saveloading,setsaveloading] = useState(false)
     const [nodes,setNodes,onNodesChange] = useNodesState(InitialNodes)
     const [edges,setEdges,onEdgesChange] = useEdgesState(InitialEdges)
     const [ sidebaropen , setsidebaropen ] = useState(false)
@@ -69,7 +70,7 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
     const [ wholeworkflow , setwholeworkflow ] = useState<workflow|null>()
     const  showToast = useToastSetterRemover()
     useEffect(() => {
-        axios
+        api
             .get(`${BACKEND_URL}/api/v1/workflow/${workflowid}`)
             .then((a: any) => {
             setwholeworkflow(a.data)
@@ -91,6 +92,13 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
 
             setNodes(structuredNodes);
             setEdges(structuredEdges)
+            }).catch((err:any)=>{
+
+                showToast({
+                    msg: err.response?.data?.message ?? "Failed to load workflow",
+                    isError:true
+                });
+
             });
     }, [workflowid,refreshagain]);
 
@@ -119,19 +127,33 @@ const Router = useRouter();
             </button>
             <button onClick={async()=>{
                 try {
-                    const response = await axios.put(`${BACKEND_URL}/api/v1/workflow/${workflowid}`,{
+                    setsaveloading(true)
+                    const response = await api.put(`${BACKEND_URL}/api/v1/workflow/${workflowid}`,{
                            nodes , edges
                     })
+                    setsaveloading(false)
+
                     showToast({msg :response.data.msg,isError:false})
                     setrefreshagain((a)=>!a)
-                } catch (err:any) {
-                    showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
+                } catch(err:any){
+                    setsaveloading(false)
+
+                    showToast({
+                        msg: err.response?.data?.message ?? "Failed to save workflow",
+                        isError:true
+                    })
                 }
 
             }} className="absolute right-5 top-20 z-10 gap-0.5 ">
-                <div className="h-8 rounded-sm px-2 active:scale-95 duration-100  flex items-center bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] text-xs font-semibold justify-center">
-                    <div>Save</div>
-                     <Save size="14"></Save>
+                <div className="h-8  w-14 rounded-sm px-2 active:scale-95 duration-100  flex items-center bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] text-xs font-semibold justify-center">
+                    {saveloading?
+                    <div className=" w-full flex justify-center ">
+                                                <div className=" h-4 w-4 rounded-full border-2 border-brand-border  border-t-brand-dark-bg dark:border-t-[#151619]  animate-spin" /> 
+                    </div>
+                    : <div className="flex items-center">
+                      <div className="hidden lg:block">Save</div>
+                      <Save size="14"></Save>
+                    </div>}
                 </div>
             </button>
             <ReactFlow
@@ -164,16 +186,23 @@ const Router = useRouter();
  
 export const UseCred =()=>{
     const [creds, setcreds] = useState([]);
-
+    const showToast = useToastSetterRemover()
+    
     useEffect(()=>{
-       axios.get(`${BACKEND_URL}/api/v1/credentials/all`, {
+       api.get(`${BACKEND_URL}/api/v1/credentials/all`, {
             // headers: {
             //     "authorization": `Bearer ${localStorage.getItem("token")}`
             // }
-        })
-            .then(res => {
+        }).then(res => {
                 setcreds(res.data.credential.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
-            })
+        }).catch((err:any)=>{
+
+            showToast({
+                msg: err.response?.data?.message ?? "Failed to load credentials",
+                isError:true
+            });
+
+        });
     },[])
     return {
         creds

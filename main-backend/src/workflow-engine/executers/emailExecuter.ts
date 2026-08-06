@@ -10,9 +10,6 @@ interface EmailParams {
 
 export async function Mailer({ to, body }: EmailParams) {
     try {
-        // console.log(`Sending email to ${to}`);
-        console.log(typeof (to), to)
-        console.log(typeof (body), body)
         await resend.emails.send({
             from: "Airflow <onboarding@resend.dev>",
             to: to,

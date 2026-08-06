@@ -13,7 +13,7 @@ import { Add } from "../svg/allsvg";
 
 export function CreateButton() {
   return (
-    <button className="w-full h-10 flex items-center justify-center gap-2 cursor-pointer rounded-xl font-bold text-sm transition-all duration-150 active:scale-95 border
+    <button className="w-full h-10 flex items-center justify-center gap-2 cursor-pointer rounded-xl font-bold text-sm transition-all duration-100 active:scale-95 border
       bg-[#151619] text-[#F0F0F0] border-transparent 
       dark:bg-[#F0F0F0] dark:text-[#151619] dark:border-transparent ">
       <Add size="18" />

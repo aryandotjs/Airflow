@@ -1,4 +1,4 @@
-export function ResolveTemplate(text: string, webhookbody: any, startDelimeter = "{{", endDelimeter = "}}") {
+export function ResolveTemplate(text: string, webhookbody: Record<string, unknown>, startDelimeter = "{{", endDelimeter = "}}") {
     let start = 0;
     let end = 0;
     let finalString = "";
@@ -10,9 +10,9 @@ export function ResolveTemplate(text: string, webhookbody: any, startDelimeter =
                 endpoint++
             }
             const part = text.slice(start + 2, endpoint)
-            const words: any = part.split(".")
+            const words = part.split(".")
 
-            let Valueobj = {
+            let Valueobj: any = {
                 ...webhookbody
             }
             for (let i = 0; i < words.length; i++) {

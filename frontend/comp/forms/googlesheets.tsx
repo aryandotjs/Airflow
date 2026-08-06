@@ -37,8 +37,8 @@ export function GoogleSheetTriggerForm({
     const [open, setopen] = useState(false);
 
 
-    return (  <div className={` transition duration-300 ease-initial ${formDetail.name =="Google-sheet" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
-        <div className={` transition duration-300 ${formDetail.name =="Google-sheet"?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
+    return (  <div className={` transition duration-100 ease-initial ${formDetail.name =="Google-sheet" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full md:inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
+        <div className={` transition duration-100 ${formDetail.name =="Google-sheet"?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
             <div className={`p-6 `} >
                 <div className="flex w-full justify-between items-center ">
                      <div className="text-[17px] font-semibold dark:text-brand-bg ">{formDetail.name}</div>
@@ -127,7 +127,7 @@ export function GoogleSheetTriggerForm({
 
 
                         <div
-                            className={`absolute w-full top-7 transition duration-150 ${
+                            className={`absolute w-full top-7 transition duration-50 ${
                                 open
                                 ? "opacity-100 translate-y-3"
                                 : "translate-y-0 opacity-0 pointer-events-none"
@@ -197,7 +197,7 @@ export function GoogleSheetTriggerForm({
                         })
                         setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
                         setformdata(initialValue)
-                    }} className="h-8 w-30 transition-all duration-150 active:scale-95">
+                    }} className="h-8 w-30 transition-all duration-50 active:scale-95">
                         <SecondarybuttonNegative>
                             <div className=" px-1 text-brand-bg text-sm pb-0.5 dark:text-brand-dark-bg dark:font-semibold">
                                 Save
@@ -207,7 +207,7 @@ export function GoogleSheetTriggerForm({
                     <div onClick={()=>{
                             setformDetail((a:any)=>{ return {nodeid : "" , name:"",open:false } })
                             setformdata(initialValue)
-                        }} className="h-8 w-30 transition-all duration-150 active:scale-95 ">
+                        }} className="h-8 w-30 transition-all duration-50 active:scale-95 ">
                         <Secondarybutton>
                             <div className=" px-1  text-sm pb-0.5">
                                 Cancle

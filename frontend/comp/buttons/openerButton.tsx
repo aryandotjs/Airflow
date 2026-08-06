@@ -4,7 +4,7 @@ import { DownArrow, UpArrow } from "../svg/allsvg"
 
 
 export function OpenerButton({open ,setopen, children,simplefilter }:{simplefilter:string|ReactNode ,open:boolean ,setopen : Dispatch<SetStateAction<boolean>> ,children? : ReactNode}){
-    return <div className=" h-8 w-full select-none" onClick={()=>{setopen(!open)}}>
+    return <div className=" h-7 lg:h-8 w-full select-none" onClick={()=>{setopen(!open)}}>
                 <Secondarybutton onclick={()=>{}} name="" className="hover:bg-[#F4F4F4] dark:hover:bg-[#212327]">
                     <div className="flex h-full justify-between w-full items-center text-xs">
                         {children?<div>{children}</div> : ""}

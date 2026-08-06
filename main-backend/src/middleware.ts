@@ -1,19 +1,22 @@
 import jwt from "jsonwebtoken"
+import { NextFunction, Request, Response } from "express";
 
-export async function authmiddleware(req: any, res: any, next: any) {
-    // const token = req.headers.authorization.split(" ")[1];
-    // console.log("1")
-    // if (!token) return res.status(404).json({ msg: "token not availabe" })
+export function authmiddleware(req: Request, res: Response, next: NextFunction) {
+    const authheader = req.headers.authorization
+    if (!authheader) {
+        return res.status(401).json({
+            msg: "token not available"
+        });
+    }
+    const token = authheader.split(" ")[1];
+    if (!token) return res.status(401).json({ msg: "token not availabe" })
     try {
-        // console.log("1")
-        // const response: any = await jwt.verify(token, process.env.JWT_SECRET || "")
-        // req.userId = response.userId as string
-        req.userId = "3"
-        console.log("1")
+        const response = jwt.verify(token, process.env.JWT_SECRET || "") as { userId: string }
+        req.userId = response.userId
         next()
-    } catch (error) {
+    } catch (error: unknown) {
         res.status(401).json({
-            error: error
+            msg: error instanceof Error ? error.message : "Invalid token error"
         })
     }
 }

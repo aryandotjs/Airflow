@@ -6,14 +6,14 @@ import { Copy } from "./svg/allsvg";
 export function CodeShow({header , code,error}:{header:string , code :JSON,error:boolean}){
   return <div>
      <div className="mt-2 flex flex-col gap-2 ">
-            <div className="text-lg font-semibold tracking-wide dark:text-[#F0F0F0] text-[#191919]">
+            <div className="text-sm lg:text-lg font-semibold tracking-wide dark:text-[#F0F0F0] text-[#191919]">
                 {header}
             </div>
-           <div className="w-full bg-brand-dark-bg rounded-[14px] px-4 py-3 font-mono text-md select-text relative ">
+           <div className="w-full bg-brand-dark-bg rounded-[14px] px-4 py-3 font-mono text-sm lg:text-md select-text relative ">
                 <button 
                 onClick={()=>{navigator.clipboard.writeText(JSON.stringify(code))}}
                     // onClick={() => navigator.clipboard.writeText(JSON.stringify(rawJsonData, null, 2))}
-                    className="transition-all active:scale-80 duration-150 absolute top-4 right-4 text-[#71767B] hover:text-[#E1E8ED]   hover:bg-[#2C3034] rounded-md p-0.5 z-10"
+                    className="transition-all active:scale-80 duration-100 absolute top-4 right-4 text-[#71767B] hover:text-[#E1E8ED]   hover:bg-[#2C3034] rounded-md p-0.5 z-10"
                 >
                                                 <Copy size="19"></Copy>
                 </button>

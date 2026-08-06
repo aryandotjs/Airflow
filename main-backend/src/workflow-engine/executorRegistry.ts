@@ -1,7 +1,5 @@
-import { response } from "express"
 import { httpExecuter } from "./executers/httpExecuter.js"
 import type { Executor } from "./executor-types.js"
-import { da } from "zod/locales"
 import { DiscordExecuter } from "./executers/discordExecuter.js"
 import { GeminiExecutor } from "./executers/geminiExecutor.js"
 

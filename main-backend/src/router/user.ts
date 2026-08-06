@@ -1,99 +1,101 @@
-import { response, Router } from "express";
-;
+import { Router } from "express";
+
 import { SignInSchema } from "../types/index.js";
 import { SignUpSchema } from "../types/index.js";
 import { prisma } from "../db/index.js";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
 import { authmiddleware } from "../middleware.js";
-import { email } from "zod";
-import { da } from "zod/locales";
 export const userRouter = Router()
 
-// userRouter.get("/random", (req, res) => {
-//     res.json({
-//         msg: "done working "
-//     })
-// })
-// userRouter.post("/signup", async (req, res) => {
-//     const body = req.body
-//     console.log(req.body)
-//     const ParsedResponse = SignUpSchema.safeParse(body)
 
-//     if (!ParsedResponse.success) return res.status(411).json({ message: "invalid data" })
+userRouter.post("/signup", async (req, res) => {
+    const body = req.body
+    const ParsedResponse = SignUpSchema.safeParse(body)
 
-//     const existingUser = await prisma.user.findFirst({
-//         where: {
-//             email: ParsedResponse.data.email
-//         }
-//     })
-//     if (existingUser) { return res.status(403).json({ message: "email already exist" }) }
+    if (!ParsedResponse.success) return res.status(411).json({ msg: "invalid data" })
 
-//     const hashedpassword = await bcrypt.hash(ParsedResponse.data.password, 10)
+    const existingUser = await prisma.user.findFirst({
+        where: {
+            email: ParsedResponse.data.email
+        }
+    })
+    if (existingUser) { return res.status(403).json({ msg: "email already exist" }) }
+
+    const hashedpassword = await bcrypt.hash(ParsedResponse.data.password, 10)
 
 
-//     const user = await prisma.user.create({
-//         data: {
-//             email: ParsedResponse.data.email,
-//             password: hashedpassword,
-//             name: ParsedResponse.data.name
-//         }
-//     })
+    const user = await prisma.user.create({
+        data: {
+            email: ParsedResponse.data.email,
+            passwordHash: hashedpassword,
+            name: ParsedResponse.data.name
+        }
+    })
 
-//     const token = jwt.sign(
-//         { userId: user.id },
-//         process.env.JWT_SECRET || " ",
-//         { expiresIn: "24h" }
-//     )
+    const token = jwt.sign(
+        { userId: user.id },
+        process.env.JWT_SECRET || " ",
+        { expiresIn: "24h" }
+    )
 
-//     ///todo send email broda
+    ///todo send email broda
 
-//     return res.json({ msg: "user created successfully check your email", token })
+    return res.json({ msg: "user created successfully check your email", token })
 
-// })
+})
 
 
 
-// userRouter.post("/signin", async (req, res) => {
-//     const body = req.body
+userRouter.post("/signin", async (req, res) => {
+    const body = req.body
 
-//     const ParsedResponse = SignInSchema.safeParse(body)
+    const ParsedResponse = SignInSchema.safeParse(body)
 
-//     if (!ParsedResponse.success) return res.status(411).json({ msg: "give valid input" })
-//     const user = await prisma.user.findFirst({
-//         where: {
-//             email: ParsedResponse.data?.email
-//         }
-//     })
+    if (!ParsedResponse.success) return res.status(411).json({ msg: "give valid input" })
+    const user = await prisma.user.findFirst({
+        where: {
+            email: ParsedResponse.data?.email
+        }
+    })
 
-//     if (!user) return res.status(400).json({ message: "invalid email or password" })
+    if (!user) return res.status(400).json({ msg: "invalid email or password" })
+    if (!user.passwordHash) return res.status(400).json({ msg: "invalid email or password" })
 
-//     // const HashResponse = await bcrypt.compare(ParsedResponse.data?.password, user.password)
+    const HashResponse = await bcrypt.compare(ParsedResponse.data?.password, user.passwordHash)
 
-//     // if (!HashResponse) return res.status(400).json({ message: "invalid email or password" })
+    if (!HashResponse) return res.status(400).json({ msg: "invalid email or password" })
 
-//     const token = jwt.sign(
-//         { userId: user.id },
-//         process.env.JWT_SECRET || " ",
-//         { expiresIn: "24h" }
-//     )
-//     res.status(200).json({
-//         token: token
-//     })
-// })
+    const token = jwt.sign(
+        { userId: user.id },
+        process.env.JWT_SECRET || " ",
+        { expiresIn: "24h" }
+    )
+    res.status(200).json({
+        msg: "logged in successfully",
+        token: token
+    })
+})
 
-// userRouter.get("/user", authmiddleware, async (req, res) => {
-//     const userId = (req as any).userId
-//     const user = await prisma.user.findFirst({
-//         where: {
-//             id: userId
-//         },
-//         select: {
-//             email: true,
-//             name: true
-//         }
-//     })
-//     res.status(401).json({
-//         user
-//     })
-// })
+userRouter.get("/me", authmiddleware, async (req, res) => {
+    const userid = req.userId;
+
+    if (!userid) {
+        return res.status(401).json({
+            msg: "Unauthorized"
+        });
+    }
+    const user = await prisma.user.findFirst({
+        where: {
+            id: userid
+        },
+        select: {
+            email: true,
+            name: true
+        }
+    })
+
+    res.status(200).json({
+        user
+    })
+})
