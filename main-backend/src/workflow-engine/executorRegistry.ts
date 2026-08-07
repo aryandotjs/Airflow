@@ -2,6 +2,7 @@ import { httpExecuter } from "./executers/httpExecuter.js"
 import type { Executor } from "./executor-types.js"
 import { DiscordExecuter } from "./executers/discordExecuter.js"
 import { GeminiExecutor } from "./executers/geminiExecutor.js"
+import { ManualTriggerData } from "../types/node.js"
 
 const executors: Record<string, Executor> = {
     "HTTP-REQUEST": httpExecuter,
@@ -12,17 +13,19 @@ const executors: Record<string, Executor> = {
 
     WEBHOOK: async ({ data }) => {
         return {
+            data,
             success: true,
             response: "webhook"
         }
     },
-    "TRIGGER-MANUALLY": async ({ data }) => {
-        if (!data.data) {
+    "TRIGGER-MANUALLY": async ({ data }: { data: unknown }) => {
+        const manualdata = data as ManualTriggerData
+        if (!manualdata.data) {
             return {
                 send: true
             }
         }
-        const parsed = JSON.parse(data.data)
+        const parsed = JSON.parse(manualdata.data)
         data = {
             data: parsed,
             sent: true

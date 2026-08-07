@@ -7,7 +7,7 @@ import { Opneframe } from "./openframe"
 import { Addform } from "./addform"
 import { Input } from "./buttons/input"
 import { OpenerBoxWithOptions } from "./OpenerBoxWithOptions"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { DateConverter } from "./RunTimeBadge"
 import { SvgforActionsTriggers } from "./SvgforActionsTriggers"
 import Spin from "./buttons/spinningwheel"
@@ -17,17 +17,26 @@ import useToastSetterRemover from "./toastfunction"
 import { Deletebutton, DeleteConfirm } from "./deleteconfirmation"
 import { api } from "@/lib/api"
 import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative"
+import { Credential } from "./ReactWorkflow"
+import { error } from "console"
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
+type CredentialForm = {
+    credName:string;
+    Apikey:string;
+    type:string;
+}
+
 export function Credentials(){
      const [refreshTrigger, setRefreshTrigger] = useState(false);
-     const [allcreds ,setallcreds] = useState()
-     const [Errors ,setErrors] = useState<any>({})
-    const [loading,setloading] =  useState(false)
+     const [loading,setloading] =  useState(false)
+
+     const [allcreds ,setallcreds] = useState<Credential[]|null>(null)
+     const [Errors ,setErrors] = useState<Record<string,string>>({})
 
      const defaultValue = {credName:"",Apikey:"",type:""}
-     const [formData ,setformData] = useState(defaultValue)
+     const [formData ,setformData] = useState<CredentialForm>(defaultValue)
 
 
      const [formopen ,setformopen] = useState(false)
@@ -40,39 +49,24 @@ export function Credentials(){
     
      useEffect(()=>{
          api.get(`${BACKEND_URL}/api/v1/credentials/all`).then((a)=>{
-             setallcreds(a.data.credential.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()))
-         }).catch((err:any)=>{
+             setallcreds(a.data.credential.sort((a:Credential,b:Credential)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()))
+         }).catch((err:unknown)=>{
+            const error = err as AxiosError<{message:string}>
             showToast({
-                msg: err.response?.data?.message ?? "Failed to load credentials",
+                message: error.response?.data?.message ?? "Failed to load credentials",
                 isError:true
             })
          })
      },[refreshTrigger])
      
      const filteredCreds = useMemo(()=>{
-          return (allcreds ?? []).filter((a:any)=>{
+          return (allcreds ?? []).filter((a:Credential)=>{
               const MatchFilter = filter1 == "ALL" || a.type === filter1 
               const MatchSearch = a.name.toLowerCase().includes(search.toLowerCase())
               return MatchSearch && MatchFilter
            })
      },[allcreds,search,filter1])
 
-
-    //  function validateForm(){
-    //     const Errs:any = {}
-    //     if (!formData.Apikey.trim()) {
-    //         Errs.Apikey = "API key required"
-    //     }
-    //     if (!formData.credName.trim()) {
-    //         Errs.credName = "Name required"
-    //     }
-    //     if (!formData.type) {
-    //         Errs.type = "type required"
-    //     }
-    //     setErrors(Errs)
-    //     return Object.keys(Errs).length === 0
-    //  }
-       
         return <div className={` flex flex-col gap-4 px-10 lg:px-24 h-screen`}>
             <div className="flex justify-between mt-6 items-center ">
                 <div className=" text-lg lg:text-[28px] tracking-tight  font-semibold  dark:text-brand-bg text-brand-dark-bg">Credentials</div>
@@ -120,18 +114,18 @@ export function Credentials(){
                     <div className="my-6 flex flex-col gap-4 min-w-70 lg:w-115">
                             <div>
                                 <Input placeholder="Credentials Name" name="Name" state={formData.credName} statesetter={(a)=>{
-                                        setformData((prev:any)=>{
+                                        setformData((prev)=>{
                                             return {
                                                 ...prev,
                                                 credName : a
                                                 }
                                             })
-                                            setErrors((Prev:any)=>{
+                                            setErrors((Prev)=>{
                                                 return {...Prev,credName:""}
                                             })
                                             }}>
                                 </Input>
-                                {Errors.credName&&
+                                {Errors?.credName&&
                                 <div className="mt-1 text-xs text-red-500">
                                     {Errors.credName}
                                 </div>}
@@ -139,34 +133,34 @@ export function Credentials(){
                            <div className="w-40 flex flex-col gap-2 text-sm font-medium">
                                <div className="">Type</div>
                             <OpenerBoxWithOptions options={["CHATGPT" , "GEMINI","CLAUDE","DISCORD"]} simplefilter={formData.type||"Select Type"} setsimplefilter={(a)=>{
-                                setformData((prev:any)=>{
+                                setformData((prev)=>{
                                     return {
                                         ...prev,
                                         type : a
                                     }
                                 })
-                                setErrors((Prev:any)=>{
+                                setErrors((Prev)=>{
                                                 return {...Prev,type:""}
                                             })
                             }} ></OpenerBoxWithOptions> 
-                            {Errors.type&&
+                            {Errors?.type&&
                                 <div className="mt-1 text-xs text-red-500">
                                     {Errors.type}
                                 </div>}
                            </div>
                            <div>
                                 <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" state={formData.Apikey} statesetter={(a)=>{
-                                    setformData((prev:any)=>{
+                                    setformData((prev)=>{
                                     return {
                                             ...prev,
                                             Apikey : a
                                         }
                                     })
-                                     setErrors((Prev:any)=>{
+                                     setErrors((Prev)=>{
                                                 return {...Prev,Apikey:""}
                                         })
                                 }}></Input>
-                                {Errors.Apikey&&
+                                {Errors?.Apikey&&
                                 <div className="mt-1 text-xs text-red-500">
                                     {Errors.Apikey}
                                 </div>}
@@ -177,7 +171,7 @@ export function Credentials(){
                                             return
                                         }
                                         setloading(true)
-                                        const response : any= await api.post(`${BACKEND_URL}/api/v1/credentials/create`,{
+                                        const response = await api.post(`${BACKEND_URL}/api/v1/credentials/create`,{
                                                 name : formData.credName,
                                                 apikey :formData.Apikey ,
                                                 type : formData.type
@@ -186,10 +180,11 @@ export function Credentials(){
                                             setformopen(false)
                                             setformData(defaultValue)
                                             setRefreshTrigger((prev)=>!prev)
-                                            showToast({msg :response.data.msg,isError:false})
-                                        }catch(err:any){
+                                            showToast({message :response.data.message,isError:false})
+                                        }catch(err:unknown){
+                                            const error = err as AxiosError<{message:string}>
                                             setloading(false)
-                                            showToast({msg : err.response?.data?.err ?? "Failed to create credential",isError:true})
+                                            showToast({message : error.response?.data?.message ?? "Failed to create credential",isError:true})
                                         }
                                     }} className="h-7 lg:h-8 w-30 transition-all duration-50 active:scale-95">
                                     <SecondarybuttonNegative>
@@ -217,9 +212,9 @@ export function Credentials(){
      
 
 
-function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Dispatch<SetStateAction<boolean>>,filteredCreds : any}){
+function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Dispatch<SetStateAction<boolean>>,filteredCreds : Credential[]}){
 
-        const [option,setoption] = useState({open : false , id : null})
+        const [option,setoption] = useState<{open : boolean , id : number | null}>({open : false , id : null})
 
         const [updateform,setupdateform] = useState(false)
 
@@ -229,7 +224,7 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
 
         const defaultValue = {credName:"",Apikey:"",type:""}
         const [formData ,setformData] = useState(defaultValue)
-        const [Errors ,setErrors] = useState<any>({})
+        const [Errors ,setErrors] = useState<Record<string,string>>({})
 
 
         const [crediddb ,setcrediddb] = useState("")
@@ -240,8 +235,8 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
         const showToast = useToastSetterRemover()
         
         useEffect(()=>{
-            const clickeventfunc = (a:any) => {
-                if (openmodalref.current && !openmodalref.current.contains(a.target)) {
+            const clickeventfunc = (a:MouseEvent) => {
+                if (openmodalref.current && !openmodalref.current.contains(a.target as Node)) {
                     setoption((prev)=>{ 
                        return {open : false , id : null}
                     })
@@ -266,7 +261,7 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
         return <div className="px-2 pr-4 ">
             {/* {crediddb} */}
             {/* {JSON.stringify(option)} */}
-            {filteredCreds.map((z:any,index:any)=>{
+            {filteredCreds.map((z,index:number)=>{
                 return <div key={index} className="relative flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold ">
                         <div className="flex w-full h-8 my-3 gap-2 justify-between">
                             <div className="  flex items-center  gap-3 w-[20%] overflow-hidden">
@@ -335,13 +330,8 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                             <div className="border-t border-[#C6C6C6] dark:border-[#2C3034]"></div>
                                             <div  className=" border-[#C6C6C6] dark:border-[#2C3034] overflow-hidden">
                                                 <div onClick={async()=>{
-                                                     try{
                                                         setdeleteformopen(true)
-                                                        setoption((prev:any)=> ({open:false , id :prev.id }))
-                                                    }catch(err:any){
-                                                        setoption({open:false , id : null})
-                                                        showToast({msg : err.response?.data?.err ?? "Something went wrong",isError:true})
-                                                    }
+                                                        setoption((prev)=> ({open:false , id :prev.id }))
                                                 }} className="m-1 ">
                                                     <MainRedButton name="Delete credential">
                                                         <Bin size="17"></Bin>
@@ -356,8 +346,8 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                             
                  </div>
             })}
-            <DeleteConfirm callback={async()=>{}}  name={"Delete API Key"} setformopen={setdeleteformopen} formopen={deleteformopen}>
-                                    <div className=" pt-5 text-sm">{ option.id == "0" || option.id ?filteredCreds[option.id].name:"invalid id "}</div>
+            <DeleteConfirm buttonname="" callback={async()=>{}}  name={"Delete API Key"} setformopen={setdeleteformopen} formopen={deleteformopen}>
+                                    <div className=" pt-5 text-sm">{ option.id == 0 || option.id ?filteredCreds[option.id].name:"invalid id "}</div>
                                     <div className="my-7 min-w-40 lg:w-100">
                                         <div className="text-sm ">Are you sure you want to delete this API Key?</div>
                                         <div className="text-sm font-medium text-[#CE292E] dark:text-[#FF9592]">This can not be undone.</div>
@@ -374,11 +364,12 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                                             apiId : crediddb
                                                         }
                                                     })
-                                                    setoption((prev:any)=> ({open:false , id :null }))
+                                                    setoption((prev)=> ({open:false , id :null }))
                                                     setRefreshTrigger((prev)=>!prev)
 
-                                                } catch (error:any) {
-                                                    showToast({msg :error.response?.data.msg  ?? "Failed to delete credential" ,isError:false})
+                                                } catch (err:unknown) {
+                                                    const error = err as AxiosError<{message:string}> 
+                                                    showToast({message :error.response?.data.message  ?? "Failed to delete credential" ,isError:false})
                                                 }
                                             }} className="h-7 lg:h-8 min-w-30 transition-all duration-50 active:scale-95">
                                                 <Deletebutton name={"Delete API Key"}></Deletebutton>
@@ -398,7 +389,7 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                 <div className="my-6 flex flex-col gap-4 min-w-70 lg:w-115">
                     <div>
                             <Input placeholder="Credentials Name" name="Name" state={formData.credName}  statesetter={(a)=>{
-                                setformData((prev:any)=>({...prev , credName : a}))   }}>
+                                setformData((prev)=>({...prev , credName : a}))   }}>
                             </Input>
                             {Errors.credName&&
                                 <div className="mt-1 text-xs text-red-500">
@@ -410,7 +401,7 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                         <div className="">Type</div>
 
                         <OpenerBoxWithOptions options={["CHATGPT" , "GEMINI","CLAUDE","DISCORD"]} simplefilter={formData.type || "Select type"} setsimplefilter={(a)=>{
-                            setformData((prev:any)=>({...prev , type : a}))
+                            setformData((prev)=>({...prev , type : a}))
                         }} ></OpenerBoxWithOptions> 
                         
                         {Errors.type&&
@@ -420,7 +411,7 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                     </div>
                     <div>
                         <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="API Key" state={formData.Apikey} statesetter={(a)=>{
-                            setformData((prev:any)=>({...prev , Apikey : a}))
+                            setformData((prev)=>({...prev , Apikey : a}))
                         }}></Input>
                         {Errors.Apikey&&
                                 <div className="mt-1 text-xs text-red-500">
@@ -435,7 +426,7 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                         }
                                         setloading(true)    
 
-                                            const response : any= await api.post(`${BACKEND_URL}/api/v1/credentials/update`,{
+                                            const response = await api.post(`${BACKEND_URL}/api/v1/credentials/update`,{
                                             name : formData.credName,
                                             apikey :formData.Apikey,
                                             type : formData.type,
@@ -445,10 +436,11 @@ function CredHistory({filteredCreds,setRefreshTrigger} : {setRefreshTrigger:Disp
                                         setupdateform(false)
                                         setRefreshTrigger((prev)=>!prev)
                                         
-                                        showToast({msg :response.data.msg,isError:false})
-                                    }catch(err:any){
+                                        showToast({message :response.data.message,isError:false})
+                                    }catch(err:unknown){
+                                        const error = err as AxiosError<{message:string}>
                                         setloading(false)
-                                        showToast({msg : err.response?.data?.msg ?? "Failed to update credential",isError:true})
+                                        showToast({message : error.response?.data?.message ?? "Failed to update credential",isError:true})
                                     }
                                         
                                     }} className="h-7 lg:h-8 w-30 transition-all duration-50 active:scale-95">
@@ -493,8 +485,8 @@ export function Svgframe({children,status , big = false}: {children:ReactNode,st
 
 
 
-function validateForm({formData,setErrors}:any){
-        const Errs:any = {}
+function validateForm({formData,setErrors}:{formData:CredentialForm,setErrors:Dispatch<SetStateAction<Record<string,string>>>}){
+        const Errs:Record<string,string> = {}
         if (!formData.Apikey.trim()) {
             Errs.Apikey = "API key required"
         }

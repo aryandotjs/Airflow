@@ -5,11 +5,11 @@ import { Secondarybutton } from "./buttons/secondarybutton";
 import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative";
 
 
-export function Addform({children , callback , name ,setformopen, formopen , buttonname ,manualbutton = false}:{buttonname:string,children:ReactNode ,name :string , setformopen : Dispatch<SetStateAction<boolean>>,formopen :boolean , callback : any ,manualbutton? :boolean}){
+export function Addform({children , callback , name ,setformopen, formopen , buttonname ,manualbutton = false}:{buttonname:string,children:ReactNode ,name :string , setformopen : Dispatch<SetStateAction<boolean>>,formopen :boolean , callback : ()=>void ,manualbutton? :boolean}){
      const openmodalref = useRef<HTMLDivElement>(null)
      useEffect(()=>{
-            const clickeventfunc = (a:any) => {
-                if (openmodalref.current && !openmodalref.current.contains(a.target)) {
+            const clickeventfunc = (a:MouseEvent ) => {
+                if (openmodalref.current && !openmodalref.current.contains(a.target as Node)) {
                     setformopen(false)
                 }
             }

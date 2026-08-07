@@ -8,26 +8,28 @@ import { OpenerButton } from "../buttons/openerButton"
 import { MainButton } from "../buttons/mainbutton"
 import { OpenOptions } from "../openoptions"
 import { Opneframe } from "../openframe"
+import { Node } from "@xyflow/react"
+import { formdetailtype } from "../ReactWorkflow"
 export function WebhookForm({
     nodes,
     setNodes,
-  setformDetail,
-  formDetail,
+    setformDetail,
+    formDetail,
 }: {
-     nodes:any,
-    setNodes:any,
-  setformDetail: Dispatch<SetStateAction<any>>;
-  formDetail: any;
+    nodes:Node[],
+    setNodes:Dispatch<SetStateAction<Node[]>>,
+    setformDetail: Dispatch<SetStateAction<formdetailtype>>;
+    formDetail: formdetailtype;
 }) {
 
      
     const initialValue = {Method:"POST",WebhookId:""}
-    const [open,setopen] = useState<any>(false) 
+    const [open,setopen] = useState<boolean>(false) 
 
     const [formdata,setformdata] = useState<{Method:string,WebhookId:string}>(initialValue)
         useEffect(()=>{
             if (nodes.length > 0) {
-                const selectednodemetadata = nodes.filter((a:any)=>{ return a.id === formDetail.nodeid})[0]?.data.metadata
+                const selectednodemetadata = nodes.filter((a)=>{ return a.id === formDetail.nodeid})[0]?.data.metadata
                 if(selectednodemetadata){
                     setformdata({...initialValue , ...selectednodemetadata})
                 }else{
@@ -43,8 +45,8 @@ export function WebhookForm({
                 return;
             }
 
-            const clickeventfunc = (a:any) => {
-                if (openmodalrefwebhook.current && !openmodalrefwebhook.current.contains(a.target)) {
+            const clickeventfunc = (a:MouseEvent) => {
+                if (openmodalrefwebhook.current && !openmodalrefwebhook.current.contains(a.target as globalThis.Node)) {
                         setformDetail({nodeid:"" , name:"",open:false } )
                 }
             }
@@ -66,14 +68,14 @@ export function WebhookForm({
                               <img className='h-5 hidden dark:block' src={"/actiontriggerimages/darkwebhook.png"}></img>
                      </div>
                      <div onClick={()=>{
-                        setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
+                        setformDetail((a)=>{ return {nodeid:"" , name:"",open:false } })
                         setformdata(initialValue)
                      }} className="h-6 w-6 rounded-md flex items-center justify-center  hover:bg-[#E9E9E9] hover:dark:bg-[#151619]"><Cross size="16"></Cross></div>
                 </div>
                        <div className="my-6 flex flex-col gap-6 w-70 md:w-115 overflow-y-scroll max-h-100 p-2 ">
                             {/* <div>
                                 <Input placeholder={`Variable-name`} name="Variable Name (optional)" state={formdata.variableName} statesetter={(a)=>{
-                                     setformdata((prev:any)=>{
+                                     setformdata((prev)=>{
                                          return {...prev , variableName : a }
                                      })
                                 }}></Input>
@@ -84,19 +86,19 @@ export function WebhookForm({
                                                         <div className="w-full relative z-10 " >
                                                                     <OpenerButton simplefilter={formdata.Method} open={open} setopen={setopen}></OpenerButton>
                                                                     <div className={`absolute w-full top-7 transition duration-100 ${open ? "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
-                                                                        <OpenOptions simplefilter={""} options={["GET","POST"]}  open={open} setopen={setopen} setsimplefilter={(a)=>{setformdata((prev:any)=>{return {...prev , Method :a}})}}>
+                                                                        <OpenOptions simplefilter={""} options={["GET","POST"]}  open={open} setopen={setopen} setsimplefilter={(a:string)=>{setformdata((prev)=>{return {...prev , Method :a}})}}>
                                                                                 <Opneframe>
-                                                                                        {["GET","POST"].map((z:any,index)=>{
+                                                                                        {["GET","POST"].map((z:string,index)=>{
                                                                                             return <div 
                                                                                                 key={index}
                                                                                                 onClick={()=>{
-                                                                                                    setformdata((prev:any)=>{return {...prev , Method : z}})
+                                                                                                    setformdata((prev)=>{return {...prev , Method : z}})
                                                                                                     setopen(false)
                                                                                                 }}
                                                                                                 className="m-1.5 ">
                                                                                                 <MainButton>
                                                                                                     <div className="flex gap-2 font-normal ">
-                                                                                                        <div className="text-xs">{z.name}</div>
+                                                                                                        <div className="text-xs">{z}</div>
                                                                                                     </div>
                                                                                                 </MainButton>
                                                                                             </div>
@@ -143,22 +145,22 @@ export function WebhookForm({
                             <div>
                                 <BigInput 
                                       placeholder={"{\n    user Id: {{httpResponse.data.id}},\n    name: {{httpResponse.data.name}},\n    items: {{httpResponse.data.items}}\n}"} 
-                                     name="RequestBody" state={formdata.RequestBody} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , RequestBody :a}})}}></BigInput> 
+                                     name="RequestBody" state={formdata.RequestBody} statesetter={(a)=>{setformdata((prev)=>{return {...prev , RequestBody :a}})}}></BigInput> 
                                 <div className=" text-xs">{"Enter JSON body or use {{variables}} for simple values or {{json variables}} to stringify objects"}</div>
                             </div>
                             : ""} */}
                          </div> 
                 <div  className="flex gap-2 w-full">
                     <div onClick={()=>{
-                        setNodes((prev:any)=>{
-                                return prev.map((n:any)=>{
+                        setNodes((prev)=>{
+                                return prev.map((n)=>{
                                     if (n.id === formDetail.nodeid) {
                                         return { ...n , data : { ...n.data , metadata : formdata }}
                                     }
                                     return n ;
                                 })
                         })
-                        setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
+                        setformDetail((a)=>{ return {nodeid:"" , name:"",open:false } })
                         setformdata(initialValue)
                     }} className="h-8 w-30 transition-all duration-50 active:scale-95">
                         <SecondarybuttonNegative>
@@ -168,7 +170,7 @@ export function WebhookForm({
                         </SecondarybuttonNegative>
                     </div>
                     <div onClick={()=>{
-                        setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
+                        setformDetail((a)=>{ return {nodeid:"" , name:"",open:false } })
                         setformdata(initialValue)
                     }} className="h-8 w-30 transition-all duration-50 active:scale-95 ">
                         <Secondarybutton>

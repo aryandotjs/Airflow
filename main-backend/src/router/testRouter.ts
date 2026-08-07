@@ -7,7 +7,7 @@
 // export const testRouter = Router()
 
 // testRouter.post("/test1", async (req, res) => {
-//     // const id = (req as any).userId
+//     // const id = (req as anny).userId
 //     // const id = "test-user"
 //     const { text } = req.body
 //     const userid = req.get("userid")
@@ -17,7 +17,7 @@
 //             userid,
 //             automationresponse: text
 //         })
-//     } catch (err: any) {
+//     } catch (err: anny) {
 //         res.status(400).json({
 //             msg: "creadential creation failed"
 //         })
@@ -25,7 +25,7 @@
 
 // })
 // testRouter.get("/test2", async (req, res) => {
-//     // const id = (req as any).userId
+//     // const id = (req as anny).userId
 //     // const id = "test-user"
 //     const userid = req.get("userid")
 //     try {
@@ -35,7 +35,7 @@
 //             name: "aryan",
 //             name2: "anu",
 //         })
-//     } catch (err: any) {
+//     } catch (err: anny) {
 //         res.status(400).json({
 //             msg: "creadential creation failed"
 //         })

@@ -115,7 +115,7 @@ WorkflowRouter.post("/duplicate", authmiddleware, async (req, res) => {
 
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
 
@@ -131,7 +131,7 @@ WorkflowRouter.post("/duplicate", authmiddleware, async (req, res) => {
             include: { nodes: true, connections: true }
         })
 
-        if (!ogWorkflow) return res.status(404).json({ msg: `Workflow not found` })
+        if (!ogWorkflow) return res.status(404).json({ message: `Workflow not found` })
 
         const duplicateZap = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 
@@ -154,8 +154,8 @@ WorkflowRouter.post("/duplicate", authmiddleware, async (req, res) => {
                         name: node.name,
                         position: node.position,
                         type: node.type,
-                        workflowId: newWorkflow.id,
                         data: node.metadata,
+                        workflowId: newWorkflow.id,
                     }
                 })
             })
@@ -182,13 +182,13 @@ WorkflowRouter.post("/duplicate", authmiddleware, async (req, res) => {
             return newWorkflow
         })
         return res.json({
-            msg: "Workflow duplicated",
+            message: "Workflow duplicated",
             workflow: duplicateZap
         });
     } catch (error) {
 
         return res.status(500).json({
-            msg: "Failed duplicating workflow"
+            message: "Failed duplicating workflow"
         });
     }
 
@@ -200,7 +200,7 @@ WorkflowRouter.delete("/delete", authmiddleware, async (req, res) => {
     const userid = req.userId;
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
     const { workflowid } = req.body
@@ -213,13 +213,13 @@ WorkflowRouter.delete("/delete", authmiddleware, async (req, res) => {
             },
         })
         return res.json({
-            msg: `${response.name ?? "Workflow"} deleted`
+            message: `${response.name ?? "Workflow"} deleted`
         })
 
 
     } catch (error: unknown) {
         return res.status(500).json({
-            msg: `Failed deleting Workflow `
+            message: `Failed deleting Workflow `
         })
     }
 
@@ -230,7 +230,7 @@ WorkflowRouter.get("/all", authmiddleware, async (req, res) => {
     const userid = req.userId;
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
     try {
@@ -244,7 +244,7 @@ WorkflowRouter.get("/all", authmiddleware, async (req, res) => {
 
     } catch (error: unknown) {
         console.log(error)
-        return res.status(500).json({ msg: "error getting workflows" })
+        return res.status(500).json({ message: "error getting workflows" })
     }
 
 })
@@ -253,7 +253,7 @@ WorkflowRouter.put("/rename", authmiddleware, async (req, res) => {
     const userid = req.userId;
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
     const { newname, workflowid } = req.body
@@ -269,13 +269,13 @@ WorkflowRouter.put("/rename", authmiddleware, async (req, res) => {
         })
 
         return res.json({
-            msg: `name changed to ${newname}`
+            message: `name changed to ${newname}`
         })
 
 
     } catch (error: unknown) {
         return res.status(500).json({
-            msg: `Failed changing name`
+            message: `Failed changing name`
         })
     }
 
@@ -286,7 +286,7 @@ WorkflowRouter.get("/:workflowid", authmiddleware, async (req, res) => {
     const userid = req.userId;
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
     const workflowid = req.params.workflowid as string
@@ -303,7 +303,7 @@ WorkflowRouter.get("/:workflowid", authmiddleware, async (req, res) => {
     })
     if (!workflow) {
         return res.status(404).json({
-            msg: "Workflow not found"
+            message: "Workflow not found"
         });
     }
     return res.json(workflow)
@@ -314,7 +314,7 @@ WorkflowRouter.put("/:workflowid", authmiddleware, async (req, res) => {
     const userid = req.userId;
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
     const workflowid = req.params.workflowid as string
@@ -370,14 +370,14 @@ WorkflowRouter.put("/:workflowid", authmiddleware, async (req, res) => {
         })
 
         res.json({
-            msg: "workflow saved successfully"
+            message: "workflow saved successfully"
         });
 
     } catch (error: unknown) {
         console.log(error)
         res.status(500).json({
             success: false,
-            msg: "Failed to save workflow",
+            message: "Failed to save workflow",
         });
     }
 })
@@ -387,7 +387,7 @@ WorkflowRouter.get("/executions/all", authmiddleware, async (req, res) => {
     const userid = req.userId;
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
     const allExecutions = await prisma.execution.findMany({
@@ -404,7 +404,7 @@ WorkflowRouter.get("/executions/all", authmiddleware, async (req, res) => {
             }
         },
         orderBy: {
-            completedAt: "desc",
+            startedAt: "desc",
         }
         ,
     })
@@ -417,23 +417,23 @@ WorkflowRouter.post("/test/:workflowId", authmiddleware, async (req, res) => {
 
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
 
     const workflowId = req.params.workflowId as string
 
+
     try {
         const result = await executeWorkflow(workflowId);
 
         res.json({
-            msg: "Workflow executed",
+            message: "Workflow executed",
             executionId: result.executionId
         })
     } catch (error: unknown) {
-
         res.status(500).json({
-            msg: "Workflow failed",
+            message: "Workflow failed",
             error: error instanceof Error ? error.message : "Workflow execution failed"
         })
     }

@@ -4,7 +4,7 @@ import { MainButton, MainRedButton } from "@/comp/buttons/mainbutton";
 import { Namebox } from "@/comp/buttons/namebox";
 import { Secondarybutton } from "@/comp/buttons/secondarybutton";
 // import { DiscordConfigPanel } from "@/comp/discord";
-import axios from "axios";
+import axios, { Axios, AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import { Add, Adjust, Bin, Check, Duplicate, Edit, Pause, Play, Search } from "./svg/allsvg";
@@ -18,12 +18,14 @@ import { Toast } from "./toast";
 import { Addform } from "./addform";
 import { Input } from "./buttons/input";
 import { error } from "console";
-import toastsetterremover from "./toastfunction";
+import toastsetterremover, { showToastDataType } from "./toastfunction";
 import Spin from "./buttons/spinningwheel";
 import useToastSetterRemover from "./toastfunction";
 import { Deletebutton, DeleteConfirm } from "./deleteconfirmation";
 import { api } from "@/lib/api";
 import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative";
+import { Workflow } from "./ReactWorkflow";
+import { ToastType } from "./toastprovider";
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 enum ZapStatus {
@@ -32,53 +34,21 @@ enum ZapStatus {
   DRAFT = "DRAFT"
 }
 
-interface Zap {
-  id : String ,
-  userId : number,
-  name : string,
-  createdAt : string,
-  runs : number,
-  status : ZapStatus
-  trigger : {
-    id        : String,
-    triggerId :  String,
-    zapId     : String,           
-    metadata  : Record<string,any>,
-    type : {
-      id: string;
-      name: string; 
-      image: string;
-    }       
-  },
-  actions : {
-    id           : string,         
-    metadata     : string,           
-    sortingOrder : string,            
-    zapId     : string,
-    ActionId  : string,
-    type : {
-      id: string;
-      name: string; 
-      image: string;
-    }
-  }[]
-}
-
-
-function useWorkflow(refresh:boolean,showToast:any) {
+function useWorkflow(refresh:boolean,showToast:(data:showToastDataType)=>void) {
     const [loading, setLoading] = useState(true);
-    const [workflows, setworkflows] = useState<Zap[]>([]);
+    const [workflows, setworkflows] = useState<Workflow[]>([]);
 
     useEffect(() => {
         api.get(`${BACKEND_URL}/api/v1/workflow/all?t=${Date.now()}`)
             .then(res => {
-                setworkflows(res.data.workflows.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
+                setworkflows(res.data.workflows.sort((a:Workflow,b:Workflow)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
                 setLoading(false)
             })
-            .catch((err:any)=>{
+            .catch((err:unknown)=>{
+                const error = err as AxiosError<{message:string}>
                 setLoading(false);
                 showToast({
-                    msg: err.response?.data?.message ?? "Failed to load workflows",
+                    message: error.response?.data?.message ?? "Failed to load workflows",
                     isError:true
                 }
     );
@@ -114,15 +84,15 @@ function useWorkflow(refresh:boolean,showToast:any) {
                     <div className="flex flex-row-reverse gap-3">
                         <div onClick={async()=>{
                                 try{
-                                    
                                     setcreateloading(true)
                                     const workflow = await api.post(`${BACKEND_URL}/api/v1/workflow`)
                                     // showToast({msg :workflow.data.msg,isError:false})
                                     setcreateloading(false)
                                     router.push(`/workflow/${workflow.data.workflow.id}`)
-                                }catch(err:any){
+                                }catch(err:unknown){
+                                    const error = err as AxiosError<{message:string}>
                                     setcreateloading(false)
-                                    showToast({msg : err.response?.data?.err ?? "Failed to create workflow",isError:true})
+                                    showToast({message : error.response?.data?.message ?? "Failed to create workflow",isError:true})
                                 }
                             }} className={`${createloading ? "opacity-60 pointer-events-none" : ""} w-full lg:w-43 flex  transition-all duration-50 active:scale-95   font-semibold rounded-xl justify-center text-xs lg:text-sm  px-2 lg:px-2.5 h-6 lg:h-7.5 gap-1 lg:gap-2.5 cursor-default items-center bg-brand-dark-bg text-brand-bg dark:bg-brand-bg  dark:text-brand-dark-bg`}>
                             <div>
@@ -140,7 +110,7 @@ function useWorkflow(refresh:boolean,showToast:any) {
                             <Secondarybutton onclick={()=>{}}>
                                 <div className="flex h-full items-center gap-2 w-full">
                                     <Search size="16"></Search>
-                                    <input onChange={(a:any)=> setsearch(a.target.value)} value={search} className=" outline-0 flex-2" placeholder="Search..."></input>
+                                    <input onChange={(a)=> setsearch(a.target.value)} value={search} className=" outline-0 flex-2" placeholder="Search..."></input>
                                 </div>
                             </Secondarybutton>
                         </div>
@@ -168,11 +138,12 @@ function useWorkflow(refresh:boolean,showToast:any) {
 
 }
 
+type workflowoptions = {open : boolean , id : number | null}
 
 
-function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetStateAction<boolean>> ,filteredzap: Zap[]}) {
-    const [option,setoption] = useState<any>({open : false , id : null})
-    const [WorkflowName,setWorkflowName] = useState<any>("")
+function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispatch<SetStateAction<boolean>> ,filteredzap: Workflow[]}) {
+    const [option,setoption] = useState<workflowoptions>({open : false , id : null})
+    const [WorkflowName,setWorkflowName] = useState<string>("")
     const [workflowid,setworkflowid] = useState("")
     const [updateform,setupdateform] = useState(false)
 
@@ -181,14 +152,14 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
     const openmodalref = useRef<HTMLDivElement>(null)
     const showToast = useToastSetterRemover()
 
-    const [renameFormErrors ,setrenameFormErrors] = useState<any>({})
+    const [renameFormErrors ,setrenameFormErrors] = useState<Record<string,string>>({})
     const [deleteformopen ,setdeleteformopen] = useState(false)
     
     
      useEffect(()=>{
-            const clickeventfunc = (a:any) => {
-                if (openmodalref.current && !openmodalref.current.contains(a.target)) {
-                    setoption((prev:any)=>{ 
+            const clickeventfunc = (a:MouseEvent) => {
+                if (openmodalref.current && !openmodalref.current.contains(a.target as Node)) {
+                    setoption((prev)=>{ 
                        return {open : false , id : prev.id}
                     })
                 }
@@ -200,7 +171,7 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
         },[])
 
      function validateForm(){
-        const Errs:any = {}
+        const Errs:Record<string,string> = {}
         if (!WorkflowName.trim()) {
             Errs.WorkflowName = "WorkflowName is required"
         }
@@ -211,7 +182,7 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
      if (!filteredzap.length) {
           return <div className="h-90 flex flex-col items-center justify-center">
             <div className="text-sm font-medium dark:text-[#F0F0F0] text-[#191919]">
-                You haven't created any workflows
+                You haven't created no workflows
             </div>
 
             <div className="mt-1 text-xs dark:text-[#9C9FA0] text-[#666666]">
@@ -264,29 +235,30 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                                                 crrstatus:z.status,
                                                 workflowid
                                             }) 
-                                            showToast({msg :response.data.msg,isError:false})
+                                            showToast({message :response.data.message,isError:false})
 
                                             setRefreshTrigger((prev)=>!prev)
-                                        }catch(err:any){
+                                        }catch(err:unknown){
+                                            const error = err as AxiosError<{errors:string[]}>
                                             setoption({open:false,id:null});
-                                                if(err.response?.data?.errors){
-                                                    if (err.response.data.errors.length > 2) {
+                                                if(error.response?.data?.errors){
+                                                    if (error.response.data.errors.length > 2) {
                                                         showToast({
-                                                            msg:"workflow couldn't be enabled",
+                                                            message:"workflow couldn't be enabled",
                                                             isError:true,
-                                                            submsg:"Open the workflow to fix the issues that need attention."
+                                                            submessage:"Open the workflow to fix the issues that need attention."
                                                         })
                                                         return
                                                     }
-                                                    err.response.data.errors.forEach((error:string)=>{
+                                                    error.response.data.errors.forEach((error:string)=>{
                                                         showToast({
-                                                            msg:error,
+                                                            message:error,
                                                             isError:true
                                                         })
                                                     })
                                                 }else{
                                                     showToast({
-                                                        msg:"Failed to change workflow status",
+                                                        message:"Failed to change workflow status",
                                                         isError:true
                                                     })
                                                 }
@@ -318,8 +290,9 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                                         })
                                         setRefreshTrigger((prev)=>!prev)
 
-                                    }catch(err:any){
-                                        showToast({msg : err.response?.data?.err ?? "Failed to duplicate workflow",isError:true})
+                                    }catch(err:unknown){
+                                        const error = err as AxiosError<{message:string}>
+                                        showToast({message : error.response?.data?.message ?? "Failed to duplicate workflow",isError:true})
                                         setoption({open:false , id : null})
                                     }
                                     
@@ -347,8 +320,8 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                 </div> 
             </div>
         </div>)}
-         <DeleteConfirm callback={()=>{}}  name={"Delete Workflow"} setformopen={setdeleteformopen} formopen={deleteformopen}>
-                    <div className=" pt-5 text-sm">{ option.id == "0" || option.id ?filteredzap[option.id].name:"invalid id "}</div>
+         <DeleteConfirm buttonname="" callback={()=>{}}  name={"Delete Workflow"} setformopen={setdeleteformopen} formopen={deleteformopen}>
+                    <div className=" pt-5 text-sm">{ option.id == 0 || option.id ?filteredzap[option.id].name:"invalid id "}</div>
                     <div className="my-7  min-w-40 lg:w-100">
                         <div className="text-sm ">Are you sure you want to delete this WorkFlow ?</div>
                         <div className="text-sm font-medium text-[#CE292E] dark:text-[#FF9592]">This can not be undone.</div>
@@ -365,10 +338,11 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                                         workflowid : workflowid
                                     }
                                 })
-                                setoption((prev:any)=> ({open:false , id :null }))
+                                setoption((prev)=> ({open:false , id :null }))
                                 setRefreshTrigger((prev)=>!prev)
-                            } catch (err:any) {
-                                showToast({msg :err.response?.data?.message ?? "Failed to delete workflow",isError:false})
+                            } catch (err:unknown) {
+                                const error = err as AxiosError<{message:string}>
+                                showToast({message :error.response?.data?.message ?? "Failed to delete workflow",isError:false})
                             }
                             
                             }} className="h-7 lg:h-8 min-w-30 transition-all duration-50 active:scale-95">
@@ -390,7 +364,7 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                 <div className="my-6   min-w-40 lg:w-100">
                     <Input placeholder="mI2DyWosumKcWdkDg0GI592C0wGSUZoF" name="Name" state={WorkflowName} statesetter={(a)=>{
                         setWorkflowName(a)
-                        setrenameFormErrors((prev:any)=>{
+                        setrenameFormErrors((prev)=>{
                             return {...prev ,WorkflowName:"" }
                         })
                     }}></Input>
@@ -406,7 +380,7 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                                         return
                                     }
                                     setLoading(true)
-                                    const response : any= await api.put(`${BACKEND_URL}/api/v1/workflow/rename`,{
+                                    const response = await api.put(`${BACKEND_URL}/api/v1/workflow/rename`,{
                                         newname : WorkflowName, 
                                         workflowid : workflowid
                                     })
@@ -414,11 +388,12 @@ function ZapTable({ filteredzap, setRefreshTrigger }: {setRefreshTrigger :Dispat
                                     setLoading(false)
                                     setoption({open:false , id : null})
                                     setupdateform(false)
-                                }catch(err:any){
+                                }catch(err:unknown){                                            
+                                    const error = err as AxiosError<{message:string}>
                                     setLoading(false)
                                     setupdateform(false)
                                     setoption({open:false , id : null})
-                                    showToast({msg:err.response?.data?.message ?? "Failed to rename workflow",isError:true})
+                                    showToast({message:error.response?.data?.message ?? "Failed to rename workflow",isError:true})
                                 }
                             }} className="h-7 lg:h-8 w-30 transition-all duration-50 active:scale-95">
                         <SecondarybuttonNegative>

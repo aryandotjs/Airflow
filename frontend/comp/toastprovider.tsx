@@ -12,7 +12,7 @@ export interface ToastType {
   isError: boolean;
   isbig: boolean;
   message: string;
-  submessage: string;
+  submessage?: string;
   show: boolean;
 }
 

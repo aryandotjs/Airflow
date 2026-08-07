@@ -6,28 +6,37 @@ import { Secondarybutton } from "../buttons/secondarybutton"
 import { Copy, Cross } from "../svg/allsvg"
 import { OpenerButton } from "../buttons/openerButton"
 import { MainButton } from "../buttons/mainbutton"
-import { OpenOptions } from "../openoptions"
 import { Opneframe } from "../openframe"
+import { Node } from "@xyflow/react"
+import { formdetailtype } from "../ReactWorkflow"
+
+type httpFormtype = {
+    variableName:string
+    Method:string
+    Endpoint:string
+    RequestBody:string
+    headers:string
+}
+const initialValue = {variableName:"",Method:"",Endpoint:"",RequestBody:"",headers:""}
+
 export function HttpForm({
     nodes,
     setNodes,
-  setformDetail,
-  formDetail,
+    setformDetail,
+    formDetail,
 }: {
-     nodes:any,
-    setNodes:any,
-  setformDetail: Dispatch<SetStateAction<any>>;
-  formDetail: any;
+    nodes:Node[],
+    setNodes:Dispatch<SetStateAction<Node[]>>,
+    setformDetail: Dispatch<SetStateAction<formdetailtype>>;
+    formDetail: formdetailtype;
 }) {
 
-    const [open,setopen] = useState<any>(false) 
-    const initialValue = {variableName:"",Method:"",Endpoint:"",RequestBody:"",headers:""}
-   
+    const [open,setopen] = useState<boolean>(false) 
 
-    const [formdata,setformdata] = useState<{variableName:string,Method:string,Endpoint:string,RequestBody:string,headers:string}>(initialValue)
+    const [formdata,setformdata] = useState<httpFormtype>(initialValue)
         useEffect(()=>{
             if (nodes.length > 0) {
-                const selectednodemetadata = nodes.filter((a:any)=>{ return a.id === formDetail.nodeid})[0]?.data.metadata
+                const selectednodemetadata = nodes.filter((a)=>{ return a.id === formDetail.nodeid})[0]?.data.metadata
                 if(selectednodemetadata){
                     setformdata({...initialValue , ...selectednodemetadata})
                 }else{
@@ -36,10 +45,10 @@ export function HttpForm({
             }
         },[formDetail.nodeid,nodes.length])
 
-        const [errors, setErrors] = useState<any>({});
+        const [errors, setErrors] = useState<Record<string,string>>({});
    
     function validateForm(){
-        const newError:any = {}
+        const newError:Record<string,string> = {}
         if (!formdata.Endpoint?.trim()) {
             newError.Endpoint = "Endpoint is required"
         }
@@ -72,8 +81,8 @@ export function HttpForm({
                     if (formDetail.name !== "HTTP-request") {
                         return;
                     }
-                    const clickeventfunc = (a:any) => {
-                        if (openmodalrefhtttp.current && !openmodalrefhtttp.current.contains(a.target)) {
+                    const clickeventfunc = (a:MouseEvent) => {
+                        if (openmodalrefhtttp.current && !openmodalrefhtttp.current.contains(a.target as globalThis.Node)) {
                                 setformDetail({nodeid:"" , name:"",open:false } )
                         }
                     }
@@ -94,14 +103,14 @@ export function HttpForm({
                               <img className='h-5 hidden dark:block' src={"/actiontriggerimages/darkhttp-request.png"}></img>
                      </div>
                      <div onClick={()=>{
-                        setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
+                        setformDetail((a)=>{ return {nodeid:"" , name:"",open:false } })
                         setformdata(initialValue)
                      }} className="h-6 w-6 rounded-md flex items-center justify-center  hover:bg-[#E9E9E9] hover:dark:bg-[#151619]"><Cross size="16"></Cross></div>
                 </div>
                        <div className="mt-6 mb-3 flex flex-col gap-6 w-70 md:w-115 overflow-y-scroll max-h-100 p-2 ">
                             <div>
                                 <Input placeholder={`httpResponse`} name="Variable Name (optional)" state={formdata.variableName} statesetter={(a)=>{
-                                     setformdata((prev:any)=>{
+                                     setformdata((prev)=>{
                                          return {...prev , variableName : a }
                                      })
                                 }}></Input>
@@ -114,12 +123,12 @@ export function HttpForm({
                                                                     <OpenerButton simplefilter={formdata.Method?formdata.Method:"Select Method"} open={open} setopen={setopen}></OpenerButton>
                                                                     <div className={`absolute w-full top-7 transition duration-50 ${open ? "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
                                                                                 <Opneframe>
-                                                                                        {["GET","POST"].map((z:any,index)=>{
+                                                                                        {["GET","POST"].map((z:string,index)=>{
                                                                                             return <div 
                                                                                                 key={index}
                                                                                                 onClick={()=>{
-                                                                                                    setformdata((prev:any)=>{return {...prev , Method : z}})
-                                                                                                    setErrors((prev:any)=>({...prev,Method:""}));
+                                                                                                    setformdata((prev)=>{return {...prev , Method : z}})
+                                                                                                    setErrors((prev)=>({...prev,Method:""}));
                                                                                                     setopen(false)
                                                                                                 }}
                                                                                                 className="m-1.5 ">
@@ -140,10 +149,10 @@ export function HttpForm({
                                                     </div>
                             <div>
                                 <Input placeholder={`https://example.com/users/{{httpResponse.data.id}}`} name="Endpoint" state={formdata.Endpoint} statesetter={(a)=>{
-                                     setformdata((prev:any)=>{
+                                     setformdata((prev)=>{
                                          return {...prev , Endpoint : a }
                                      })
-                                     setErrors((prev:any)=>({
+                                     setErrors((prev)=>({
                                         ...prev,
                                         Endpoint:""
                                     }));
@@ -158,7 +167,7 @@ export function HttpForm({
                             <div>
                                 <BigInput 
                                       placeholder={`{\n    "Authorization": "Bearer {{login.body.token}}",\n    "X-User": "{{Trigger-manually.data.name}}",\n }`} 
-                                     name="Request headers" state={formdata.headers} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , headers :a}})}}></BigInput> 
+                                     name="Request headers" state={formdata.headers} statesetter={(a)=>{setformdata((prev)=>{return {...prev , headers :a}})}}></BigInput> 
                                      {errors.headers&&
                                         <div className="mt-1 text-xs text-red-500">
                                         {errors.headers}
@@ -169,7 +178,7 @@ export function HttpForm({
                             <div>
                                 <BigInput 
                                       placeholder={`{\n    "user Id": "{{httpResponse.data.id}}"",\n    "name": "{{httpResponse.data.name}}",\n    "items": "{{httpResponse.data.items}}"\n}`} 
-                                     name="RequestBody" state={formdata.RequestBody} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , RequestBody :a}})}}></BigInput> 
+                                     name="RequestBody" state={formdata.RequestBody} statesetter={(a)=>{setformdata((prev)=>{return {...prev , RequestBody :a}})}}></BigInput> 
                                     {errors.RequestBody&&
                                         <div className="mt-1 text-xs text-red-500">
                                         {errors.RequestBody}
@@ -196,15 +205,15 @@ export function HttpForm({
                         if(!validateForm()){
                            return 
                         }
-                        setNodes((prev:any)=>{
-                                return prev.map((n:any)=>{
+                        setNodes((prev)=>{
+                                return prev.map((n)=>{
                                     if (n.id === formDetail.nodeid) {
                                         return { ...n , data : { ...n.data , metadata : formdata }}
                                     }
                                     return n ;
                                 })
                         })
-                        setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
+                        setformDetail((a)=>{ return {nodeid:"" , name:"",open:false } })
                         setformdata(initialValue)
                     }} className="h-8 w-30 transition-all duration-50 active:scale-95">
                         <SecondarybuttonNegative>
@@ -214,7 +223,7 @@ export function HttpForm({
                         </SecondarybuttonNegative>
                     </div>
                     <div onClick={()=>{
-                        setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
+                        setformDetail((a)=>{ return {nodeid:"" , name:"",open:false } })
                         setformdata(initialValue)
                     }} className="h-8 w-30 transition-all duration-50 active:scale-95 ">
                         <Secondarybutton>

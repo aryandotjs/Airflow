@@ -1,10 +1,12 @@
 "use client";
 
+import { Dispatch, SetStateAction } from "react";
+
 export const AuthInput = ({label, placeholder,state, statesetter, type = "text"}: {
     label: string;
     placeholder: string;
-    state:any,
-    statesetter:any;
+    state:string,
+    statesetter:(a:string)=>void;
     type?: "text" | "password"
 }) => {
     return <div className="mt-3 gap-2">

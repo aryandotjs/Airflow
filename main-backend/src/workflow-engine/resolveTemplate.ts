@@ -12,12 +12,12 @@ export function ResolveTemplate(text: string, webhookbody: Record<string, unknow
             const part = text.slice(start + 2, endpoint)
             const words = part.split(".")
 
-            let Valueobj: any = {
+            let Valueobj: unknown = {
                 ...webhookbody
             }
             for (let i = 0; i < words.length; i++) {
-                if (Valueobj && Valueobj[words[i]] !== undefined) {
-                    Valueobj = Valueobj[words[i]]
+                if (Valueobj !== null && typeof Valueobj === "object" && words[i] in Valueobj) {
+                    Valueobj = (Valueobj as Record<string, unknown>)[words[i]]
                 } else {
                     Valueobj = undefined;
                     break;

@@ -9,4 +9,4 @@ export interface ExecutorCredential {
 }
 
 
-export type Executor = (params: { data: Record<string, any>, context: WorkflowContext, credential?: ExecutorCredential | null }) => Promise<unknown>
+export type Executor = (params: { data: unknown, context: WorkflowContext, credential?: ExecutorCredential | null }) => Promise<unknown>

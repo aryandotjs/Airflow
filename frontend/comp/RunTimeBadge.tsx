@@ -1,12 +1,15 @@
 import { useMemo } from "react";
 
 interface TimestampProps {
-  isoString: string;
+  isoString: string|null;
 }
 
 export function DateConverter({ isoString }: TimestampProps) {
+  if (!isoString) {
+     return "running"
+  }
   const relativeTime = useMemo(() => {
-    const start = Date.parse(isoString) as any;
+    const start = Date.parse(isoString);
     const now = Date.now();
     const diffInSeconds = Math.floor((now - start) / 1000);
     if (diffInSeconds < 60) return "just now";

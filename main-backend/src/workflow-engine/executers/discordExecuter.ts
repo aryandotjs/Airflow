@@ -1,25 +1,25 @@
 import axios from "axios";
 import { ResolveTemplate } from "../resolveTemplate.js";
 import { WorkflowContext } from "../contex.js";
+import { DiscordNodeData } from "../../types/node.js";
 
 export async function DiscordExecuter({
     data,
     context
 }: {
-    data: Record<string, any>,
+    data: unknown,
     context: WorkflowContext
 }) {
-
+    const discordData = data as DiscordNodeData
     console.log("Discord executor running");
-
     try {
         const message = ResolveTemplate(
-            data.content,
+            discordData.content,
             context
         )
-        const response = await axios.post(data.webhookUrl, {
+        const response = await axios.post(discordData.webhookUrl, {
             content: message,
-            username: data.username || "automation bot"
+            username: discordData.username || "automation bot"
         })
 
         return {
@@ -28,10 +28,10 @@ export async function DiscordExecuter({
         }
     } catch (err: unknown) {
         console.log(err)
-        if (err instanceof Error && (
-            (err as any).code === "ENOTFOUND" ||
-            (err as any).response?.status === 404 ||
-            (err as any).response?.status === 401
+        if (axios.isAxiosError(err) && (
+            err.code === "ENOTFOUND" ||
+            err.response?.status === 404 ||
+            err.response?.status === 401
         )) {
 
             throw new Error("Discord webhook is invalid or no longer exists")

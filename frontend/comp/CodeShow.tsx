@@ -3,7 +3,10 @@ import { Copy } from "./svg/allsvg";
 
 
 
-export function CodeShow({header , code,error}:{header:string , code :JSON,error:boolean}){
+export function CodeShow({header , code,error}:{header:string , code :unknown,error:boolean}){
+    if (!code) {
+       return ""  
+    }
   return <div>
      <div className="mt-2 flex flex-col gap-2 ">
             <div className="text-sm lg:text-lg font-semibold tracking-wide dark:text-[#F0F0F0] text-[#191919]">

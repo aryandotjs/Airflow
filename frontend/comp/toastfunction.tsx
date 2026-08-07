@@ -1,11 +1,17 @@
-import { useToast } from "./toastprovider";
+import { ToastType, useToast } from "./toastprovider";
+
+export interface showToastDataType {
+  isError: boolean;
+  message: string;
+  submessage?: string;
+}
 
 export default function useToastSetterRemover(){
     const { setToasts} = useToast()
-    function showToast(data:any){
-        let id : any;
+    function showToast(data:showToastDataType){
+        let id : number ;
 
-            setToasts((prev:any) => {
+            setToasts((prev) => {
                 id = prev.length > 0 
                     ? prev[prev.length - 1].id + 1
                     : 0;
@@ -14,17 +20,17 @@ export default function useToastSetterRemover(){
                     {
                         id,
                         isError: data.isError,
-                        isbig: data.submsg ? true : false,
-                        message: data.msg,
-                        submessage: data.submsg ? data.submsg : "" ,
+                        isbig: data.submessage ? true : false,
+                        message: data.message,
+                        submessage: data.submessage ? data.submessage : "" ,
                         show: false
                     }
                 ];
             });
 
             setTimeout(() => {
-                setToasts((prev:any) =>
-                    prev.map((toast:any) =>
+                setToasts((prev) =>
+                    prev.map((toast) =>
                         toast.id === id
                             ? { ...toast, show:true }
                             : toast
@@ -33,10 +39,10 @@ export default function useToastSetterRemover(){
             }, 10);
            
 
-            if (data.submsg) {
+            if (data.submessage) {
                 setTimeout(() => {
-                setToasts((prev:any) => {
-                    return prev.map((toast:any) =>
+                setToasts((prev) => {
+                    return prev.map((toast) =>
                         toast.id === id
                             ? { ...toast, show:false }
                             : toast
@@ -44,17 +50,17 @@ export default function useToastSetterRemover(){
                 });
 
                 setTimeout(() => {
-                     setToasts((prev:any) =>
-                    prev.filter((toast:any) => toast.id !== id));
+                     setToasts((prev) =>
+                    prev.filter((toast) => toast.id !== id));
                 }, 300);
                
 
             }, 15000);
             }
-            if (!data.submsg) {
+            if (!data.submessage) {
                 setTimeout(() => {
-                setToasts((prev:any) => {
-                    return prev.map((toast:any) =>
+                setToasts((prev) => {
+                    return prev.map((toast) =>
                         toast.id === id
                             ? { ...toast, show:false }
                             : toast
@@ -62,8 +68,8 @@ export default function useToastSetterRemover(){
                 });
 
                 setTimeout(() => {
-                     setToasts((prev:any) =>
-                    prev.filter((toast:any) => toast.id !== id));
+                     setToasts((prev) =>
+                    prev.filter((toast) => toast.id !== id));
                 }, 300);
                
 

@@ -1,61 +1,98 @@
 "use client"
-import { ReactFlow , Node, Background, Controls, Edge, useNodesState, useEdgesState, Connection, addEdge, ReactFlowProvider } from "@xyflow/react";
+import { ReactFlow , Node, Background, Controls, Edge, useNodesState, useEdgesState, Connection, addEdge } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
+import {  useCallback, useEffect, useState } from "react";
 import RightsideBar from "./rightsidebar";
 import Trigger, { Action } from "./trigger";
 import { Add, Cross, Prev, Save, Webhook } from "./svg/allsvg";
-import axios from "axios";
+import { AxiosError } from "axios";
 import AiForm from "./forms/AiForm";
-import { Addform } from "./addform";
-import { Input } from "./buttons/input";
-import { BigInput } from "./biggerinput";
-import { OpenerButton } from "./buttons/openerButton";
-import { OpenOptions } from "./openoptions";
-import { Opneframe } from "./openframe";
-import { MainButton } from "./buttons/mainbutton";
-import { Secondarybutton } from "./buttons/secondarybutton";
 import { ThemeProvider } from "./theme-provider";
 import { useRouter } from "next/navigation";
-import { metadata } from "@/app/layout";
-import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative";
 import DiscordForm from "./forms/discordform";
-import { GoogleSheetTriggerForm } from "./forms/googlesheets";
-import { GoogleFormTriggerForm } from "./forms/googleform";
-import { NotionTriggerForm } from "./forms/notionform";
-import { useToast } from "./toastprovider";
+// import { GoogleSheetTriggerForm } from "./forms/googlesheets";
+// import { GoogleFormTriggerForm } from "./forms/googleform";
+// import { NotionTriggerForm } from "./forms/notionform";
 import useToastSetterRemover from "./toastfunction";
 import { HttpForm } from "./forms/httpfrom";
 import { ManualTriggerForm } from "./forms/manualtriggerfrom";
 import { WebhookForm } from "./forms/webhookform";
 import { api } from "@/lib/api";
 
-// export let InitialNodes : Node<{name :string , metadata :string , onDelete : (id:any)=>void}>[] = [{
-//     id : '1',
-//     position : { x : 340 , y: 340},
-//     type : "trigger",
-//     data : {
-//        name : "Aryan" ,
-//        metadata : "",
-//        onDelete : (id)=>{}
-//     }
-// }]
+export type Workflow = {
 
+    id:string
+    name:string
+    runs:number
+    status:"ACTIVE" | "PAUSED" | "DRAFT"
+    userId:string
+    createdAt:string
+    updatedAt:string
+    nodes:WorkflowNode[]
+    connections:Workflowconnection[]
+}
+ export type Workflowconnection =  {
+        id: string
+        workflowId: string
+        fromNodeId: string
+        toNodeId: string
+        fromOutput: string
+        toInput: string
+        createdAt: string
+        updatedAt: string
+    }
 
+export type WorkflowNode = {
+    id:string
+    workflowId:string
+    name:string
+    type:string
+    position:{
+        x:number
+        y:number
+    }
+    data: Record<string, any>
+    credentialId:string | null
+    createdAt:string
+    updatedAt:string
+}
+export type Credential = {
+   createdAt: string ,
+   id: string ,
+   name: string ,
+   type: string ,
+   updatedAt: string ,
+   userId: string ,
+   value: {
+       apikey: string
+   } 
+}
+
+export type structuredNodes = {
+     id: string;
+    name: string;
+    position: {
+        x: number;
+        y: number;
+    };
+    type: string;
+    metadata: Record<string, unknown>;
+}
+export type formdetailtype = {
+  name :string , open : boolean , nodeid : string
+}
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
 export const  nodeTypes  = {
     "trigger": Trigger,
     "action" : Action
 }
-type workflow = {
-    name :string
-}
+
 export const InitialNodes : Node [] = []
 export const InitialEdges : Edge [] = []
 
-export function WorkflowContent({workflowid}:{workflowid:any}){
-    const [formDetail, setformDetail] = useState<{name :string , open : boolean}>({name :"" , open : false});
+export function WorkflowContent({workflowid}:{workflowid:string}){
+    const [formDetail, setformDetail] = useState<formdetailtype>({name :"", open : false, nodeid:" "});
 
     const [refreshagain,setrefreshagain] = useState(false)
     const [saveloading,setsaveloading] = useState(false)
@@ -67,35 +104,35 @@ export function WorkflowContent({workflowid}:{workflowid:any}){
                  setEdges((prevEdges) => addEdge(connection, prevEdges));
         }, [setEdges]);
     
-    const [ wholeworkflow , setwholeworkflow ] = useState<workflow|null>()
+    const [ wholeworkflow , setwholeworkflow ] = useState<Workflow|null>()
     const  showToast = useToastSetterRemover()
     useEffect(() => {
         api
-            .get(`${BACKEND_URL}/api/v1/workflow/${workflowid}`)
-            .then((a: any) => {
-            setwholeworkflow(a.data)
-            const structuredNodes = a.data.nodes.map((n: any) => ({
-                id: n.id,
-                position: n.position,
-                type: n.type,
-                data: {
-                name: n.name,
-                metadata : n.data,
-                openForm : setformDetail
-                },
-            }));
-            const structuredEdges = a.data.connections.map((c: any) => ({
-                source:c.fromNodeId,
-                target:c.toNodeId,
-                id: `xy-edge__${c.fromNodeId}-${c.toNodeId}`
-            }));
+            .get<Workflow>(`${BACKEND_URL}/api/v1/workflow/${workflowid}`)
+            .then((a) => {
+                setwholeworkflow(a.data)
+                const structuredNodes = a.data.nodes.map((n: WorkflowNode) => ({
+                    id: n.id,
+                    position: n.position,
+                    type: n.type,
+                    data: {
+                    name: n.name,
+                    metadata : n.data,
+                    setformDetail,
+                    },
+                }));
+                const structuredEdges = a.data.connections.map((c: Workflowconnection) => ({
+                    source:c.fromNodeId,
+                    target:c.toNodeId,
+                    id: `xy-edge__${c.fromNodeId}-${c.toNodeId}`
+                }));
+                setNodes(structuredNodes);
+                setEdges(structuredEdges)
+            }).catch((err:unknown)=>{
 
-            setNodes(structuredNodes);
-            setEdges(structuredEdges)
-            }).catch((err:any)=>{
-
+                const error = err as AxiosError<{message:string}>;
                 showToast({
-                    msg: err.response?.data?.message ?? "Failed to load workflow",
+                    message: error.response?.data?.message ?? "Failed to load workflow",
                     isError:true
                 });
 
@@ -128,18 +165,19 @@ const Router = useRouter();
             <button onClick={async()=>{
                 try {
                     setsaveloading(true)
+                    console.log(nodes,edges,"we wallaah ")
                     const response = await api.put(`${BACKEND_URL}/api/v1/workflow/${workflowid}`,{
                            nodes , edges
                     })
                     setsaveloading(false)
 
-                    showToast({msg :response.data.msg,isError:false})
+                    showToast({message :response.data.message,isError:false})
                     setrefreshagain((a)=>!a)
-                } catch(err:any){
+                } catch(err:unknown){
                     setsaveloading(false)
-
+                    const error = err as AxiosError<{message:string}>
                     showToast({
-                        msg: err.response?.data?.message ?? "Failed to save workflow",
+                        message: error.response?.data?.message ?? "Failed to save workflow",
                         isError:true
                     })
                 }
@@ -170,35 +208,31 @@ const Router = useRouter();
                     <Controls/>
             </ReactFlow>
             <DiscordForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></DiscordForm>
-            <GoogleSheetTriggerForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></GoogleSheetTriggerForm>
-            <GoogleFormTriggerForm nodes={nodes} setNodes={setNodes}  setformDetail={setformDetail} formDetail={formDetail} ></GoogleFormTriggerForm>
-            <NotionTriggerForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></NotionTriggerForm>
             <HttpForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></HttpForm>
             <ManualTriggerForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></ManualTriggerForm>
             <WebhookForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></WebhookForm>
 
-            <AiForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} AiName="Anthropic" AiType={"CLAUDE"}></AiForm>
             <AiForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} AiName="Gemini" AiType={"GEMINI"}></AiForm>
-            <AiForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail}  AiName="OpenAi" AiType={"CHATGPT"}></AiForm>
+            {/* <AiForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} AiName="Anthropic" AiType={"CLAUDE"}></AiForm> */}
+            {/* <NotionTriggerForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></NotionTriggerForm> */}
+            {/* <GoogleFormTriggerForm nodes={nodes} setNodes={setNodes}  setformDetail={setformDetail} formDetail={formDetail} ></GoogleFormTriggerForm> */}
+            {/* <GoogleSheetTriggerForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail} ></GoogleSheetTriggerForm> */}
+            {/* <AiForm nodes={nodes} setNodes={setNodes} setformDetail={setformDetail} formDetail={formDetail}  AiName="OpenAi" AiType={"CHATGPT"}></AiForm> */}
     </div>
 }
 
  
 export const UseCred =()=>{
-    const [creds, setcreds] = useState([]);
+    const [creds, setcreds] = useState<Credential[]|null>([]);
     const showToast = useToastSetterRemover()
     
     useEffect(()=>{
-       api.get(`${BACKEND_URL}/api/v1/credentials/all`, {
-            // headers: {
-            //     "authorization": `Bearer ${localStorage.getItem("token")}`
-            // }
-        }).then(res => {
-                setcreds(res.data.credential.sort((a:any,b:any)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
-        }).catch((err:any)=>{
-
+       api.get(`${BACKEND_URL}/api/v1/credentials/all`).then(res => {
+                setcreds(res.data.credential.sort((a:Credential,b:Credential)=> new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
+        }).catch((err:unknown)=>{
+            const error = err as AxiosError<{message:string}>
             showToast({
-                msg: err.response?.data?.message ?? "Failed to load credentials",
+                message: error.response?.data?.message ?? "Failed to load credentials",
                 isError:true
             });
 

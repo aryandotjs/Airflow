@@ -2,12 +2,12 @@ import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from
 import { OpenerButton } from "./buttons/openerButton"
 import { OpenOptions } from "./openoptions"
 
-export function OpenerBoxWithOptions({options ,simplefilter ,setsimplefilter,children }:{children? :ReactNode, options?:string[],simplefilter : string ,setsimplefilter : Dispatch<SetStateAction<any>>}){
+export function OpenerBoxWithOptions({options ,simplefilter ,setsimplefilter,children }:{children? :ReactNode, options?:string[],simplefilter : string ,setsimplefilter : (a:string)=>void }){
     const [open , setopen] = useState(false) 
         const openmodalref = useRef<HTMLDivElement>(null)
         useEffect(()=>{
-                const clickeventfunc = (a:any) => {
-                        if (openmodalref.current && !openmodalref.current.contains(a.target)) {
+                const clickeventfunc = (a:MouseEvent) => {
+                        if (openmodalref.current && !openmodalref.current.contains(a.target as Node)) {
                         setopen(false)
                         }
                 }

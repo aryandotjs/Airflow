@@ -35,7 +35,7 @@
 //     const { Allnodes } = req.body
 //     const name = name1[Math.floor(Math.random() * 10)] + "-" + name1[Math.floor(Math.random() * 10)]
 //     try {
-//         const Node = await prisma.node.createMany({
+//         const Node = await prisma.node.createManny({
 //             data: Allnodes
 //         })
 //         res.json({ msg: 'node created', Node })

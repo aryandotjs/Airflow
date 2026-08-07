@@ -1,21 +1,11 @@
 import { prisma } from "../db/index.js";
+import { WorkflowNode } from "../types/node.js";
 import type { WorkflowContext } from "./contex.js";
 import { getExecuter } from "./executorRegistry.js";
 
-interface workflowNode {
-    id: string;
-    name: string;
-    type: string;
-    data: Record<string, any>;
-    credential?: {
-        id: string;
-        name: string;
-        type: string;
-        value: unknown;
-    } | null;
-}
 
-export async function executeNode(node: workflowNode, context: WorkflowContext) {
+
+export async function executeNode(node: WorkflowNode, context: WorkflowContext) {
 
     const executer = getExecuter((node.name).toUpperCase())
 
@@ -30,10 +20,15 @@ export async function executeNode(node: workflowNode, context: WorkflowContext) 
         context,
         credential: node.credential
     })
+    const variableName =
+        typeof node.data.variableName === "string"
+            ? node.data.variableName
+            : node.name;
+
 
     return {
         ...context,
-        [node.data.variableName || node.name]: output
+        [variableName || node.name]: output
     };
 
 }

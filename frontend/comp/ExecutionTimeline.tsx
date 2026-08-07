@@ -1,7 +1,12 @@
-export function ExecutionTimeline({ steps }: { steps: any[] }) {
+import { ExecutionStep } from "./executions";
+
+export function ExecutionTimeline({ steps }: { steps: ExecutionStep[] }) {
+    if (!steps) {
+        return ""
+    }
     return (
         <div className="flex flex-col gap-3">
-            {steps.map((step: any, index: number) => (
+            {steps.map((step: ExecutionStep, index: number) => (
                 <div key={index} className="flex items-center justify-between rounded-xl border border-[#EEEEEE] dark:border-[#191B1E] px-4 py-3">
                     <div className="flex items-center gap-3">
                         <div

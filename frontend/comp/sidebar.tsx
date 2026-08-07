@@ -7,9 +7,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 
+export type me = {
+        email: string
+        name: string
+}
 
 export function Sidebar(){
-     const [me,setme] = useState(null)
+     const [me,setme] = useState<me|null>(null)
      const Router = useRouter()
      useEffect(()=>{
          api.get("/api/v1/user/me").then((a)=>{
@@ -19,7 +23,7 @@ export function Sidebar(){
      
      return <div className="transition-w ease-in-out duration-100  border-r w-15 p-1 lg:w-60 h-full border-r-brand-border dark:border-r-dark-border  max-w-62   lg:px-4  normal font-semibold flex flex-col justify-between  gap-5 pb-32">
         <div className="w-full ">
-            <Me me={me ?? {}}></Me>
+            <Me me={me}></Me>
         </div>
         <div className="flex flex-col gap-2 flex-2">
            <MainButtonforsidebar onclick={()=> Router.push("/workflows")} size="small"  name={"Workflows"}>

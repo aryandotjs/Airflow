@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
-import { UseCred } from "../ReactWorkflow"
-import { Addform } from "../addform"
+import {  formdetailtype, UseCred } from "../ReactWorkflow"
 import { Input } from "../buttons/input"
 import { OpenerButton } from "../buttons/openerButton"
 import { OpenOptions } from "../openoptions"
@@ -10,26 +9,38 @@ import { BigInput } from "../biggerinput"
 import { Copy, Cross } from "../svg/allsvg"
 import { SecondarybuttonNegative } from "../buttons/secondarybuttonnegative"
 import { Secondarybutton } from "../buttons/secondarybutton"
-const aimap : any = {
+import { Node } from "@xyflow/react"
+const aimap : Record<string,string> = {
     "Anthropic" : "claude",
     "Gemini" : "gemini",
     "OpenAi" : "chatgpt"
 }
-const initialValue = {variableName:"",Credential:{name:"",id:""},SystemPrompt:"",UserPrompt:""}
 
-export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,AiType}:{nodes:any,setNodes:any,formDetail:any,setformDetail:Dispatch<SetStateAction<any>>,AiName:string,AiType:string}){
+type AiForm = {
+    variableName?:string,
+    Credential:{
+        name:string,
+        id:string
+    },
+    SystemPrompt?:string,
+    UserPrompt:string
+}
+const initialValue = {variableName:"",
+    Credential:{name:"",id:""},SystemPrompt:"",UserPrompt:""}
+
+export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,AiType}:{nodes:Node[],setNodes:Dispatch<SetStateAction<Node[]>>,formDetail:formdetailtype,setformDetail:Dispatch<SetStateAction<formdetailtype>>,AiName:string,AiType:string}){
     const {creds} = UseCred()
-    const newcreds = creds.map((a:any)=> {
+    const newcreds = creds?.map((a)=> {
          return {
             id : a.id,
             name : a.name,
             type : a.type
          }
     })
-    const [formdata,setformdata] = useState<{variableName:string,Credential:{name:string,id:string},SystemPrompt?:string,UserPrompt:string}>(initialValue)
+    const [formdata,setformdata] = useState<AiForm>(initialValue)
      useEffect(()=>{
             if (nodes.length > 0) {
-                const selectednodemetadata = nodes.filter((a:any)=>{return  a.id === formDetail.nodeid})[0]?.data.metadata
+                const selectednodemetadata = nodes.filter((a)=>{return  a.id === formDetail.nodeid})[0]?.data.metadata
                 if(selectednodemetadata){
                     setformdata({...initialValue,...selectednodemetadata})
                 }else{
@@ -37,11 +48,11 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
             }
             }
         },[formDetail.nodeid,nodes.length])
-    const [open,setopen] = useState<any>(false) 
+    const [open,setopen] = useState<boolean>(false) 
 
-    const [errors, setErrors] = useState<any>({});
+    const [errors, setErrors] = useState<Record<string,string>>({});
         function validateForm(){
-            const newError:any = {}
+            const newError:Record<string,string> = {}
             if (!formdata.UserPrompt?.trim()) {
                 newError.UserPrompt = "UserPrompt is required"
             }
@@ -58,8 +69,8 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                     return;
                 }
     
-                const clickeventfunc = (a:any) => {
-                    if (openmodalrefwebhook.current && !openmodalrefwebhook.current.contains(a.target)) {
+                const clickeventfunc = (a:MouseEvent) => {
+                    if (openmodalrefwebhook.current && !openmodalrefwebhook.current.contains(a.target as globalThis.Node)) {
                             setformDetail({nodeid:"" , name:"",open:false } )
                     }
                 }
@@ -83,14 +94,14 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                             </div>
 
                          <div onClick={()=>{
-                                setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
+                                setformDetail(()=>{ return {nodeid:"" , name:"",open:false } })
                                 setformdata(initialValue)
                                 }} className="h-6 w-6 rounded-md flex items-center justify-center  hover:bg-[#E9E9E9] hover:dark:bg-[#151619]"><Cross size="16"></Cross></div>
                     </div>
                       <div className="">
                      <div className="my-6 flex flex-col gap-4 w-70 md:w-115 overflow-y-scroll h-100 p-2 ">
                         <div>
-                            <Input placeholder={`my-${AiName}-variable`} name="Variable Name" state={formdata.variableName} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , variableName :a}})}}></Input>
+                            <Input placeholder={`my-${AiName}-variable`} name="Variable Name" state={formdata.variableName?? ""} statesetter={(a)=>{setformdata((prev)=>{return {...prev , variableName :a}})}}></Input>
                             <div className="mt-1 text-xs">{`Name of the variable to store the response :{{${AiName}.text}}`}</div>
                         </div>
                         <div className="w-full flex flex-col gap-1 text-sm font-medium">
@@ -112,17 +123,17 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
 
                                                 } open={open} setopen={setopen}></OpenerButton>
                                         <div className={`absolute w-full top-7 transition duration-100 ${open ? "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
-                                            <OpenOptions simplefilter={formdata.Credential?.name??""} open={open} setopen={setopen} setsimplefilter={(a)=>{setformdata((prev:any)=>{return {...prev , AiCredentials :a}})}}>
+                                            <OpenOptions simplefilter={formdata.Credential?.name??""} open={open} setopen={setopen} setsimplefilter={(a)=>{setformdata((prev)=>{return {...prev , AiCredentials :a}})}}>
                                                     <Opneframe>
-                                                            {newcreds.map((z:any,index)=>{
+                                                            {newcreds?.map((z,index)=>{
                                                                 if (z.type !== AiType) {
                                                                     return
                                                                 }
                                                                 return <div 
                                                                     key={index}
                                                                     onClick={()=>{
-                                                                        setformdata((prev:any)=>{return {...prev , Credential :z}})
-                                                                        setErrors((Prev:any)=>({...Prev,Credential:""}))
+                                                                        setformdata((prev)=>{return {...prev , Credential :z}})
+                                                                        setErrors((Prev)=>({...Prev,Credential:""}))
                                                                          setopen(false)
                                                                     }}
                                                                     className="m-1.5 ">
@@ -152,8 +163,8 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                         </div>
                         <div>
                            <BigInput placeholder="Act as a discort admin ...." name="User Prompt (Optional)" state={formdata.UserPrompt?? ""} statesetter={(a)=>{ 
-                            setformdata((prev:any)=>{return {...prev , UserPrompt :a}})
-                            setErrors((Prev:any)=>({...Prev,UserPrompt:""}))
+                            setformdata((prev)=>{return {...prev , UserPrompt :a}})
+                            setErrors((Prev)=>({...Prev,UserPrompt:""}))
 
                              }}></BigInput> 
                             {errors.UserPrompt&&
@@ -163,7 +174,7 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                            <div className=" text-xs">{"Sets the behavior of the assistant. Use {{variables}} for simple values or {{json variable}} to stringify objects"}</div>
                         </div>
                         <div>
-                           <BigInput placeholder="Summerize this text : {{jsonhttpreponse.data}}" name="System Prompt (Optional)" state={formdata.SystemPrompt} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , SystemPrompt :a}})}}></BigInput> 
+                           <BigInput placeholder="Summerize this text : {{jsonhttpreponse.data}}" name="System Prompt (Optional)" state={formdata.SystemPrompt ?? ""} statesetter={(a)=>{setformdata((prev)=>{return {...prev , SystemPrompt :a}})}}></BigInput> 
                            <div className=" text-xs">{"The prompt to send to the AI.Use{{variables}} for simple values or {{json variables}} to stringify objects"}</div>
                         </div>
                          <div className="flex gap-1 items-center">
@@ -185,15 +196,15 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                             if (!validateForm()) {
                                 return;
                             }
-                             setNodes((prev:any)=>{
-                                     return prev.map((n:any)=>{
+                             setNodes((prev)=>{
+                                     return prev.map((n)=>{
                                            if (n.id === formDetail.nodeid) {
                                               return { ...n , data : { ...n.data , metadata : formdata }}
                                            }
                                            return n ;
                                      })
                                 })
-                                setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
+                                setformDetail(()=>{ return {nodeid:"" , name:"",open:false } })
                                 setformdata(initialValue)
                         }} className="h-8 w-30 transition-all duration-50 active:scale-95">
                             <SecondarybuttonNegative>
@@ -203,7 +214,7 @@ export default function AiForm({nodes,setNodes,formDetail,setformDetail,AiName,A
                             </SecondarybuttonNegative>
                         </div>
                         <div onClick={()=>{
-                                    setformDetail((a:any)=>{ return {nodeid : "" , name:"",open:false } })
+                                    setformDetail(()=>{ return {nodeid : "" , name:"",open:false } })
                                     setformdata(initialValue)
                                     }} className="h-8 w-30 transition-all duration-50 active:scale-95 ">
                             <Secondarybutton>

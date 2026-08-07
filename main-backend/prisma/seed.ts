@@ -1,9 +1,9 @@
 // import { prisma } from "../src/db/index";
 // async function main() {
 
-//     await prisma.user.deleteMany({});
-//     await prisma.availableTrigger.deleteMany({});
-//     await prisma.availableAction.deleteMany({});
+//     await prisma.user.deleteManny({});
+//     await prisma.availableTrigger.deleteManny({});
+//     await prisma.availableAction.deleteManny({});
 
 //     await prisma.availableTrigger.create({
 //         data: {

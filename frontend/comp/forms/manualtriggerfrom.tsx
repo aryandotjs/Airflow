@@ -4,16 +4,18 @@ import { BigInput } from "../biggerinput"
 import { SecondarybuttonNegative } from "../buttons/secondarybuttonnegative"
 import { Secondarybutton } from "../buttons/secondarybutton"
 import { Copy, Cross } from "../svg/allsvg"
+import { Node } from "@xyflow/react"
+import { formdetailtype } from "../ReactWorkflow"
 export function ManualTriggerForm({
     nodes,
     setNodes,
-  setformDetail,
-  formDetail,
+    setformDetail,
+    formDetail,
 }: {
-     nodes:any,
-    setNodes:any,
-  setformDetail: Dispatch<SetStateAction<any>>;
-  formDetail: any;
+    nodes:Node[],
+    setNodes:Dispatch<SetStateAction<Node[]>>,
+    setformDetail: Dispatch<SetStateAction<formdetailtype>>;
+    formDetail: formdetailtype;
 }) {
 
 const initialValue = {data:""}
@@ -22,7 +24,7 @@ const initialValue = {data:""}
 
         useEffect(()=>{
             if (nodes.length > 0) {
-                const selectednodemetadata = nodes.filter((a:any)=>{ return a.id === formDetail.nodeid})[0]?.data.metadata
+                const selectednodemetadata = nodes.filter((a)=>{ return a.id === formDetail.nodeid})[0]?.data.metadata
                 if(selectednodemetadata){
                     setformdata({...initialValue , ...selectednodemetadata})
                 }else{
@@ -32,9 +34,9 @@ const initialValue = {data:""}
         },[formDetail.nodeid,nodes.length])
 
 
-     const [errors, setErrors] = useState<any>({});
+     const [errors, setErrors] = useState<Record<string,string>>({});
         function validateForm(){
-            const newError:any = {}
+            const newError:Record<string,string> = {}
            
             if (formdata.data?.trim()) {
                 try {
@@ -54,8 +56,8 @@ const initialValue = {data:""}
                 return;
             }
 
-            const clickeventfunc = (a:any) => {
-                if (openmodalrefmanual.current && !openmodalrefmanual.current.contains(a.target)) {
+            const clickeventfunc = (a:MouseEvent) => {
+                if (openmodalrefmanual.current && !openmodalrefmanual.current.contains(a.target as globalThis.Node)) {
                         setformDetail({nodeid:"" , name:"",open:false } )
                 }
             }
@@ -75,7 +77,7 @@ const initialValue = {data:""}
                               {/* <img className='h-6' src={"/actiontriggerimages/Trigger-manually.png"}></img> */}
                      </div>
                      <div onClick={()=>{
-                        setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
+                        setformDetail((a)=>{ return {nodeid:"" , name:"",open:false } })
                      }} className="h-6 w-6 rounded-md flex items-center justify-center  hover:bg-[#E9E9E9] hover:dark:bg-[#151619]"><Cross size="16"></Cross></div>
                 </div>
                 <div className="my-1 text-xs flex flex-col gap-6 w-70 md:w-115 overflow-y-scroll max-h-100 ">
@@ -84,7 +86,7 @@ const initialValue = {data:""}
                 <div  className="my-6 flex flex-col gap-6 w-70 md:w-115 overflow-y-scroll max-h-70 p-2 ">
                     <div>
                         <BigInput  placeholder={`{\n   "user Id" : "123",\n    "name": "Aryan",\n    "items": "AI automation"\n}`} 
-                        name="Trigger Data" state={formdata.data} statesetter={(a)=>{setformdata((prev:any)=>{return {...prev , data :a}})}}/>
+                        name="Trigger Data" state={formdata.data} statesetter={(a)=>{setformdata((prev)=>{return {...prev , data :a}})}}/>
                          {errors.data&&
                                         <div className="mt-1 text-xs text-red-500">
                                         {errors.data}
@@ -112,15 +114,15 @@ const initialValue = {data:""}
                         if (!validateForm()) {
                             return
                         }
-                        setNodes((prev:any)=>{
-                                return prev.map((n:any)=>{
+                        setNodes((prev)=>{
+                                return prev.map((n)=>{
                                     if (n.id === formDetail.nodeid) {
                                         return { ...n , data : { ...n.data , metadata : formdata}}
                                     }
                                     return n ;
                                 })
                         })
-                        setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
+                        setformDetail((a)=>{ return {nodeid:"" , name:"",open:false } })
                         setformdata(initialValue)
                     }} className="h-8 w-30 transition-all duration-50 active:scale-95">
                         <SecondarybuttonNegative>
@@ -130,7 +132,7 @@ const initialValue = {data:""}
                         </SecondarybuttonNegative>
                     </div>
                     <div onClick={()=>{
-                        setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
+                        setformDetail((a)=>{ return {nodeid:"" , name:"",open:false } })
                         setformdata(initialValue)
                     }} className="h-8 w-30 transition-all duration-50 active:scale-95 ">
                         <Secondarybutton>

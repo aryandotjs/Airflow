@@ -19,11 +19,11 @@
 
 // //     useEffect(()=>{
 // //         axios.get(`${BACKEND_URL}/api/v1/zap/available-triggers`)
-// //         .then((a:any)=>{
+// //         .then((a:ansy)=>{
 // //            setAvailableTriggers(a.data.availabletrigger) 
 // //         }) 
 // //         axios.get(`${BACKEND_URL}/api/v1/zap/available-actions`)
-// //         .then((a:any)=>{
+// //         .then((a:ansy)=>{
 // //            setAvailableActions(a.data.availableaction) 
 // //         }) 
 // //     },[])
@@ -47,7 +47,7 @@
 // //         index: number;
 // //         availableActionId: string;
 // //         availableActionName: string;
-// //         metadata: any;
+// //         metadata: ansy;
 // //         image : string
 // //     }[]>([])
 
@@ -88,7 +88,7 @@
 // //          }}></ZapCell>
 
 // //          <div>
-// //             {actionsSelected.map((b:any,index)=> {
+// //             {actionsSelected.map((b:anny,index)=> {
 // //                 return <div key={index} className="flex justify-center mt-2">
 // //                   <ZapCell image={b.image} name={b.availableActionName ? b.availableActionName : "Action"} index={b.index} onClick={()=>{
 // //                         setModelSelectedIndex(b.index)
@@ -109,7 +109,7 @@
 // //          </div>
 // //          <div>
 // //            {ModelSelectedIndex ? <Model index={ModelSelectedIndex} availableItems={ModelSelectedIndex == 1 ? AvailableTriggers : AvailableActions}
-// //             onSelect={(props : null | {name : string , id :string , metadata :any , image :string})=>{
+// //             onSelect={(props : null | {name : string , id :string , metadata :anny , image :string})=>{
 // //                  if (props === null) {
 // //                     setModelSelectedIndex(0)
 // //                     return ;
@@ -121,7 +121,7 @@
 // //                          image : props.image
 // //                       })
 // //                 }else{
-// //                     setactionsSelected((a:any)=>{
+// //                     setactionsSelected((a:anny)=>{
 // //                         let Allactions = [...actionsSelected]
 // //                         console.log(Allactions,"1")
 // //                         console.log(Allactions[ModelSelectedIndex - 2])
@@ -150,7 +150,7 @@
 // //     {
 // //     index :number ,
 // //     availableItems :{name : string , id : string , image :string }[] , 
-// //     onSelect :( props : null | { name: string; id: string; metadata: any; image :string} ) => void  
+// //     onSelect :( props : null | { name: string; id: string; metadata: anny; image :string} ) => void  
 // //     }
 // //     ){
         
@@ -207,7 +207,7 @@
 // // }
 
 
-// // function EmailSelector({setMetadata} : {setMetadata : (params:any)=>void}){
+// // function EmailSelector({setMetadata} : {setMetadata : (params:anny)=>void}){
 // //     const [email , setemail] = useState("")
 // //     const [body , setbody] = useState("")
 

@@ -2,42 +2,46 @@ import axios from "axios";
 import { ResolveTemplate } from "../resolveTemplate.js";
 import { ResolveObjectTemplate } from "../ResolveObjectTemplate.js";
 import type { WorkflowContext } from "../contex.js";
+import { HttpNodeData } from "../../types/node.js";
 
 export async function httpExecuter(
     {
         data,
         context
     }: {
-        data: Record<string, any>,
+        data: unknown,
         context: WorkflowContext
     }) {
     console.log("HTTP executor running");
-
+    const httpdata = data as HttpNodeData
     const endpoint = ResolveTemplate(
-        data.Endpoint || "",
+        String(httpdata.Endpoint || ""),
         context
     )
     const RequestBody = ResolveObjectTemplate(
-        data.RequestBody ? JSON.parse(data.RequestBody) : {},
+        httpdata.RequestBody ? JSON.parse(String(httpdata.RequestBody)) : {},
         context
     )
     const RequestHeader = ResolveObjectTemplate(
-        data.headers ? JSON.parse(data.headers) : {},
+        httpdata.headers ? JSON.parse(String(httpdata.headers)) : {},
         context
-    )
+    ) as Record<string, string>
     let result;
-    if (data.Method == "GET") {
+    if (httpdata.Method == "GET") {
         const response = await axios.get(endpoint, {
             headers: RequestHeader
         })
         result = await response.data
     }
 
-    if (data.Method == "POST") {
+    else if (httpdata.Method == "POST") {
         const response = await axios.post(endpoint, RequestBody, {
             headers: RequestHeader
         })
-        result = await response.data
+        result = response.data
+    }
+    else {
+        throw new Error("Unsupported HTTP method");
     }
 
     return { status: 200, body: result }

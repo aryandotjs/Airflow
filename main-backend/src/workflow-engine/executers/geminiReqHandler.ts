@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai"
+import { GenerateContentParameters, GoogleGenAI } from "@google/genai"
 
 interface geminiReqOptions {
     apiKey: string,
@@ -14,7 +14,7 @@ export async function geminiReqHandler({
 
     try {
         const ai = new GoogleGenAI({ apiKey: apiKey })
-        let args: any = {
+        let args: GenerateContentParameters = {
             model: "gemini-3.1-flash-lite",
             contents: [prompt]
         }

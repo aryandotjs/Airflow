@@ -6,31 +6,27 @@ import { Secondarybutton } from "../buttons/secondarybutton"
 import { Copy, Cross, DownArrow, Prev, UpArrow } from "../svg/allsvg"
 import axios from "axios"
 import VariablePicker from "../VariablePicker"
-import { UseCred } from "../ReactWorkflow"
+import {  formdetailtype, UseCred } from "../ReactWorkflow"
 import { OpenerButton } from "../buttons/openerButton"
 import { OpenOptions } from "../openoptions"
 import { Opneframe } from "../openframe"
 import { MainButton } from "../buttons/mainbutton"
+import { Node } from "@xyflow/react"
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{nodes:any,setNodes:any,setformDetail:Dispatch<SetStateAction<any>>,formDetail:any}){
+type discordForm = {variableName:string,webhookUrl:string,content:string,username:string}
+
+export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{nodes:Node[],setNodes:Dispatch<SetStateAction<Node[]>>,setformDetail:Dispatch<SetStateAction<formdetailtype>>,formDetail:formdetailtype}){
         const [variables,setVariables] = useState<string[]>([])
         const initialValue = {variableName:"",webhookUrl:"",content:"",username:""}
-        const [formdata,setformdata] = useState<{variableName:string,webhookUrl:string,content:string,username:string}>(initialValue)
+        const [formdata,setformdata] = useState<discordForm>(initialValue)
         
         const {creds} = UseCred()
-        
-        // useEffect(()=>{
-        //     axios.get(`${BACKEND_URL}/api/v1/test/variables`)
-        //     .then(res=>{
-        //         setVariables(res.data.variables)
-        //     })
-        // },[])
-        
+       
         useEffect(()=>{
             
             if (nodes.length > 0) {
-                const selectednodemetadata = nodes.filter((a:any)=>{ return a.id === formDetail.nodeid})[0]?.data.metadata
+                const selectednodemetadata = nodes.filter((a)=>{ return a.id === formDetail.nodeid})[0]?.data.metadata
                 if(selectednodemetadata){
                     setformdata({...initialValue , ...selectednodemetadata})
                 }else{
@@ -39,19 +35,19 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
             }
         },[formDetail.nodeid,nodes])
          
-        const [open,setopen] = useState<any>(false) 
+        const [open,setopen] = useState<boolean>(false) 
 
 
         function insertVariable(variable:string){
-            setformdata((prev:any)=>{
+            setformdata((prev)=>{
                    return {
                      ...prev , content : prev.content + `{{${variable}}}`
                    }
             })
         }
-        const [errors, setErrors] = useState<any>({});
+        const [errors, setErrors] = useState<Record<string,string>>({});
         function validateForm(){
-            const newError:any = {}
+            const newError:Record<string,string> = {}
             if (!formdata.webhookUrl?.trim()) {
                 newError.webhookUrl = "webhookUrl is required"
             }
@@ -63,17 +59,16 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
         }
 
 
-        const openmodalrefdiscord = useRef<HTMLDivElement>(null)
+        const openmodalrefdiscord = useRef<HTMLDivElement|null>(null)
              
              useEffect(()=>{
-                console.log(" man see")
                     if (formDetail.name !== "discord") {
                         return;
                     }
 
-                    const clickeventfunc = (a:any) => {
-                        if (openmodalrefdiscord.current && !openmodalrefdiscord.current.contains(a.target)) {
-                                setformDetail({nodeid:"" , name:"",open:false } )
+                    const clickeventfunc = (a:MouseEvent) => {
+                        if (openmodalrefdiscord.current && !openmodalrefdiscord.current.contains(a.target as globalThis.Node)) {
+                                setformDetail({name:"",open:false,nodeid:formDetail.nodeid })
                         }
                     }
                     document.addEventListener("mousedown",clickeventfunc)
@@ -93,7 +88,7 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                               <img className='h-6' src={"/actiontriggerimages/discord.png"}></img>
                             </div>
                              <div onClick={()=>{
-                                setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
+                                setformDetail((a)=>{ return {nodeid:"" , name:"",open:false } })
                                 setformdata(initialValue)
                               }} className="h-6 w-6 rounded-md flex items-center justify-center  hover:bg-[#E9E9E9] hover:dark:bg-[#151619]"><Cross size="16"></Cross></div>
                         </div>
@@ -101,7 +96,7 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                          <div className="my-6 flex flex-col gap-6 w-70 md:w-115 overflow-y-scroll max-h-100 p-2 ">
                             <div>
                                 <Input placeholder={`my-Discord-variable`} name="Variable Name " state={formdata.variableName} statesetter={(a)=>{
-                                     setformdata((prev:any)=>{
+                                     setformdata((prev)=>{
                                          return {...prev , variableName : a }
                                      })
                                 }}></Input>
@@ -114,10 +109,10 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                                 </div>
 
                                 <Input placeholder={`Please select or enter a Discord webhook URL.`} name="" state={formdata.webhookUrl} statesetter={(a)=>{
-                                    setformdata((prev:any)=>{
+                                    setformdata((prev)=>{
                                         return {...prev , webhookUrl : a }
                                     })
-                                    setErrors((Prev:any)=>({...Prev,webhookUrl:""}))
+                                    setErrors((Prev)=>({...Prev,webhookUrl:""}))
                                 }}></Input>
                                 {errors.webhookUrl&&
                                 <div className="mt-1 text-xs text-red-500">
@@ -134,17 +129,17 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                                 </div>
                                 <div className="w-full absolute top-6 z-10 " >
                                     <div className={`absolute w-full top-7 transition duration-100 ${open ? "opacity-100 translate-y-3" : "translate-y-0 opacity-0 pointer-events-none ease-in-out"}`}>
-                                        <OpenOptions simplefilter={formdata.webhookUrl??""} open={open} setopen={setopen} setsimplefilter={(a)=>{setformdata((prev:any)=>{return {...prev , AiCredentials :a}})}}>
+                                        <OpenOptions simplefilter={formdata.webhookUrl??""} open={open} setopen={setopen} setsimplefilter={(a)=>{setformdata((prev)=>{return {...prev , AiCredentials :a}})}}>
                                                 <Opneframe>
-                                                        {creds.map((z:any,index)=>{
+                                                        {creds?.map((z,index)=>{
                                                             if (z.type !== "DISCORD") {
                                                                 return
                                                             }
                                                             return <div 
                                                                 key={index}
                                                                 onClick={()=>{
-                                                                    setformdata((prev:any)=>{return {...prev , webhookUrl :z.value.apikey}})
-                                                                    setErrors((Prev:any)=>({...Prev,webhookUrl:""}))
+                                                                    setformdata((prev)=>{return {...prev , webhookUrl :z.value.apikey}})
+                                                                    setErrors((Prev)=>({...Prev,webhookUrl:""}))
                                                                     setopen(false)
                                                                 }}
                                                                 className="m-1.5 ">
@@ -167,11 +162,11 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                             </div>
                             
                             <div>
-                               <BigInput placeholder="Summary: {{myGemini:text}}" name="Content" state={formdata.content} statesetter={(a)=>{
-                                     setformdata((prev:any)=>{
+                               <BigInput placeholder="Summary: {{myGemini:text}}" name="Content" state={formdata.content} statesetter={(a:string)=>{
+                                     setformdata((prev)=>{
                                          return {...prev , content : a }
                                      })
-                                     setErrors((Prev:any)=>({...Prev,content:""}))
+                                     setErrors((Prev)=>({...Prev,content:""}))
                                 }}></BigInput> 
                                <div className=" text-xs">{"The message to send. Use {{variables}} for simple values or {{json variable}} to stringify objects"}</div>
                                {/* <VariablePicker
@@ -185,7 +180,7 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                             </div>
                             <div>
                                 <Input placeholder={`automation-bot`} name="Username (Optional)" state={formdata.username} statesetter={(a)=>{
-                                     setformdata((prev:any)=>{
+                                     setformdata((prev)=>{
                                          return {...prev , username : a }
                                      })
                                      
@@ -211,15 +206,15 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                                 if (!validateForm()) {
                                     return 
                                 }
-                                setNodes((prev:any)=>{
-                                     return prev.map((n:any)=>{
+                                setNodes((prev)=>{
+                                     return prev.map((n)=>{
                                            if (n.id === formDetail.nodeid) {
                                               return { ...n , data : { ...n.data , metadata : formdata }}
                                            }
                                            return n ;
                                      })
                                 })
-                                setformDetail((a:any)=>{ return {nodeid:"" , name:"",open:false } })
+                                setformDetail((a)=>{ return {nodeid:"" , name:"",open:false } })
                                 setformdata(initialValue)
 
                             }} className="h-8 w-30 transition-all duration-50 active:scale-95">
@@ -230,7 +225,7 @@ export default function DiscordForm({nodes,setformDetail,setNodes,formDetail}:{n
                                 </SecondarybuttonNegative>
                             </div>
                             <div onClick={()=>{
-                                    setformDetail((a:any)=>{ return {nodeid : "" , name:"",open:false } })
+                                    setformDetail((a)=>{ return {nodeid : "" , name:"",open:false } })
                                     setformdata(initialValue)
                                 }} className="h-8 w-30 transition-all duration-50 active:scale-95 ">
                                 <Secondarybutton>

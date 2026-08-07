@@ -1,5 +1,6 @@
+import { Workflowconnection, WorkflowNode } from "../types/node.js"
 
-export function topologicalSort(nodes: any[], connections: any[]) {
+export function topologicalSort(nodes: WorkflowNode[], connections: Workflowconnection[]) {
 
     const graph = new Map<string, string[]>()
     const indegree = new Map<string, number>()
@@ -17,14 +18,14 @@ export function topologicalSort(nodes: any[], connections: any[]) {
         indegree.set(to, (indegree.get(to) || 0) + 1)
     }
 
-    const queue: any[] = []
+    const queue: string[] = []
     for (const [nodeId, degree] of indegree) {
         if (degree === 0) {
             queue.push(nodeId)
         }
     }
 
-    const result: any[] = []
+    const result = []
 
     while (queue.length > 0) {
 

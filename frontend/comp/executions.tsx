@@ -1,54 +1,10 @@
 "use client"
-import axios from "axios"
-import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } from "react"
-import { Add, Adjust, Copy, Cross, Execution, Prev, Search } from "./svg/allsvg";
+import {  Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } from "react"
+import {  Adjust, Copy, Execution, Prev, Search } from "./svg/allsvg";
 import { Secondarybutton } from "./buttons/secondarybutton";
-import { OpenComp } from "./opencomp";
-import { OpenerButton } from "./buttons/openerButton";
-import { OpenOptions } from "./openoptions";
 import { OpenerBoxWithOptions } from "./OpenerBoxWithOptions";
 import { StatusButton } from "./buttons/statusbutton";
 import { DateConverter } from "./RunTimeBadge";
-import { SvgforActionsTriggers } from "./SvgforActionsTriggers";
-import { Opneframe } from "./openframe";
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
- interface Zap {
-  id : String ,
-  userId : number,
-  trigger : {
-    id        : String,
-    triggerId :  String,
-    zapId     : String,           
-    metadata  : Record<string,any>,
-    type : {
-      id: string;
-      name: string; 
-      image: string;
-    }       
-  },
-  actions : {
-    id           : string,         
-    metadata     : string,           
-    sortingOrder : string,            
-    zapId     : string,
-    ActionId  : string,
-    type : {
-      id: string;
-      name: string; 
-      image: string;
-    }
-  }[]
-}
-
-const timeobj : Record<string,number> = {
-    "Today" : 24, 
-    "Last 3 days":72,
-    "Last 7 days":168,
-    "Last 15 days":360
-}
-
-import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 import { CodeShow } from "./CodeShow";
@@ -56,14 +12,52 @@ import Spin from "./buttons/spinningwheel";
 import { useRouter } from "next/navigation";
 import { ExecutionTimeline } from "./ExecutionTimeline";
 import { api } from "@/lib/api";
-import useToastSetterRemover from "./toastfunction";
+import useToastSetterRemover, { showToastDataType } from "./toastfunction";
+import { AxiosError } from "axios";
+import { ToastType } from "./toastprovider";
 
-const getExecutions = async (setzapruns:any,showToast:any) => {
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+const timeobj : Record<string,number> = {
+    "Today" : 24, 
+    "Last 3 days":72,
+    "Last 7 days":168,
+    "Last 15 days":360
+}
+export type ExecutionStep = {
+    nodeId:string
+    nodeName:string
+    status:"RUNNING" | "SUCCESS" | "FAILED"
+    startedAt:string
+    completedAt:string | null
+    duration:number
+    error?:string
+}
+type ExecutionOutput = {
+    context:Record<string, unknown>
+    steps:ExecutionStep[]
+}
+type MainExecution = {
+    id:string
+    workflowId:string
+    status:"RUNNING" | "SUCCESS" | "FAILED"
+    startedAt:string
+    completedAt:string | null
+    error:string | null
+    input:unknown
+    output:ExecutionOutput | null
+    workflow:{
+        name:string
+    }
+}
+
+const getExecutions = async (setzapruns:Dispatch<SetStateAction<MainExecution[]|null>>,showToast:(data:showToastDataType)=>void) => {
     try {
         const response = await api.get(`${BACKEND_URL}/api/v1/workflow/executions/all`)
-        setzapruns(response.data.sort((a:any,b:any)=> new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()));
-    } catch (error:any) {
-               showToast({ msg: error?.response?.data?.message ?? "Failed to load Executions",isError:true });
+        setzapruns(response.data.sort((a:MainExecution,b:MainExecution)=> new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()));
+    } catch (err:unknown) {
+               const error = err as AxiosError<{message:string}>
+               showToast({ message: error?.response?.data?.message ?? "Failed to load Executions",isError:true });
     }
         
 }
@@ -71,24 +65,18 @@ const getExecutions = async (setzapruns:any,showToast:any) => {
 export  function Executions(){
     const showToast = useToastSetterRemover()
     const [refreshTrigger, setRefreshTrigger] = useState(false);
-    const [zapruns,setzapruns] = useState<[]>()
+    const [zapruns,setzapruns] = useState<MainExecution[]|null>(null)
     const [filter1,setfilter1] = useState("ALL")
     const [filter2,setfilter2] = useState("Last 15 days")
     const [search,setsearch] = useState("")
     useEffect(()=>{
            getExecutions(setzapruns,showToast);
-        // api.get(`${BACKEND_URL}/api/v1/workflow/executions/all`)
-        // .then((a)=>{
-        //     setzapruns(a.data.sort((a:any,b:any)=> new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()))
-        //  }).catch((err:any)=>{
-        //        showToast({ msg: err?.response?.data?.message ?? "Failed to load Executions",isError:true });
-        //  })
     })
     useEffect(()=>{
         if(!zapruns) return ;
 
         const hasRunning = zapruns.some(
-            (e:any) => e.status === "RUNNING"
+            (e) => e.status === "RUNNING"
         );
 
         if (!hasRunning) return;
@@ -103,9 +91,9 @@ export  function Executions(){
 
     
 
-     const filteredZapruns : any = useMemo(()=>{
+     const filteredZapruns = useMemo(()=>{
 
-              return (zapruns ?? [] ).filter((a:any)=>{
+              return (zapruns ?? [] ).filter((a:MainExecution)=>{
                 const hoursAgo = (Date.now() - new Date(a.startedAt).getTime()) 
                     / (1000 * 60 * 60);
                 const MatchFilter1 = filter1 == "ALL" || a.status === filter1 
@@ -165,7 +153,7 @@ export  function Executions(){
 }
  
 
-function History({filteredZapruns} :any){
+function History({filteredZapruns} :{filteredZapruns:MainExecution[]}){
     const [selectedcard , setselectedcard] = useState({open:false,index:null})
     const router = useRouter()
     if (!filteredZapruns) {
@@ -183,22 +171,13 @@ function History({filteredZapruns} :any){
     </div>
     }
      return <div className="px-2 pr-4 ">
-        {filteredZapruns.map((z:any,index:any)=>{
+        {filteredZapruns.map((z,index)=>{
             return <div key={index} className={`${z.status === "RUNNING" ? "pointer-events-none":""} flex w-full items-center justify-between border-b  border-[#EEEEEE]  dark:border-[#191B1E] cursor-pointer dark:text-[#9C9FA0] text-[#404040]   tracking-normal text-xs font-semibold `}>
                 <div className="flex w-full h-8 my-3 gap-5 justify-between">
                     <div className="   items-center gap-1 w-[20%] hidden lg:flex">
                         <Svgframe status={z.status.toLowerCase()}>
                             <Execution size={"18"} ></Execution>
                         </Svgframe>
-                        {/* <div> {'->'} </div>
-                        {z.type.actions.map((a:any,b:any)=>{
-                            return <div key={b}>
-                                <Svgframe status={z.status.toLowerCase()}>
-                                     <SvgforActionsTriggers size="20" name={a.type.name}>
-                                    </SvgforActionsTriggers>
-                                </Svgframe>
-                            </div>
-                        })} */}
                     </div>
                     
                     <div  onClick={()=>{ 
@@ -227,16 +206,17 @@ function History({filteredZapruns} :any){
 }
 
 
-export function DetailCard({id} : any){
+export function DetailCard({id} :{id:string}){
     const showToast = useToastSetterRemover()
-    const [execution , setexecution] = useState<any>(null)
+    const [execution , setexecution] = useState<MainExecution|null>(null)
     
     useEffect(()=>{
         api.get(`${BACKEND_URL}/api/v1/workflow/executions/all`).then((a)=>{
-            let filtered = a.data.find((e:any)=>e.id === id)
+            let filtered = a.data.find((e:MainExecution)=>e.id === id)
             setexecution(filtered)
-        }).catch((err:any)=>{
-            showToast({ msg: err?.response?.data?.message ?? "Failed to load execution detail",isError:true });
+        }).catch((err:unknown)=>{
+            const error = err as AxiosError<{message:string}>
+            showToast({ message: error?.response?.data?.message ?? "Failed to load execution detail",isError:true });
         })
     },[])
     
@@ -302,11 +282,11 @@ export function DetailCard({id} : any){
                         </div>
                     </div>
                 </div>
-                <ExecutionTimeline  steps={execution.output.steps?execution.output.steps:[]} ></ExecutionTimeline>
+                <ExecutionTimeline  steps={execution.output?.steps ?? []} ></ExecutionTimeline>
                 <div className="mt-8">
                 {execution.error ? 
-                <CodeShow header="Workflow Error" code={ execution.error? execution.error:{}} error={true} ></CodeShow>:""}
-                <CodeShow header="Workflow Output" code={execution.output?execution.output:{}} error={false} ></CodeShow>
+                <CodeShow header="Workflow Error" code={ execution.error} error={true} ></CodeShow>:""}
+                <CodeShow header="Workflow Output" code={execution.output} error={false} ></CodeShow>
                 </div>
             </div>
         </div>
@@ -315,11 +295,14 @@ export function DetailCard({id} : any){
 }
 
 
-function DurationCalculator(start:string,end:string):string{
+function DurationCalculator(start:string,end:string|null):string{
+    if (!end) {
+        return "Running"
+    }
        const a = Date.parse(start)
        const b = Date.parse(end)
        const c =  (Number(b)- Number(a)).toString()
-
+       
        if (Number(c) >= 1000) {
            return (Number(c)/1000).toString()+ "sec"
        }

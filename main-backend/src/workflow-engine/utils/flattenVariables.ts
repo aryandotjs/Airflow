@@ -15,7 +15,7 @@ const context = {
 }
 
 export function FlattenVariables(
-    obj: any,
+    obj: Record<string, unknown>,
     prefix = ""
 ): string[] {
 
@@ -25,7 +25,7 @@ export function FlattenVariables(
         const path = prefix ? `${prefix}.${key}` : key
 
         if (typeof obj[key] === "object" && obj[key] !== null) {
-            veriables.push(...FlattenVariables(obj[key], path))
+            veriables.push(...FlattenVariables(obj[key] as Record<string, unknown>, path))
         } else {
             veriables.push(path);
         }
@@ -33,5 +33,3 @@ export function FlattenVariables(
     })
     return veriables
 }
-
-// console.log(FlattenVariables(context))

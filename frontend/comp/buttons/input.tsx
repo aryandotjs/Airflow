@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { Secondarybutton } from "./secondarybutton";
 
 
-export function Input({ name ,placeholder ,statesetter , state}:{state : string , statesetter : Dispatch<SetStateAction<string>>, name:string,placeholder:string }){
+export function Input({ name ,placeholder ,statesetter , state}:{state : string , statesetter : (a:string)=>void, name:string,placeholder:string }){
      return <div className="flex flex-col gap-1">
         <div className="text-sm font-medium">
            {name}

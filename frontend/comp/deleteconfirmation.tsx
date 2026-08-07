@@ -1,9 +1,21 @@
-import { ReactNode, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction } from "react";
 import { Addform } from "./addform";
-import { SecondarybuttonNegative } from "./buttons/secondarybuttonnegative";
-import { Secondarybutton } from "./buttons/secondarybutton";
 
-export function DeleteConfirm({formopen,setformopen,name,buttonname,children,callback}:any){
+export function DeleteConfirm({
+    formopen,
+    setformopen,
+    name,
+    buttonname,
+    children,
+    callback
+ }:{
+    formopen:boolean,
+    setformopen:Dispatch<SetStateAction<boolean>>,
+    name:string,
+    buttonname:string,
+    children:ReactNode,
+    callback : ()=>void
+}){
     return <div className="bg-red-300">
         <Addform manualbutton={true} callback={callback}  name={name} formopen={formopen} buttonname={buttonname} setformopen={setformopen}>
                     {children}

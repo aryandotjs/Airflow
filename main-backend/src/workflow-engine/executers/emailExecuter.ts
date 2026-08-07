@@ -20,7 +20,7 @@ export async function Mailer({ to, body }: EmailParams) {
         console.log(`Email successfully delivered to ${to}! ✅`);
         return { success: true };
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("failed to mail:", error);
         return { success: false, error: error };
     }

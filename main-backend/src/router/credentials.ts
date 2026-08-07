@@ -11,7 +11,7 @@ CredentialRouter.post("/create", authmiddleware, async (req, res) => {
 
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
 
@@ -29,13 +29,13 @@ CredentialRouter.post("/create", authmiddleware, async (req, res) => {
         })
 
         return res.status(200).json({
-            msg: `credential ${name} created`,
+            message: `credential ${name} created`,
             credid: cred.id
         })
     } catch (err: unknown) {
         console.log(err)
         res.status(400).json({
-            msg: "creadential creation failed"
+            message: "creadential creation failed"
         })
     }
 
@@ -46,7 +46,7 @@ CredentialRouter.post("/update", authmiddleware, async (req, res) => {
 
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
 
@@ -68,7 +68,7 @@ CredentialRouter.post("/update", authmiddleware, async (req, res) => {
         })
 
         return res.status(200).json({
-            msg: "This Credential has been update.",
+            message: "This Credential has been update.",
             credid: cred.id
         })
     } catch (err: unknown) {
@@ -85,7 +85,7 @@ CredentialRouter.get("/all", authmiddleware, async (req, res) => {
 
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
 
@@ -100,7 +100,7 @@ CredentialRouter.get("/all", authmiddleware, async (req, res) => {
         })
     } catch (err: unknown) {
         res.status(400).json({
-            msg: "creadential didnt found"
+            message: "creadential didnt found"
         })
     }
 
@@ -111,7 +111,7 @@ CredentialRouter.delete("/delete", authmiddleware, async (req, res) => {
 
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
 
@@ -124,11 +124,11 @@ CredentialRouter.delete("/delete", authmiddleware, async (req, res) => {
             }
         })
         return res.status(200).json({
-            msg: "This Credential has been deleted"
+            message: "This Credential has been deleted"
         })
     } catch (err: unknown) {
         res.status(400).json({
-            msg: err instanceof Error ? err.message : "Failed deleting Credential"
+            message: err instanceof Error ? err.message : "Failed deleting Credential"
         })
     }
 

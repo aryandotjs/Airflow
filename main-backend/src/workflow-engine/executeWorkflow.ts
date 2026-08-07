@@ -3,6 +3,7 @@ import type { WorkflowContext } from "./contex.js"
 import { executeNode } from "./executeNode.js"
 import { topologicalSort } from "./topologicalSort.js"
 import { Prisma } from "../generated/prisma/client.js"
+import { Workflowconnection, WorkflowNode } from "../types/node.js"
 
 interface ExecutionStep {
     nodeId: string;
@@ -45,10 +46,7 @@ export async function executeWorkflow(
         if (!workflow) {
             throw Error("no workflow here")
         }
-
-        const sortednodes = topologicalSort(workflow.nodes, workflow.connections)
-
-
+        const sortednodes = topologicalSort(workflow.nodes as WorkflowNode[], workflow.connections as Workflowconnection[])
 
         for (const node of sortednodes) {
             const step: ExecutionStep = {

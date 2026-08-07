@@ -4,7 +4,7 @@ import { MainButton } from "@/comp/buttons/mainbutton";
 import { CheckFeature } from "@/comp/checkfeature";
 import { Feature } from "@/comp/feature";
 import { AuthInput } from "@/comp/input";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { GlowButton } from "@/comp/buttons/glowbutton";
@@ -14,14 +14,19 @@ import Spin from "@/comp/buttons/spinningwheel";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
+type signupformtype = {
+    email:string
+    password:string
+}
+
 export default function() {
     const showToast = useToastSetterRemover()
     const router = useRouter();
-    const [form, setfrom] = useState({email:"",password:""});
-    const [errors, seterrors] = useState<any>({});
+    const [form, setfrom] = useState<signupformtype>({email:"",password:""});
+    const [errors, seterrors] = useState<Record<string,string>>({});
     const [loading, setloading] = useState(false);
     const validateForm = () => {
-    const newError:any = {};
+    const newError:Record<string,string> = {};
 
     if (!form.email) {
         newError.email = "Email is required";
@@ -60,9 +65,9 @@ export default function() {
                 <div className="border-b border-white/15 w-full my-6"></div>
                 
                 <div className="space-y-1">
-                    <AuthInput state={form.email} statesetter={(a:any)=>{setfrom((prev:any)=>({...prev,email:a})) }} label={"Email"} type="text" placeholder="adam123@gmail.com" />
+                    <AuthInput state={form.email} statesetter={(a:string)=>{setfrom((prev)=>({...prev,email:a})) }} label={"Email"} type="text" placeholder="adam123@gmail.com" />
                      {errors.email && <div className="mt-1 text-xs text-red-500">{errors.email}</div>}   
-                    <AuthInput state={form.password} statesetter={(a:any)=>{setfrom((prev:any)=>({...prev,password:a})) }} label={"Password"} type="text" placeholder="••••••••••••" />
+                    <AuthInput state={form.password} statesetter={(a:string)=>{setfrom((prev)=>({...prev,password:a})) }} label={"Password"} type="text" placeholder="••••••••••••" />
                      {errors.password && <div className="mt-1 text-xs text-red-500">{errors.password}</div>}   
                 </div>
 
@@ -81,8 +86,9 @@ export default function() {
                                   router.push("/workflows");
                                   setloading(false)
 
-                              } catch (err:any) {
-                                  showToast({msg : err.response?.data?.msg ?? "Login failed",isError:true})
+                              } catch (err:unknown) {
+                                  const error = err as AxiosError<{message:string}>
+                                  showToast({message : error.response?.data?.message ?? "Login failed",isError:true})
                                   setloading(false)
                               }
                         }}>

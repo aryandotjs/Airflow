@@ -2,9 +2,13 @@ import { useState } from "react";
 import { MainButton } from "./buttons/mainbutton";
 import { Openup } from "./svg/allsvg";
 import { OpenComp } from "./opencomp";
+import { me } from "./sidebar";
 
 
-export function Me({me}:any){
+export function Me({me}:{me:me|null}){
+     if (!me) {
+         return "" 
+     }
      return <div className="h-18 flex items-center w-full ">
         <div className={`transition duration-100  ease-in-out flex  justify-center  cursor-pointer hover:bg-[#E9E9E9] dark:hover:text-[#F0F0F0] dark:hover:bg-[#151619] rounded-xl text-center flex-col font-medium text-sm h-10 w-full `}>
           <div className={`  flex w-full gap-2.5  pl-3 items-center`} >
@@ -19,7 +23,10 @@ export function Me({me}:any){
      </div>
 }
 
-export function Me2({me}:any){
+export function Me2({me}:{me:me|null}){
+     if (!me) {
+         return "" 
+     }
      const [open , setopen] =  useState(false)
      return <div onClick={()=> setopen(!open)} className="relative h-15 flex items-center justify-center select-none ">
           <div className="flex justify-center w-9  lg:justify-between h-10 p-0.5 lg:p-1.5   items-center  border-2 dark:border-[#151619] lg:w-full rounded-2xl border-[#C6C6C6]  lg:pr-3 dark:hover:bg-[#151619] hover:bg-[#E9E9E9] ">
