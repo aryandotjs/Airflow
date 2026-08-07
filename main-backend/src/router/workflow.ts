@@ -37,7 +37,7 @@ WorkflowRouter.post("/", authmiddleware, async (req, res) => {
     const userid = req.userId
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
     const name = name1[Math.floor(Math.random() * 10)] + "-" + name1[Math.floor(Math.random() * 10)]
@@ -49,13 +49,13 @@ WorkflowRouter.post("/", authmiddleware, async (req, res) => {
             }
         })
         return res.json({
-            msg: `Workflow ${workflow.name} created bc`,
+            message: `Workflow ${workflow.name} created bc`,
             workflow
         })
 
     } catch (error) {
         res.json({
-            msg: `creadential creation failed`,
+            message: `creadential creation failed`,
         })
     }
 })
@@ -65,7 +65,7 @@ WorkflowRouter.post("/togglestatus", authmiddleware, async (req, res) => {
     const userid = req.userId;
     if (!userid) {
         return res.status(401).json({
-            msg: "Unauthorized"
+            message: "Unauthorized"
         });
     }
     const { crrstatus, workflowid } = req.body
@@ -76,7 +76,7 @@ WorkflowRouter.post("/togglestatus", authmiddleware, async (req, res) => {
 
         if (!validation.success) {
             return res.status(400).json({
-                msg: "Workflow cannot be activated",
+                message: "Workflow cannot be activated",
                 errors: validation.errors
             })
         }
@@ -103,7 +103,7 @@ WorkflowRouter.post("/togglestatus", authmiddleware, async (req, res) => {
     })
 
     return res.json({
-        msg: `Workflow ${status}`
+        message: `Workflow ${status}`
     })
 
 })
