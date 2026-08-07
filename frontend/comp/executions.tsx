@@ -223,7 +223,9 @@ export function DetailCard({id} :{id:string}){
     const router = useRouter()
    
     if (!execution) {
-        return <div></div>
+        return <div className="bg-brand-bg dark:bg-brand-dark-bg h-screen w-full flex justify-center mt-70">
+                                <Spin></Spin>
+                </div>
     }
     return <div className="h-screen ">
         <div className={` bg-brand-bg dark:bg-brand-dark-bg px-10 lg:px-24 pb-50`}>

@@ -21,7 +21,7 @@ export function Sidebar(){
          });
      },[])
      
-     return <div className="transition-w ease-in-out duration-100  border-r w-15 p-1 lg:w-60 h-full border-r-brand-border dark:border-r-dark-border  max-w-62   lg:px-4  normal font-semibold flex flex-col justify-between  gap-5 pb-32">
+     return <div className="transition-w ease-in-out duration-100  border-r w-15 p-1 lg:w-60 h-full border-r-brand-border dark:border-r-dark-border  max-w-62   lg:px-4  normal font-semibold flex flex-col justify-between  gap-5 pb-5">
         <div className="w-full ">
             <Me me={me}></Me>
         </div>

@@ -165,7 +165,6 @@ const Router = useRouter();
             <button onClick={async()=>{
                 try {
                     setsaveloading(true)
-                    console.log(nodes,edges,"we wallaah ")
                     const response = await api.put(`${BACKEND_URL}/api/v1/workflow/${workflowid}`,{
                            nodes , edges
                     })
