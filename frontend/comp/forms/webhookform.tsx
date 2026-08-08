@@ -10,6 +10,10 @@ import { OpenOptions } from "../openoptions"
 import { Opneframe } from "../openframe"
 import { Node } from "@xyflow/react"
 import { formdetailtype } from "../ReactWorkflow"
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+
 export function WebhookForm({
     nodes,
     setNodes,
@@ -56,7 +60,7 @@ export function WebhookForm({
             }
         },[formDetail.name])
 
-        
+       
 
   return (<div className={` transition duration-100 ease-initial ${formDetail.name == "Webhook" ?  "opacity-100 " : " opacity-0 pointer-events-none " } fixed flex w-full h-full inset-0 justify-center items-center bg-brand-bg/90 dark:bg-brand-dark-bg/90 z-20`}>
         <div ref={openmodalrefwebhook} className={` transition duration-100 ${formDetail.name == "Webhook"?  " scale-100" : "scale-95  "}  border border-[#C6C6C6] dark:border-[#2C3034] rounded-4xl  bg-brand-bg dark:bg-brand-dark-bg`}>
@@ -113,22 +117,23 @@ export function WebhookForm({
                                 <div className="text-sm font-medium">
                                    {"Webhook URL"}
                                 </div>
-                                    <div className="flex h-8 justify-between border border-[#C6C6C6]  dark:border-[#2C3034]  cursor-pointer bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] rounded-xl    px-2.5 tracking-normal text-sm font-medium">
-                                        <div className="w-full pt-1  flex h-max-8 overflow-x-hidden item-start ">
-                                            {formdata.WebhookId?`http://localhost:3001/api/v1/webhook/${formdata.WebhookId}` : "Save workflow to generate URL" }
+                                    <div className=" flex h-8 justify-between border border-[#C6C6C6]  dark:border-[#2C3034]  cursor-pointer bg-[#E9E9E9] dark:bg-[#151619] dark:text-[#9C9FA0] text-[#404040] rounded-xl    px-2.5 tracking-normal text-sm font-medium">
+                                        <div className="w-full pt-1 overflow-x-hidden whitespace-nowrap truncate ">
+                                            {formdata.WebhookId?`${BACKEND_URL}/api/v1/webhook/${formdata.WebhookId}` : "Save workflow to generate URL" }
                                         </div>
                                         <button onClick={()=>{
                                             if (formdata.WebhookId) {
-                                                navigator.clipboard.writeText(`http://localhost:3001/api/v1/webhook/${formdata.WebhookId}`)
+                                                navigator.clipboard.writeText(`${BACKEND_URL}/api/v1/webhook/${formdata.WebhookId}`)
                                             }
                                         }}className="transition-all active:scale-80 duration-50   text-[#71767B]      rounded-md p-0.5 "
                                                             >
                                             <Copy size="19"></Copy>
                                         </button>
                                     </div>
-                                <div className=" text-xs">{`Send POST requests to this URL to trigger the workflow`}</div>
+                                    <div className=" text-xs">{`Send POST requests to this URL to trigger the workflow`}</div>
                             </div>
-
+                            
+       
                             <div className="flex gap-1 items-center">
                                 <div  className="text-xs flex gap-1">
                                     <div> {"use context in next nodes as "}</div>

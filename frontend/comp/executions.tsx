@@ -141,7 +141,7 @@ export  function Executions(){
                     </Secondarybutton>
                     
                     {zapruns ? 
-                          <History filteredZapruns={filteredZapruns}></History>
+                         <History filteredZapruns={filteredZapruns}></History>
                           :
                           <div className="bg-brand-bg dark:bg-brand-dark-bg h-screen w-full flex justify-center mt-40">
                                 <Spin></Spin>

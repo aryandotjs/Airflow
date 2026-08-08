@@ -103,7 +103,7 @@ export function Credentials(){
                     </div>
                 </Secondarybutton>
                     {!allcreds ? 
-                        <div className="bg-brand-bg dark:bg-brand-dark-bg  w-full flex justify-center mt-40 ">
+                        <div className="bg-brand-bg dark:bg-brand-dark-bg  w-full flex justify-center mt-40  ">
                             <Spin></Spin>
                         </div> :
                         <CredHistory setRefreshTrigger={setRefreshTrigger} filteredCreds={filteredCreds}></CredHistory> 

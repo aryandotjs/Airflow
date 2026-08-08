@@ -132,7 +132,7 @@ function useWorkflow(refresh:boolean,showToast:(data:showToastDataType)=>void) {
                         {loading ? <div className="bg-brand-bg dark:bg-brand-dark-bg h-screen w-full flex justify-center mt-40">
                                      <Spin></Spin>
                                 </div>
-                              : <div className="flex justify-center"> <ZapTable setRefreshTrigger={setRefreshTrigger} filteredzap={filteredzap} /> </div>} 
+                              :  <ZapTable setRefreshTrigger={setRefreshTrigger} filteredzap={filteredzap} /> } 
                     </div>
              </div>
 
